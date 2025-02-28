@@ -1,19 +1,19 @@
 import React, { useEffect } from 'react';
 import { Link } from "react-router-dom";
-import "../assets/css/register.css";
+import "../assets/styles/register.scss";
 
 function Register() {
     
-    // useEffect(() => {
-    //     document.body.style.overflow = "hidden"; // Ẩn thanh cuộn khi vào trang đăng nhập
-    //     return () => {
-    //         document.body.style.overflow = "auto"; // Hiện lại thanh cuộn khi rời trang đăng nhập
-    //     };
-    // }, []);
+    useEffect(() => {
+        document.body.style.overflow = "hidden"; // Ẩn thanh cuộn khi vào trang đăng nhập
+        return () => {
+            document.body.style.overflow = "auto"; // Hiện lại thanh cuộn khi rời trang đăng nhập
+        };
+    }, []);
     
     return (
         <div className="registerPage flex">
-            <Link to="/" className="btn--backhome">Back to home</Link>
+            {/* <Link to="/" className="btn--backhome">Back to home</Link> */}
             <div className="containterRegister flex">
                 <div className="introduceDiv flex">
                     <div className="introduceDiv--header">
@@ -26,7 +26,7 @@ function Register() {
                 </div>
 
                 <div className="formDiv flex">
-                    <div className="header--LoginForm">
+                    <div className="header--RegisterForm">
                         <img src="./logo.png" alt="Logo" />
                         <h2>Đăng kí</h2>
                     </div>

@@ -1,14 +1,13 @@
 import React from 'react';
-import Maincontent from '../maincontent';
-import Header from '../header';
-function Home(props) {
+import Maincontent from '../layouts/MainContent';
+import Header from '../layouts/Header';
+function Page(props) {
     return (
-        <>
-        <Header/>
-        <Maincontent>
-        </Maincontent>
-        </>
+        <div>
+          <Header/>
+          <Maincontent/>  
+        </div>
     );
 }
 
-export default Home;
+export default Page;

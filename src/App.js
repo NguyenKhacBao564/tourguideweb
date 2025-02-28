@@ -1,7 +1,7 @@
 
 import { Routes, Router, Route, Link} from "react-router-dom";
 
-import Page from "./page";
+import Page from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import ScrollToTop from "./feature/scrollToTop";

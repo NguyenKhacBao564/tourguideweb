@@ -4,14 +4,15 @@
 }
 
 html{
-  /*HACK*/
   font-size: 100%;
 }
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;  /*kế thừa từ thẻ chứa nó  */
 }
+
 body {
   margin: 0;
   padding: 0;
@@ -25,12 +26,10 @@ body {
   display: flex;
 }
 
-
 .grid{
   display: grid;
   align-items: center;
   gap: 1.5rem;
-
 }
 
 .icon-large{
@@ -46,65 +45,157 @@ body {
 li{
   list-style: none;
 }
+
+a{
+  text-decoration: none;
+}
+
 .navbar {
   display: flex;
-  width: 100%;
-  margin: 0;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 50px;
+  background: transparent;
+  color: var(--foreground);
   position: fixed;
-  padding: 10px 50px;
-  top:0;
+  width: 100%;
+  top: 0;
   left: 0;
-  align-items: center;
-  background-color: transparent;
-  color: var(--foreground);
   z-index: 1000;
+  transition: 0.3s ease-in-out;
+
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+  }
+  .nav-links {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    list-style: none;
+    li{
+      display: inline-block;
+
+    }
+    li a {
+      color: rgb(255, 255, 255);
+      transition: color 0.3s;
+      font-weight: bold;
+    }
+    .btn {
+      padding: 15px 20px;
+      border-radius: 5px;
+      font-family: 'Poppins', sans-serif;
+      text-decoration: none;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    .btn--login {
+      background-color: #FFDA32;
+      color: black;
+      font-weight: 700;
+      &:hover{
+        background-color: #ecc30c;
+      }
+    }
+    .btn--signup {
+      background: transparent;
+      color: rgb(0, 0, 0);
+      font-weight: 700;
+      &:hover{
+        background-color: #1616163f;
+      }
+    }
+    .btn--close{
+      display: none;
+    }
+  }
+  /* Mobile Navbar */
+ 
+  .menu-toggle {
+    display: none;
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
-.logo {
-  font-size: 24px;
-  font-weight: bold;
-  color: white;
-}
+  @media (max-width: 768px) {
+    .navbar {
+      width: 100vw;
+    }    
+    .nav-links {
+      position: absolute;
+      top: 0px;
+      right: 0;
+      width: 30%;
+      height: 100vh;
+      background: #13253F;
+      box-shadow: -8px 8px 8px -2px rgba(0, 0, 0, 0.1);
+      flex-direction: column;
+      gap: 0;
+      padding: 0px;
+      display: none;
+      animation: slideIn 0.5s forwards;
+      z-index: 1000;
+      
+      &.active {
+        display: flex;
+        text-align: left;
 
-.links {
-  display: flex;
-  gap: 50px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  margin-left: auto;  /* Đẩy links sang phải */
-  
-}
+        li{
+          display: block;
+          padding: 15px;
+          width: 100%;
+          &:hover{
+            background: #1e3a61;
+          }
+        }
+        .btn {
+          // border: 1px solid rgb(255, 255, 255);
+          padding: 0;
+          width: 100%;
+          border-radius: 0px;
+          font-family: 'Poppins', sans-serif;
+          text-decoration: none;
+          font-weight: bold;
+          transition: 0.3s;
+        }
+        .btn--login {
+          background-color: transparent;
+          color: rgb(255, 255, 255);
+          font-weight: 700;
+        }
+        .btn--signup {
+          background: transparent;
+          color: rgb(255, 255, 255);
+          font-weight: 700;
+        }
+        .btn--close{
+          display: flex;
+          margin-right: auto;
+          justify-content: center;
+          align-items: center;
+          width: 50px;
+          color: white;
+          font-size: 24px;
+        }
+      }
+    }
 
-.links li a {
-  text-decoration: none;
-  color: var(--foreground);
-  color: white;
-}
+    .menu-toggle {
+      display: block;
+    }
 
-.auth-buttons {
-  display: flex;
-  gap: 50px;
-  margin-left: 40px;  /* Tạo khoảng cách giữa links và nút */
-}
-
-
-.btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #FFDA32;
-  color: black;
-  border-radius: 3px;
-  text-decoration: none;
-  font-family: 'Poppins', sans-serif;
-  font-weight: bold;
-  width: 140px;
-  height: 50px;
-}
-
-.navbar .btn--login{
-  background-color: transparent;
+  }
 }
 
 .header {

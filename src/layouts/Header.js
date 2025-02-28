@@ -1,7 +1,7 @@
 import React from 'react';
-import Navbar from "./components/navbar";
+import Navbar from "../components/navbar";
 
-import Searchbar from './components/searchbar';
+import Searchbar from '../components/searchbar';
 function Header(props) {
     return (
         <div className='header'>
