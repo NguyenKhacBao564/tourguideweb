@@ -1,0 +1,4 @@
+1/ cài concurrenttly để chạy song song json-server và dự án:
+npm i concurrently
+2/ Cài json-server
+

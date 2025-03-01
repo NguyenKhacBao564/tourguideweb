@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link } from "react-router-dom";
 import "../assets/styles/login.scss";
-
+import Validator from "../feature/validator";
 function Login() {
     
     useEffect(() => {
@@ -11,6 +11,15 @@ function Login() {
         };
     }, []);
     
+    Validator({
+        form: '#form-1',
+        rules: [
+            Validator.isRequire('#username'),
+            Validator.isEmail('#password')
+        ]
+    });
+
+
     return (
         <div className="loginPage flex">
              {/* <Link to="/" className="btn--backhome">Back to home</Link> */}
@@ -30,7 +39,6 @@ function Login() {
                         <img src="./logo.png" alt="Logo" />
                         <h2>Đăng nhập</h2>
                     </div>
-
                     <form action="" className="login-form grid">
                         <span>Login fail</span>
                         <div className='inputDiv'>

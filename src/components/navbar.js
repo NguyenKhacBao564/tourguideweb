@@ -13,8 +13,8 @@ function Navbar() {
                 <li><a href="#">Popular Destination</a></li>
                 <li><a href="#">Contact</a></li>
                 <li><a href="#">Help</a></li>
-                <li><Link to="/login" className="btn btn--signup">Đăng kí</Link></li>
-                <li><Link to="/register" className="btn btn--login">Đăng nhập</Link></li>
+                <li><Link to="/register" className="btn btn--signup">Đăng kí</Link></li>
+                <li><Link to="/login" className="btn btn--login">Đăng nhập</Link></li>
             </ul>
 
             <div className="menu-toggle" onClick={() => setIsOpen(!isOpen)}>
