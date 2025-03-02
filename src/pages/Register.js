@@ -16,7 +16,7 @@ function Register() {
         phone: '',
         email: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
     });
 
     const inputs = [
@@ -25,9 +25,11 @@ function Register() {
             name: "username",
             type: "text",
             placeholder: "Nhập họ và tên",
-            errorMessage: "Họ và tên không được để trống",
+            errorMessage: {
+                Empty: "Họ và tên không được để trống",
+                Constraint: "Họ và tên không chứa kí tự đặc biệt hoặc số"},
             label: "Nhập họ và tên",
-            pattern: "^[A-Za-zÀ-Ỹà-ỹ]+$",
+            pattern: "^[A-Za-zÀ-Ỹà-ỹ]+(?:\\s[A-Za-zÀ-Ỹà-ỹ]+)*$",
             required: true,
         },
         {
@@ -35,7 +37,9 @@ function Register() {
             name: "phone",
             type: "text",
             placeholder: "Nhập số điện thoại",
-            errorMessage: "Vui lòng nhập đúng số điện thoại",
+            errorMessage: {
+                Empty: "Số điện thoại không được để trống",
+                Constraint: "Vui lòng nhập đúng định dạng số điện thoại"},
             label: "Nhập số điện thoại",
             pattern: "^(0[3\\|5\\|7\\|8\\|9])[0-9]{8,10}$",
             required: true,
@@ -45,7 +49,9 @@ function Register() {
             name: "email",
             type: "text",
             placeholder: "Email",
-            errorMessage: "Định dạng email không đúng",
+            errorMessage: {
+                Empty: "Email không được để trống",
+                Constraint: "Email không hợp lệ"},
             label: "Email", 
             // pattern: "^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$", // Regex pattern cho email
             pattern: "^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9]+(?:\\.[a-zA-Z0-9\\-]+)*\\.[a-zA-Z]{2,}$",
@@ -57,7 +63,9 @@ function Register() {
             name: "password",
             type: "password",
             placeholder: "Nhập mật khẩu",
-            errorMessage: "Mật khẩu chứa ít nhất 8 kí từ và ít nhất một chữ cái, một số và một kí tự đặc biệt ",
+            errorMessage: {
+                Empty: "Mật khẩu không được để trống",
+                Constraint: "Mật khẩu chứa ít nhất 8 kí từ và ít nhất một chữ cái, một số và một kí tự đặc biệt "},
             label: "Nhập mật khẩu",
             pattern: '^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*?])[a-zA-Z0-9!@#$%^&*?]{8,20}$',
             required: true,
@@ -67,31 +75,34 @@ function Register() {
             name: "confirmPassword",
             type: "password",
             placeholder: "Nhập lại mật khẩu",
-            errorMessage: "Mật khẩu không khớp",
+            errorMessage: {
+                Empty: "Mật khẩu không được để trống",
+                Constraint: "Mật khẩu không khớp"},
             label: "Nhập lại mật khẩu",
-            pattern: values.password,
             required: true,
         },
     ]
 
-    const onChange = (e) => {
-        setValues({...values,[e.target.name]: e.target.value});
-        const { name, value } = e.target;
 
-        // Tìm input có name tương ứng để lấy regex pattern
-        const inputField = inputs.find(input => input.name === name);
-        
-        if (inputField) {
-            const regex = new RegExp(inputField.pattern); // Chuyển pattern từ string sang RegExp
-            const isValid = regex.test(value); // Kiểm tra giá trị nhập vào có khớp regex không
-            
-            console.log(`Giá trị nhập vào: ${value}`);
-            console.log(`Pattern: ${inputField.pattern}`);
-            console.log(`Hợp lệ: ${isValid}`);
-        }
+
+    const onChange = (e) => {
+        const { name, value } = e.target;
+        setValues((prev) => {
+            const newValues = { ...prev, [name]: value };
+            // Kiểm tra xác nhận mật khẩu ngay khi người dùng nhập
+            if (name === "confirmPassword") {
+                if (newValues.password !== value) {
+                    e.target.setCustomValidity("Mật khẩu không khớp!");
+                } else {
+                    e.target.setCustomValidity("");
+                }
+            }
+            return newValues;
+        });
     }
 
     const handleSubmit = (e) => {
+
         e.preventDefault();
     }
 
@@ -116,7 +127,7 @@ function Register() {
                     </div>
                     <form action="" onSubmit={handleSubmit} className="register-form grid">
                         <span>Register fail</span>
-                        {inputs.map((input)=> (<FormInput key={input.id} {...input}  value={values[input.name]} onChange={onChange} />
+                        {inputs.map((input)=> (<FormInput key={input.id} {...input}  value={values[input.name]} onChange={onChange}/>
                         ))}
                         <button type="submit" className="btn--register">Đăng kí</button>
                         <span className="or">Hoặc</span>
