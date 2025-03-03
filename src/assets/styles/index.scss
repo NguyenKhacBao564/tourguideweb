@@ -570,3 +570,23 @@ a{
   margin-top: 150px;
   flex-wrap: wrap;
 }
+
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputWrapper input {
+  width: 100%;
+  padding-right: 35px; /* Chừa chỗ cho icon */
+}
+
+.icon {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  color: #555;
+}

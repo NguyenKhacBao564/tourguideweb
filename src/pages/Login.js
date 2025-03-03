@@ -20,7 +20,7 @@ function Login() {
         password: '',
     });
 
-    const [check, setCheck] = useState(false);
+    const [check, setCheck] = useState(false); // Kiểm tra đăng nhập thành công hay không
 
     const inputs = [
         {
@@ -29,7 +29,6 @@ function Login() {
             type: "text",
             placeholder: "Nhập email",
             label: "Nhập email",
-            // pattern: "^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9]+(?:\\.[a-zA-Z0-9\\-]+)*\\.[a-zA-Z]{2,}$",
             errorMessage: {},
             required: true,
         },
@@ -39,7 +38,6 @@ function Login() {
             type: "password",
             placeholder: "Nhập mật khẩu",
             label: "Nhập mật khẩu",
-            // pattern: '^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*?])[a-zA-Z0-9!@#$%^&*?]{8,20}$',
             errorMessage: {},
             required: true,
         },
@@ -83,10 +81,8 @@ function Login() {
 
     
     return (
-       
         <div className="loginPage">
              {/* <Link to="/" className="btn--backhome">Back to home</Link> */}
-             
             <div className="containterLogin flex">
                 <div className="introduceDiv flex">
                     <div className="introduceDiv--header">
@@ -99,12 +95,12 @@ function Login() {
                 </div>
 
                 <div className="formDiv flex">
-                    
                     <div className="header--LoginForm">
                         <img src="./logo.png" alt="Logo" />
                         <h2>Đăng nhập</h2>
                     </div>
                     <form action="" onSubmit={handleSubmit} className="login-form grid">
+                        {/* Thất bại thì hiện ra */}
                         <p>{check && <span className="alertLoginFail">Tên đăng nhập hoặc mật khẩu không đúng</span>}</p>
                         {inputs.map((input) => (<FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange}/>))}
                         <a href="#" className="forgotPassword">Quên mật khẩu</a>

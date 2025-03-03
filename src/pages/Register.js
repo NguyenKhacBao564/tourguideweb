@@ -33,7 +33,6 @@ function Register() {
                 Default: "Họ và tên không được để trống",
                 Constraint: "Họ và tên không chứa kí tự đặc biệt hoặc số"},
             label: "Nhập họ và tên",
-            pattern: "^[A-Za-zÀ-Ỹà-ỹ]+(?:\\s[A-Za-zÀ-Ỹà-ỹ]+)*$",
             required: true,
         },
         {
@@ -45,7 +44,6 @@ function Register() {
                 Default: "Số điện thoại không được để trống",
                 Constraint: "Vui lòng nhập đúng định dạng số điện thoại"},
             label: "Nhập số điện thoại",
-            pattern: "^(0[3\\|5\\|7\\|8\\|9])[0-9]{8,10}$",
             required: true,
         },
         {
@@ -57,8 +55,6 @@ function Register() {
                 Default: "Email không được để trống",
                 Constraint: "Email không hợp lệ"},
             label: "Email", 
-            // pattern: "^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$", // Regex pattern cho email
-            pattern: "^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9]+(?:\\.[a-zA-Z0-9\\-]+)*\\.[a-zA-Z]{2,}$",
             required: true,
            
         },
@@ -71,7 +67,6 @@ function Register() {
                 Default: "Mật khẩu không được để trống",
                 Constraint: "Mật khẩu chứa ít nhất 8 kí từ và ít nhất một chữ cái, một số và một kí tự đặc biệt "},
             label: "Nhập mật khẩu",
-            pattern: '^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*?])[a-zA-Z0-9!@#$%^&*?]{8,20}$',
             required: true,
         },
         {
@@ -90,16 +85,17 @@ function Register() {
 
     const onChange = (e) => {
         const { name, value } = e.target;
+       
         setValues((prev) => {
             const newValues = { ...prev, [name]: value };
-            // Kiểm tra xác nhận mật khẩu ngay khi người dùng nhập
-            if (name === "confirmPassword") {
-                if (newValues.password !== value) {
-                    e.target.setCustomValidity("Mật khẩu không khớp!");
-                } else {
-                    e.target.setCustomValidity("");
-                }
-            }
+            //Kiểm tra xác nhận mật khẩu ngay khi người dùng nhập
+            // if (name === "confirmPassword") {
+            //     if (newValues.password !== value) {
+            //         e.target.setCustomValidity("Mật khẩu không khớp!");
+            //     } else {
+            //         e.target.setCustomValidity("");
+            //     }
+            // }
             return newValues;
         });
     }
@@ -136,7 +132,11 @@ function Register() {
                     </div>
                     <form action="" onSubmit={handleSubmit} className="register-form grid">
                         <span>Register fail</span>
-                        {inputs.map((input)=> (<FormInput key={input.id} {...input}  value={values[input.name]} onChange={onChange}/>
+                        {inputs.map((input)=> (<FormInput key={input.id} {...input}  value={values[input.name]} 
+                            onChange={onChange} 
+                            valueconfirm={input.name === "confirmPassword"? values["password"]:""}
+                            usepattern={true}
+                            />
                         ))}
                         <button type="submit" className="btn--register">Đăng kí</button>
                         <span className="or">Hoặc</span>

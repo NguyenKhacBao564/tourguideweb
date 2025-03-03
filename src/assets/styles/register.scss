@@ -1,16 +1,16 @@
 
-.btn--backhome{
-    position:absolute;
-    text-decoration: none;
-    color:#2e2b38;
-    top: 5px;
-    left: 5px;
-    font-size: 18px;
-    background-color: #2DB6A4;
-    /* border-radius: 3px; */
-    color: white;
-    padding: 0.5rem;
-}
+// .btn--backhome{
+//     position:absolute;
+//     text-decoration: none;
+//     color:#2e2b38;
+//     top: 5px;
+//     left: 5px;
+//     font-size: 18px;
+//     background-color: #2DB6A4;
+//     /* border-radius: 3px; */
+//     color: white;
+//     padding: 0.5rem;
+// }
 .registerPage{
     height: 100vh;
     width: 100%;
@@ -21,7 +21,6 @@
 }
 
 .containterRegister{
-    
     box-sizing: border-box;
     height: 100vh;
     width: 100%;
@@ -36,7 +35,6 @@
         right: 10px;
         position: absolute;
         z-index: 1000;
-        
     }
     .introduceDiv{
         height: 100%;
@@ -46,8 +44,6 @@
         background: #1C2B38;
         /* border-radius: 10px 0 0 10px; */
         text-align: justify;
-       
-    
         .introduceDiv--header{
             flex-grow: 1;
             display: flex;
@@ -79,8 +75,6 @@
     
             }
         }
-    
-    
         p {
             font-size: 1rem;
             margin: 20px 0;
@@ -104,62 +98,27 @@
         background-color: #FFFFFF;
         justify-content: center;
         align-items: center;
-        gap: 1.5em;
+        gap: 0rem;
        
         .header--RegisterForm{
             text-align: center;
     
             img{
                 width: 60px;
-                padding-bottom: .5rem;
+                padding-bottom: 0.1rem;
             }
     
             h2{
-                font-size: 48px;
+                font-size: 42px;
                 font-weight: bold;
             }
         } 
-        
         .register-form{
             width: 50%;
-            gap: 1.5rem;
+            gap: 1rem;
             span{
                 text-align: center; 
             }
-            
-            .inputDiv{
-               input{
-                    width: 100%;
-                    padding: 1rem;
-                    margin-bottom: 0.2rem;
-                    border: 1px solid #E0E0E9;
-                    border-radius: 5px;
-                    font-size: 1rem;
-                    box-shadow: 0 10px 50px -20px rgba(68, 97, 242, 11);
-                    outline: none;
-                }
-                label{
-                    font-size: 14px;
-                    font-weight: bold;
-                    padding: .5rem 0;
-                    display: block;
-                }
-                span{
-                    font-size: 14px;
-                    text-align: left;
-                    font-weight: bold;
-                    color: #e43d3d;
-                    display: none;
-                }
-                input:invalid[focused="true"] ~ span{
-                    display: block;
-                }
-                input:invalid[focused="true"]{
-                    
-                    border: 1px solid #ff1717;
-                }
-            }
-        
             .btn--register{
                 padding: 1rem 0;
                 color: #FFFFFF;
@@ -202,9 +161,6 @@
         }
     }
 }
-
-
-
 
 
 @media screen and (max-width: 1920px){
