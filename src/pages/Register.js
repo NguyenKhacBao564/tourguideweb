@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import "../assets/styles/register.scss";
 import FormInput from "../components/FormInput";
+import AlertUI from '../components/AlertUI';
+
 function Register() {
     
     useEffect(() => {
@@ -18,6 +20,8 @@ function Register() {
         password: '',
         confirmPassword: '',
     });
+    const [show, setShow] = useState(false);
+
 
     const inputs = [
         {
@@ -26,7 +30,7 @@ function Register() {
             type: "text",
             placeholder: "Nhập họ và tên",
             errorMessage: {
-                Empty: "Họ và tên không được để trống",
+                Default: "Họ và tên không được để trống",
                 Constraint: "Họ và tên không chứa kí tự đặc biệt hoặc số"},
             label: "Nhập họ và tên",
             pattern: "^[A-Za-zÀ-Ỹà-ỹ]+(?:\\s[A-Za-zÀ-Ỹà-ỹ]+)*$",
@@ -38,7 +42,7 @@ function Register() {
             type: "text",
             placeholder: "Nhập số điện thoại",
             errorMessage: {
-                Empty: "Số điện thoại không được để trống",
+                Default: "Số điện thoại không được để trống",
                 Constraint: "Vui lòng nhập đúng định dạng số điện thoại"},
             label: "Nhập số điện thoại",
             pattern: "^(0[3\\|5\\|7\\|8\\|9])[0-9]{8,10}$",
@@ -50,7 +54,7 @@ function Register() {
             type: "text",
             placeholder: "Email",
             errorMessage: {
-                Empty: "Email không được để trống",
+                Default: "Email không được để trống",
                 Constraint: "Email không hợp lệ"},
             label: "Email", 
             // pattern: "^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$", // Regex pattern cho email
@@ -64,7 +68,7 @@ function Register() {
             type: "password",
             placeholder: "Nhập mật khẩu",
             errorMessage: {
-                Empty: "Mật khẩu không được để trống",
+                Default: "Mật khẩu không được để trống",
                 Constraint: "Mật khẩu chứa ít nhất 8 kí từ và ít nhất một chữ cái, một số và một kí tự đặc biệt "},
             label: "Nhập mật khẩu",
             pattern: '^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*?])[a-zA-Z0-9!@#$%^&*?]{8,20}$',
@@ -76,13 +80,12 @@ function Register() {
             type: "password",
             placeholder: "Nhập lại mật khẩu",
             errorMessage: {
-                Empty: "Mật khẩu không được để trống",
+                Default: "Mật khẩu không được để trống",
                 Constraint: "Mật khẩu không khớp"},
             label: "Nhập lại mật khẩu",
             required: true,
         },
     ]
-
 
 
     const onChange = (e) => {
@@ -102,14 +105,19 @@ function Register() {
     }
 
     const handleSubmit = (e) => {
-
         e.preventDefault();
+        setShow(true);
+        setTimeout(() => {
+            setShow(false);
+        }, 3000);
     }
 
     return (
         <div className="registerPage flex">
             {/* <Link to="/" className="btn--backhome">Back to home</Link> */}
+            
             <div className="containterRegister flex">
+                <AlertUI variant="success" show={show} text="Bạn đã đăng kí thành công" className="alert" />
                 <div className="introduceDiv flex">
                     <div className="introduceDiv--header">
                         <h1 className="title">Chào mừng dến với </h1>
@@ -119,8 +127,9 @@ function Register() {
                     </div>
                     <img src="/img1.png" alt="Illustration"/>
                 </div>
-
+               
                 <div className="formDiv flex">
+                   
                     <div className="header--RegisterForm">
                         <img src="./logo.png" alt="Logo" />
                         <h2>Đăng kí</h2>

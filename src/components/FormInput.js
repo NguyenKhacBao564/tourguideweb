@@ -3,18 +3,23 @@ import React, { useState, useEffect } from "react";
 function FormInput(props) {
     const { label, errorMessage, onChange, id,...inputProps } = props;
     const [focused, setFocused] = useState(false);
-    const [errorType, setErrorType] = useState(errorMessage["Empty"]);
+   
 
     const handleFocus = () => {
         setFocused(true);
     };
 
+    const hasErrorNotify =  Object.keys(errorMessage).length>1;
+    
+    const [errorType, setErrorType] = useState(hasErrorNotify ? "Default" : "");
     const checkTypeError = (e) => {
-        console.log(e.target.value);
-        if (e.target.value === "") {
-            setErrorType(errorMessage["Empty"]);
-        } else {
-            setErrorType(errorMessage["Constraint"]);
+        // console.log(e.target.value);
+        if(hasErrorNotify){
+            if (e.target.value === "") {
+                setErrorType("Default");
+            } else {
+                setErrorType("Constraint");
+            }
         }
     }
 
@@ -32,7 +37,7 @@ function FormInput(props) {
                 onFocus={() => inputProps.name === "confirmPassword" && setFocused(true)}
                 focused={focused.toString()}
             />
-            <span>{errorType}</span>
+            {hasErrorNotify && <span>{errorMessage[errorType]}</span>}
         </div>
     );
 }

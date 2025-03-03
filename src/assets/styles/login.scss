@@ -103,7 +103,7 @@
             }
         } 
         .login-form{
-    
+            .alert
             span{
                 text-align: center; 
             }
@@ -219,12 +219,6 @@
 
         .formDiv {
             flex-basis: 100%;      
-            .header--LoginForm {
-                // h2 {
-                //     font-size: 36px;
-                //     font-weight: bold;
-                // }
-            }
 
             .login-form {
                 width: 90%;

@@ -72,5 +72,18 @@
       "numberguest": "28/35",
       "price": 16500000
     }
+  ],
+  "user":[
+    {
+      "id": "1",
+      "username": "admin",
+      "password": "admin123"
+    },
+    {
+      "id": "2",
+      "username": "user",
+      "password": "user123"
+    }
   ]
 }
+

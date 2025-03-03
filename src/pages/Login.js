@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import "../assets/styles/login.scss";
-import Validator from "../feature/validator";
+
 import FormInput from '../components/FormInput';
+
+
+
 function Login() {
     
     useEffect(() => {
@@ -11,18 +14,13 @@ function Login() {
             document.body.style.overflow = "auto"; // Hiện lại thanh cuộn khi rời trang đăng nhập
         };
     }, []);
-    
-    // Validator({
-    //     form: '#form-1',
-    //     rules: [
-    //         Validator.isRequire('#username'),
-    //         Validator.isEmail('#password')
-    //     ]
-    // });
+
     const [values, setValues] = useState({
-        email: '',
+        mail: '',
         password: '',
     });
+
+    const [check, setCheck] = useState(false);
 
     const inputs = [
         {
@@ -31,6 +29,9 @@ function Login() {
             type: "text",
             placeholder: "Nhập email",
             label: "Nhập email",
+            // pattern: "^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9]+(?:\\.[a-zA-Z0-9\\-]+)*\\.[a-zA-Z]{2,}$",
+            errorMessage: {},
+            required: true,
         },
         {
             id: 2,
@@ -38,16 +39,54 @@ function Login() {
             type: "password",
             placeholder: "Nhập mật khẩu",
             label: "Nhập mật khẩu",
+            // pattern: '^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*?])[a-zA-Z0-9!@#$%^&*?]{8,20}$',
+            errorMessage: {},
+            required: true,
         },
     ]
 
-    const onChange = (a) =>{
-        setValues({...values, [a.target.name]: a.target.value});
+    const onChange = (e) =>{
+        setValues({...values, [e.target.name]: e.target.value});
     }
 
+    const [data, setData] = useState([]);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const listuser = await fetch('http://localhost:3004/user');
+            const user= await listuser.json();
+            // console.log(tourlist.json());
+            setData(user);
+        }
+        fetchUser();
+        
+        }, []);
+
+
+   
+
+    const handleSubmit = (e) => {  
+        e.preventDefault();
+        var username = data.find(user => user.username === values.mail);
+        console.log(data);
+        console.log(username);
+        
+        if(username && username.password === values.password){ 
+            setCheck(false);
+            console.log("Đăng nhập thành công!");
+        }else{
+            setCheck(true);
+            console.log("Sai tên đăng nhập hoặc mật khẩu!");
+        }
+        
+    }
+
+    
     return (
-        <div className="loginPage flex">
+       
+        <div className="loginPage">
              {/* <Link to="/" className="btn--backhome">Back to home</Link> */}
+             
             <div className="containterLogin flex">
                 <div className="introduceDiv flex">
                     <div className="introduceDiv--header">
@@ -60,12 +99,13 @@ function Login() {
                 </div>
 
                 <div className="formDiv flex">
+                    
                     <div className="header--LoginForm">
                         <img src="./logo.png" alt="Logo" />
                         <h2>Đăng nhập</h2>
                     </div>
-                    <form action="" className="login-form grid">
-                        <span>Login fail</span>
+                    <form action="" onSubmit={handleSubmit} className="login-form grid">
+                        <p>{check && <span className="alertLoginFail">Tên đăng nhập hoặc mật khẩu không đúng</span>}</p>
                         {inputs.map((input) => (<FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange}/>))}
                         <a href="#" className="forgotPassword">Quên mật khẩu</a>
                         <button type="submit" className="btn--login">Đăng nhập</button>
