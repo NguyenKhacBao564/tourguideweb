@@ -40,7 +40,8 @@ jobs:
           echo "$EC2_KEY" > key.pem
           chmod 400 key.pem
 
-          # Thêm EC2 vào known_hosts để tránh lỗi Host key verification failed
+          # Tạo thư mục ~/.ssh nếu chưa có
+          mkdir -p ~/.ssh
           ssh-keyscan -H $EC2_HOST >> ~/.ssh/known_hosts
 
           # Dùng rsync để đồng bộ file nhanh hơn scp
