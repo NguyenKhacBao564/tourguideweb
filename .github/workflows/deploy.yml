@@ -13,44 +13,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Bước 2: Cài đặt Node.js
+      # Bước 2: Cài Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '22'  # Dùng Node.js 22, kiểm tra nếu gặp lỗi
-          cache: 'npm'  # Dùng cache để cài nhanh hơn
+          node-version: '18'  # Phiên bản Node.js bạn dùng
 
-      # Bước 3: Kiểm tra phiên bản Node.js thực tế
-      - name: Check Node.js version
-        run: node -v
-
-      # Bước 4: Cài đặt dependencies và build dự án
+      # Bước 3: Cài dependencies và build dự án
       - name: Install dependencies and build
         run: |
           npm install
-          CI=false npm run build  # Bỏ qua lỗi CI
+          npm run build
 
-      # Bước 5: Deploy lên EC2
+      # Bước 4: Đẩy file build lên EC2
       - name: Deploy to EC2
         env:
-          EC2_HOST: 174.129.56.237
-          EC2_USER: ec2-user
-          EC2_KEY: ${{ secrets.EC2_SSH_KEY }}
+          EC2_HOST: 174.129.56.237  # Thay bằng IP của EC2
+          EC2_USER: ec2-user       # User của EC2 (thay nếu dùng AMI khác)
+          EC2_KEY: ${{ secrets.EC2_SSH_KEY }}  # SSH key lưu trong GitHub Secrets
         run: |
           echo "$EC2_KEY" > key.pem
           chmod 400 key.pem
-
-          # Tạo thư mục ~/.ssh nếu chưa có
-          mkdir -p ~/.ssh
-          ssh-keyscan -H $EC2_HOST >> ~/.ssh/known_hosts
-
-          # Dùng rsync để đồng bộ file nhanh hơn scp
-          rsync -avz -e "ssh -i key.pem" ./build/ $EC2_USER@$EC2_HOST:/home/$EC2_USER/
-
-          # SSH vào EC2 để di chuyển file và reload nginx
-          ssh -i key.pem $EC2_USER@$EC2_HOST << EOF
-            sudo rsync -avz /home/$EC2_USER/ /usr/share/nginx/html/
-            sudo systemctl reload nginx
-          EOF
-
+          scp -i key.pem -r ./build/* $EC2_USER@$EC2_HOST:/home/$EC2_USER/
+          ssh -i key.pem $EC2_USER@$EC2_HOST "sudo mv /home/$EC2_USER/* /usr/share/nginx/html/ && sudo systemctl restart nginx"
           rm key.pem
