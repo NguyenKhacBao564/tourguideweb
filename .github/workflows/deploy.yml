@@ -3,22 +3,37 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - main
+      - main  # Chạy khi push vào branch main
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Máy ảo chạy workflow
     steps:
+      # Bước 1: Checkout mã nguồn từ GitHub
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Bước 2: Cài Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # Phiên bản Node.js bạn dùng
+
+      # Bước 3: Cài dependencies và build dự án
+      - name: Install dependencies and build
+        run: |
+          npm install
+          npm run build
+
+      # Bước 4: Đẩy file build lên EC2
       - name: Deploy to EC2
         env:
-          EC2_HOST: 174.129.56.237
-          EC2_USER: ec2-user
-          EC2_KEY: ${{ secrets.EC2_SSH_KEY }}
+          EC2_HOST: 3.90.5.217  # Thay bằng IP của EC2
+          EC2_USER: ec2-user       # User của EC2 (thay nếu dùng AMI khác)
+          EC2_KEY: ${{ secrets.EC2_SSH_KEY }}  # SSH key lưu trong GitHub Secrets
         run: |
           echo "$EC2_KEY" > key.pem
           chmod 400 key.pem
-          ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST "bash ~/TourBooking_React/update.sh"
+          scp -i key.pem -r ./build/* $EC2_USER@$EC2_HOST:/home/$EC2_USER/
+          ssh -i key.pem $EC2_USER@$EC2_HOST "sudo mv /home/$EC2_USER/* /usr/share/nginx/html/ && sudo systemctl restart nginx"
           rm key.pem
