@@ -68,7 +68,7 @@
                 </div>
                 
                 <div className='province-detail'>
-                    <img src={categories[index].image} alt="Province" className="province-img" />
+                    <img alt="anh" src={categories[index].image} alt="Province" className="province-img" />
                     <div className="province-info" >
                         <div className="province-title">
                             <h1>{categories[index].name}</h1>

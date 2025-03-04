@@ -121,13 +121,13 @@ function Register() {
                         <p>Chào mừng bạn đến với hệ thống đặt tour du lịch số 1 PTIT! Hãy khám phá những chuyến đi tuyệt vời và lên kế hoạch cho hành trình sắp tới của bạn ngay hôm nay!</p>
                         <Link to="/login" className="btn--register">Đăng nhập</Link>
                     </div>
-                    <img src="/img1.png" alt="Illustration"/>
+                    <img  alt="anh3" src="/img1.png" alt="Illustration"/>
                 </div>
                
                 <div className="formDiv flex">
                    
                     <div className="header--RegisterForm">
-                        <img src="./logo.png" alt="Logo" />
+                        <img alt="anh4" src="./logo.png" alt="Logo" />
                         <h2>Đăng kí</h2>
                     </div>
                     <form action="" onSubmit={handleSubmit} className="register-form grid">

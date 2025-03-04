@@ -108,10 +108,10 @@ function Login() {
                         <span className="or">Hoặc</span>
                         <div className="footer--LoginForm">
                             <button className="btn--loginWithGoogle">
-                                <img src="./google.png" className='icon-large'/>
+                                <img alt="anh1" src="./google.png" className='icon-large'/>
                             </button>
                             <button className="btn--loginWithFacebook">
-                                <img src="./facebook.png" className='icon-large'/>
+                                <img alt="anh2" src="./facebook.png" className='icon-large'/>
                             </button>
                         </div>
                     </form>     
