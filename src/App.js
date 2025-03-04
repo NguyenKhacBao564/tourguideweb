@@ -1,5 +1,5 @@
 
-import { Routes, Router, Route, Link} from "react-router-dom";
+import { Routes, Route} from "react-router-dom";
 
 import Page from "./pages/Home";
 import Register from "./pages/Register";

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Routes, Route, Link } from "react-router-dom";
-import Contact from '../pages/Contact';
+import { Link } from "react-router-dom";
+
 import { FaBars, FaTimes} from "react-icons/fa";
 function Navbar() {
     const [isOpen, setIsOpen] = useState(false);

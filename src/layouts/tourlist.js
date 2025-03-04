@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Tourcard from '../components/tourcard';
 // import tourdata from '../data/db';
 function Tourlist(props) {

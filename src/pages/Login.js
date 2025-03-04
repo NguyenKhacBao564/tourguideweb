@@ -103,7 +103,7 @@ function Login() {
                         {/* Thất bại thì hiện ra */}
                         <p>{check && <span className="alertLoginFail">Tên đăng nhập hoặc mật khẩu không đúng</span>}</p>
                         {inputs.map((input) => (<FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange}/>))}
-                        <a href="#" className="forgotPassword">Quên mật khẩu</a>
+                        <a className="forgotPassword">Quên mật khẩu</a>
                         <button type="submit" className="btn--login">Đăng nhập</button>
                         <span className="or">Hoặc</span>
                         <div className="footer--LoginForm">
