@@ -32,24 +32,24 @@ jobs:
 
       # Bước 5: Deploy lên EC2
       - name: Deploy to EC2
-  env:
-    EC2_HOST: 174.129.56.237
-    EC2_USER: ec2-user
-    EC2_KEY: ${{ secrets.EC2_SSH_KEY }}
-  run: |
-    echo "$EC2_KEY" > key.pem
-    chmod 400 key.pem
+    env:
+      EC2_HOST: 174.129.56.237
+      EC2_USER: ec2-user
+      EC2_KEY: ${{ secrets.EC2_SSH_KEY }}
+      run: |
+        echo "$EC2_KEY" > key.pem
+        chmod 400 key.pem
 
-    # Thêm EC2 vào known_hosts để tránh lỗi Host key verification failed
-    ssh-keyscan -H $EC2_HOST >> ~/.ssh/known_hosts
+        # Thêm EC2 vào known_hosts để tránh lỗi Host key verification failed
+        ssh-keyscan -H $EC2_HOST >> ~/.ssh/known_hosts
 
-    # Dùng rsync để đồng bộ file nhanh hơn scp
-    rsync -avz -e "ssh -i key.pem" ./build/ $EC2_USER@$EC2_HOST:/home/$EC2_USER/
+        # Dùng rsync để đồng bộ file nhanh hơn scp
+        rsync -avz -e "ssh -i key.pem" ./build/ $EC2_USER@$EC2_HOST:/home/$EC2_USER/
 
-    # SSH vào EC2 để di chuyển file và reload nginx
-    ssh -i key.pem $EC2_USER@$EC2_HOST << EOF
-      sudo rsync -avz /home/$EC2_USER/ /usr/share/nginx/html/
-      sudo systemctl reload nginx
-    EOF
+        # SSH vào EC2 để di chuyển file và reload nginx
+        ssh -i key.pem $EC2_USER@$EC2_HOST << EOF
+          sudo rsync -avz /home/$EC2_USER/ /usr/share/nginx/html/
+          sudo systemctl reload nginx
+        EOF
 
-    rm key.pem
+        rm key.pem
