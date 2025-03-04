@@ -3,7 +3,7 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - main  # Branch bạn muốn tự động cập nhật
+      - main
 
 jobs:
   deploy:
@@ -20,5 +20,5 @@ jobs:
         run: |
           echo "$EC2_KEY" > key.pem
           chmod 400 key.pem
-          ssh -i key.pem $EC2_USER@$EC2_HOST "bash ~/TourBooking_React/update.sh"
+          ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST "bash ~/TourBooking_React/update.sh"
           rm key.pem
