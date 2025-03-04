@@ -21,8 +21,4 @@ jobs:
           echo "$EC2_KEY" > key.pem
           chmod 400 key.pem
           ssh -o StrictHostKeyChecking=no -i key.pem $EC2_USER@$EC2_HOST "bash ~/TourBooking_React/update.sh"
-<<<<<<< HEAD
           rm key.pem
-=======
-          rm key.pem
->>>>>>> 586f619a44beb9a81d2de0c74723328d4a8e7e57
