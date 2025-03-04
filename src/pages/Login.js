@@ -47,35 +47,35 @@ function Login() {
         setValues({...values, [e.target.name]: e.target.value});
     }
 
-    const [data, setData] = useState([]);
+    // const [data, setData] = useState([]);
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            const listuser = await fetch('http://localhost:3004/user');
-            const user= await listuser.json();
-            // console.log(tourlist.json());
-            setData(user);
-        }
-        fetchUser();
+    // useEffect(() => {
+    //     const fetchUser = async () => {
+    //         const listuser = await fetch('http://localhost:3004/user');
+    //         const user= await listuser.json();
+    //         // console.log(tourlist.json());
+    //         setData(user);
+    //     }
+    //     fetchUser();
         
-        }, []);
+    //     }, []);
 
 
    
 
     const handleSubmit = (e) => {  
         e.preventDefault();
-        var username = data.find(user => user.username === values.mail);
-        console.log(data);
-        console.log(username);
+        // var username = data.find(user => user.username === values.mail);
+        // console.log(data);
+        // console.log(username);
         
-        if(username && username.password === values.password){ 
-            setCheck(false);
-            console.log("Đăng nhập thành công!");
-        }else{
-            setCheck(true);
-            console.log("Sai tên đăng nhập hoặc mật khẩu!");
-        }
+        // if(username && username.password === values.password){ 
+        //     setCheck(false);
+        //     console.log("Đăng nhập thành công!");
+        // }else{
+        //     setCheck(true);
+        //     console.log("Sai tên đăng nhập hoặc mật khẩu!");
+        // }
         
     }
 
