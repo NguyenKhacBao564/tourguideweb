@@ -2,7 +2,7 @@
     import React, { useState } from 'react';
     // import AOS from 'aos';
     // import 'aos/dist/aos.css'; // You can also use <link> for styles
-    import Tourlist from './tourlist';
+    import Tourlist from './Tourlist';
     // ..
     // AOS.init();
     function Maincontent() {
@@ -68,7 +68,7 @@
                 </div>
                 
                 <div className='province-detail'>
-                    <img alt="anh" src={categories[index].image} alt="Province" className="province-img" />
+                    <img alt="anh" src={categories[index].image} className="province-img" />
                     <div className="province-info" >
                         <div className="province-title">
                             <h1>{categories[index].name}</h1>

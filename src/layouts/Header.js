@@ -1,13 +1,13 @@
 import React from 'react';
-import Navbar from "../components/navbar";
+import Navbar from "./Navbar";
 
-import Searchbar from '../components/searchbar';
+import Searchbar from '../components/Searchbar';
 function Header(props) {
     return (
         <div className='header'>
             <Navbar/>
             <div className="footer-content">
-                <h1>BẢO CU TO</h1>
+                <h1>Chúng tôi tìm cho bạn những tour tuyệt vời</h1>
                 <p>Discover your next adventure with ease – book unforgettable tours and travel experiences tailored just for you!</p>
                 <div className="videoArea">
                     <div className="circle-button">

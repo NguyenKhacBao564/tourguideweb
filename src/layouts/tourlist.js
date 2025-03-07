@@ -1,6 +1,10 @@
-import React from 'react';
-import Tourcard from '../components/tourcard';
+import React, {useEffect} from 'react';
+import Tourcard from '../components/Tourcard';
 // import tourdata from '../data/db';
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import axios from "axios";
 function Tourlist(props) {
     const [tours, setTours] = React.useState([]);
 
@@ -14,12 +18,26 @@ function Tourlist(props) {
     //     fetchTours();
         
     // }, []);
+    useEffect(() => {
+        axios.get("http://localhost:5000/tours")
+          .then((res) => setTours(res.data))
+          .catch((err) => console.error(err));
+      }, []);
 
+    
+      
     return (
         <div className='tourlist'>
-          {tours.map(tour => (
-                <Tourcard key={tour.id} {...tour}/>
-            ))}
+       <Container style={{ display: "flex", flexWrap: "wrap" }}>
+            <Row className="g-3 flex" style={{ display: "flex", flexWrap: "wrap" }}>
+                {tours.map(tour => (
+                    <Col key={tour.id} xs={12} sm={6} md={4} lg={3}>
+                        <Tourcard {...tour} />
+                    </Col>
+                ))}
+            </Row>
+        </Container>
+
         </div>
     );
 }
