@@ -1,5 +1,6 @@
 
-    import React, { useState } from 'react';
+import React, { useState } from 'react';
+import Carousel from 'react-bootstrap/Carousel';
     // import AOS from 'aos';
     // import 'aos/dist/aos.css'; // You can also use <link> for styles
     import Tourlist from './Tourlist';
@@ -80,6 +81,7 @@
                         </div>
                     </div>
                 </div>
+                <h1 className="tourlist_Label">Các tour nổi bật</h1>
                 <Tourlist/>
 
             </div>

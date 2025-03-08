@@ -28,16 +28,7 @@ function Tourlist(props) {
       
     return (
         <div className='tourlist'>
-       <Container style={{ display: "flex", flexWrap: "wrap" }}>
-            <Row className="g-3 flex" style={{ display: "flex", flexWrap: "wrap" }}>
-                {tours.map(tour => (
-                    <Col key={tour.id} xs={12} sm={6} md={4} lg={3}>
-                        <Tourcard {...tour} />
-                    </Col>
-                ))}
-            </Row>
-        </Container>
-
+            {tours.map((tour,index) => (<Tourcard key={index} {...tour} />))}
         </div>
     );
 }
