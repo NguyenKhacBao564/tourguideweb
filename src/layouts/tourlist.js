@@ -5,6 +5,7 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import axios from "axios";
+
 function Tourlist(props) {
     const [tours, setTours] = React.useState([]);
 
@@ -28,7 +29,16 @@ function Tourlist(props) {
       
     return (
         <div className='tourlist'>
-            {tours.map((tour,index) => (<Tourcard key={index} {...tour} />))}
+       <Container>
+            <Row className="g-3">
+                {tours.map(tour => (
+                    <Col key={tour.id} xs={'auto'} sm={6} md={6} lg={4} xl={4} xxl={3} style={{ display: "flex", justifyContent: "center"}}> 
+                        <Tourcard {...tour} />
+                    </Col>
+                ))}
+            </Row>
+        </Container>
+      
         </div>
     );
 }
