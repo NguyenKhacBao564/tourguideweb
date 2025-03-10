@@ -1,8 +1,12 @@
 
-    import React, { useState } from 'react';
+import React, { useState } from 'react';
+import Carousel from 'react-bootstrap/Carousel';
+import ShowAllButton from '../components/ShowAllButton';
+import '../assets/styles/layouts/MainContent.scss';
     // import AOS from 'aos';
     // import 'aos/dist/aos.css'; // You can also use <link> for styles
-    import Tourlist from './Tourlist';
+import Tourlist from '../components/Tourlist';
+import Touroutstanding from './Touroutstanding';
     // ..
     // AOS.init();
     function Maincontent() {
@@ -51,7 +55,11 @@
         ]);
         
 
-        const[index, setIndex] = useState(0);
+        const [index, setIndex] = useState(0);
+
+        const handleSelect = (selectedIndex) => {
+            setIndex(selectedIndex);
+        };
 
         return (
             <div className='maincontent'>
@@ -67,21 +75,27 @@
                     ))}
                 </div>
                 
-                <div className='province-detail'>
-                    <img alt="anh" src={categories[index].image} className="province-img" />
-                    <div className="province-info" >
-                        <div className="province-title">
-                            <h1>{categories[index].name}</h1>
-                            <p>{categories[index].description}</p>
-                        </div>
-                        
-                        <div className="cta-container">
-                            <button className="cta-button">Explore Now</button>
-                        </div>
-                    </div>
-                </div>
+                <Carousel className='province-detail' activeIndex={index} onSelect={handleSelect}>
+                {categories.map((item, index)=> (
+                    <Carousel.Item>
+                        <img alt="anh" src={categories[index].image} className="province-img" />
+                        <Carousel.Caption>
+                            <div className="province-info" >
+                                <div className="province-title">
+                                    <h1>{categories[index].name}</h1>
+                                    <p>{categories[index].description}</p>
+                                </div>
+                                
+                                <div className="cta-container">
+                                    <button className="cta-button">Explore Now</button>
+                                </div>
+                            </div>
+                        </Carousel.Caption>
+                    </Carousel.Item>))}
+                </Carousel>
+                <h1 className="tourlist_Label">Các tour nổi bật</h1>
                 <Tourlist/>
-
+                <Touroutstanding/>
             </div>
         );
     }

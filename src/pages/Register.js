@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
-import "../assets/styles/register.scss";
+import "../assets/styles/pages/Register.scss";
 import FormInput from "../components/FormInput";
 import AlertUI from '../components/AlertUI';
 
@@ -121,13 +121,13 @@ function Register() {
                         <p>Chào mừng bạn đến với hệ thống đặt tour du lịch số 1 PTIT! Hãy khám phá những chuyến đi tuyệt vời và lên kế hoạch cho hành trình sắp tới của bạn ngay hôm nay!</p>
                         <Link to="/login" className="btn--register">Đăng nhập</Link>
                     </div>
-                    <img  alt="anh3" src="/img1.png" alt="Illustration"/>
+                    <img src="/img1.png" alt="Illustration"/>
                 </div>
                
                 <div className="formDiv flex">
                    
                     <div className="header--RegisterForm">
-                        <img alt="anh4" src="./logo.png" alt="Logo" />
+                        <img src="./logo.png" alt="Logo" />
                         <h2>Đăng kí</h2>
                     </div>
                     <form action="" onSubmit={handleSubmit} className="register-form grid">

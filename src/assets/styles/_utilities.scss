@@ -1,0 +1,49 @@
+// _utilities.scss
+
+.text-center {
+    text-align: center;
+  }
+  
+  .mt-10 {
+    margin-top: 10px;
+  }
+  
+  .mb-20 {
+    margin-bottom: 20px;
+  }
+  
+  .pt-20{
+    padding-top: 20px;
+  }
+
+  .p-20-10{
+    padding: 20px 10px;
+  }
+
+  .p-20-50{
+    padding: 20px 50px;
+  }
+
+  .shadow {
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+.btn{
+    border: none;
+    outline: none;
+    cursor: pointer;
+  }
+  
+.grid{
+    display: grid;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .flex{
+    display: flex;
+  }
+ 
+  .button-primary-outline {
+    @include button-style(transparent, #123288, #123288, #123288, white);
+}

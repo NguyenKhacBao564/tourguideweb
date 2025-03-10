@@ -1,6 +1,6 @@
 import React, { useState,useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import styles from "../assets/styles/FormInput.module.scss"; // Import CSS Module
+import styles from "../assets/styles/components/FormInput.module.scss"; // Import CSS Module
 import validator from "../feature/validator";
 import pattern from '../utils/pattern';
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot, faUser, faCalendarDays} from "@fortawesome/free-solid-svg-icons";
-
+import "../assets/styles/components/SearchBar.scss";
 function Searchbar(props) {
     return (
         <div className='searchbar-container'>
@@ -9,7 +9,6 @@ function Searchbar(props) {
             <div>
                 <div className="search-item">
                     <span className="search-label">
-                        <FontAwesomeIcon icon={faLocationDot} className="icon" />
                         Location
                     </span>
                     <input type="text" placeholder="Search For A Destination" className="search-input" />
@@ -21,7 +20,7 @@ function Searchbar(props) {
             <div>
                 <div className="search-item">
                     <span className="search-label">
-                        <FontAwesomeIcon icon={faUser} className="icon"/>
+                       
                         Locaion
                     </span>
                     <input type="text" placeholder="How many Guests?" className="search-input" />
@@ -33,7 +32,6 @@ function Searchbar(props) {
             <div>
                 <div className="search-item">
                     <span className="search-label">
-                        <FontAwesomeIcon icon={faCalendarDays} className="icon"/>
                         Date
                     </span>
                     <input type="date" className="search-input" /> 

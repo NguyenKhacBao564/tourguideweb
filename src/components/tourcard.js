@@ -2,6 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock, faCar, faUsers} from "@fortawesome/free-solid-svg-icons";
 import { FaCalendarAlt } from "react-icons/fa";
+import "../assets/styles/components/TourCard.scss";
 function Tourcard(props) {
 
     console.log(props);

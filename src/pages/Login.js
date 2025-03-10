@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
-import "../assets/styles/login.scss";
+
+import "../assets/styles/pages/Login.scss";
 
 import FormInput from '../components/FormInput';
 
@@ -47,22 +48,6 @@ function Login() {
         setValues({...values, [e.target.name]: e.target.value});
     }
 
-    // const [data, setData] = useState([]);
-
-    // useEffect(() => {
-    //     const fetchUser = async () => {
-    //         const listuser = await fetch('http://localhost:3004/user');
-    //         const user= await listuser.json();
-    //         // console.log(tourlist.json());
-    //         setData(user);
-    //     }
-    //     fetchUser();
-        
-    //     }, []);
-
-
-   
-
     const handleSubmit = (e) => {  
         e.preventDefault();
         // var username = data.find(user => user.username === values.mail);
@@ -102,16 +87,20 @@ function Login() {
                     <form action="" onSubmit={handleSubmit} className="login-form grid">
                         {/* Thất bại thì hiện ra */}
                         <p>{check && <span className="alertLoginFail">Tên đăng nhập hoặc mật khẩu không đúng</span>}</p>
-                        {inputs.map((input) => (<FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange}/>))}
+
+                        {inputs.map((input) => (
+                            <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange}/>
+                            ))}
+                        
                         <a className="forgotPassword">Quên mật khẩu</a>
                         <button type="submit" className="btn--login">Đăng nhập</button>
                         <span className="or">Hoặc</span>
                         <div className="footer--LoginForm">
                             <button className="btn--loginWithGoogle">
-                                <img alt="anh1" src="./google.png" className='icon-large'/>
+                                <img alt="anh1" src="./google.png" />
                             </button>
                             <button className="btn--loginWithFacebook">
-                                <img alt="anh2" src="./facebook.png" className='icon-large'/>
+                                <img alt="anh2" src="./facebook.png"/>
                             </button>
                         </div>
                     </form>     

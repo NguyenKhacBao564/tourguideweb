@@ -1,0 +1,14 @@
+
+.tourlist{
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 150px;
+    flex-wrap: wrap;
+  }
+  
+  .show-all-container {
+    display: flex;
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    margin-top: 50px; /* Khoảng cách phía trên */
+  }

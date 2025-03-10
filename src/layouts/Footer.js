@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "../assets/styles/Footer.module.scss"; // Import CSS Module
+import styles from "../assets/styles/layouts/Footer.module.scss"; // Import CSS Module
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
