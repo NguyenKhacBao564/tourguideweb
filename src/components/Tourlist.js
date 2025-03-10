@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
-import Tourcard from './Tourcard';
-import TourList from '../assets/styles/components/TourList.scss';
+
+import '../assets/styles/components/TourList.scss';
+import TourCard from "./TourCard"; 
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -22,12 +23,12 @@ function Tourlist(props) {
                 <Row className="g-4">
                     {tours.map(tour => (
                         <Col key={tour.id} xs={12} sm={6} md={6} lg={4} xl={4} xxl={3} style={{ display: "flex", justifyContent: "center"}}> 
-                            <Tourcard {...tour} />
+                            <TourCard {...tour} />
                         </Col>
                     ))}
                 </Row>
                 <div className="show-all-container">
-                    <ShowAllButton />
+                    <ShowAllButton/>
                 </div>
         </Container>
         

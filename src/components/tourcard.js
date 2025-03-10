@@ -3,9 +3,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock, faCar, faUsers} from "@fortawesome/free-solid-svg-icons";
 import { FaCalendarAlt } from "react-icons/fa";
 import "../assets/styles/components/TourCard.scss";
-function Tourcard(props) {
+function TourCard(props) {
 
-    console.log(props);
+    // console.log(props);
     return (
         <div className='tour-card'>
             <img src="https://images.pexels.com/photos/1658967/pexels-photo-1658967.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Phú Yên" className="tour-img"/>
@@ -29,4 +29,4 @@ function Tourcard(props) {
     );
 }
 
-export default Tourcard;
+export default TourCard;
