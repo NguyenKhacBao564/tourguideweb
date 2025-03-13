@@ -7,7 +7,7 @@ import '../assets/styles/layouts/MainContent.scss';
     // import 'aos/dist/aos.css'; // You can also use <link> for styles
 import Tourlist from '../components/Tourlist';
 import Touroutstanding from './Touroutstanding';
-    // ..
+import Slider from "react-slick";    // ..
     // AOS.init();
     function Maincontent() {
         const [provinces] = useState(["Hà Nội", "Đồng Tháp", "Phú Yên", "Đà Lạt", "Bình Định", "Huế", "Quảng Trị", "Đà Nẵng"]);
@@ -95,6 +95,7 @@ import Touroutstanding from './Touroutstanding';
                 </Carousel>
                 <h1 className="tourlist_Label">Các tour nổi bật</h1>
                 <Tourlist/>
+                
                 <Touroutstanding/>
             </div>
         );

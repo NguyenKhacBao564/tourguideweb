@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import "../assets/styles/pages/Register.scss";
 import FormInput from "../components/FormInput";
 import AlertUI from '../components/AlertUI';
+import SocialLogin from '../components/SocialLogin';
 
 function Register() {
     
@@ -121,7 +122,7 @@ function Register() {
                         <p>Chào mừng bạn đến với hệ thống đặt tour du lịch số 1 PTIT! Hãy khám phá những chuyến đi tuyệt vời và lên kế hoạch cho hành trình sắp tới của bạn ngay hôm nay!</p>
                         <Link to="/login" className="btn--register">Đăng nhập</Link>
                     </div>
-                    <img src="/img1.png" alt="Illustration"/>
+                    <img src="/illus_Login_Regis.png" alt="Illustration"/>
                 </div>
                
                 <div className="formDiv flex">
@@ -140,14 +141,7 @@ function Register() {
                         ))}
                         <button type="submit" className="btn--register">Đăng kí</button>
                         <span className="or">Hoặc</span>
-                        <div className="footer--RegisterForm">
-                            <button className="btn--loginWithGoogle">
-                                <img src="./google.png" className='icon-large'/>
-                            </button>
-                            <button className="btn--loginWithFacebook">
-                                <img src="./facebook.png" className='icon-large'/>
-                            </button>
-                        </div>
+                        <SocialLogin/>
                     </form>     
                 </div>
             </div>

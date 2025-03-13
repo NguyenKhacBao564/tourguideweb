@@ -24,9 +24,27 @@ body {
 a {
   text-decoration: none;
   color: inherit;
+  cursor: pointer;
 }
 li{
     list-style: none;
   }
+
+  .footer--LoginForm{
+    text-align: center;
+
+    button{
+        margin: 0 1rem;
+        padding: 0.5rem;
+        border: 2px solid #E0E0E9;
+        border-radius: 15px;
+        background-color: #FFFFFF;
+        box-shadow: 0 15px 50px -15px rgba(68, 97, 242, 11);
+        cursor: pointer;
+        img { width: 40px; }
+    }
+}
+
+
 
   
