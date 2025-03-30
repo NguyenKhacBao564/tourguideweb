@@ -37,7 +37,7 @@ function Footer() {
           </Col>
 
           {/* Help */}
-          <Col sm={6} md={{span: 2, offset: 2}}>
+          <Col sm={6} md={{span: 3, offset: 2}}>
             <p>Help</p>
             <ul>
               <li>Contact us</li>

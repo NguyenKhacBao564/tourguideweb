@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import "../../styles/pages/Register.scss";
-import FormInput from "../../components/FormInput/FormInput";
 import AlertUI from '../../components/AlertUI/AlertUI';
+import FormInput from '../../components/FormInput/FormInput';
 import SocialLogin from '../../components/SocialLogin/SocialLogin';
 
 function Register() {
@@ -116,6 +116,7 @@ function Register() {
             <div className="containterRegister flex">
                 <AlertUI variant="success" show={show} text="Bạn đã đăng kí thành công" className="alert" />
                 <div className="introduceDiv flex">
+                    <Link to="/" >Trở lại trang chủ</Link>
                     <div className="introduceDiv--header">
                         <h1 className="title">Chào mừng dến với </h1>
                         <h2>Tour Guide</h2>
@@ -126,7 +127,6 @@ function Register() {
                 </div>
                
                 <div className="formDiv flex">
-                   
                     <div className="header--RegisterForm">
                         <img src="./logo.png" alt="Logo" />
                         <h2>Đăng kí</h2>

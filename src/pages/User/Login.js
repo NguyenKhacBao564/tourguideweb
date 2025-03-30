@@ -76,6 +76,7 @@ function Login() {
              {/* <Link to="/" className="btn--backhome">Back to home</Link> */}
             <div className="containterLogin flex">
                 <div className="introduceDiv flex">
+                    <Link to="/" >Trở lại trang chủ</Link>
                     <div className="introduceDiv--header">
                         <h1 className="title">Chào mừng dến với </h1>
                         <h2>Tour Guide</h2>
@@ -114,7 +115,7 @@ function Login() {
                        
                         <span className="or">Hoặc</span>
                         <SocialLogin />
-                        <p>Chưa có tài khoản? <a>Đăng kí ngay</a></p>
+                        <p>Chưa có tài khoản? <Link to="/register" >Đăng kí ngay</Link></p>
                     </form>     
                 </div>
             </div>

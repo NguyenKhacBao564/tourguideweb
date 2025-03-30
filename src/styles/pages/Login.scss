@@ -175,6 +175,9 @@
     
 }
 @media (max-width: 768px) {
+    .loginPage{
+        overflow-y: visible;
+    }
     .introduceDiv {
         display: none;
     }
