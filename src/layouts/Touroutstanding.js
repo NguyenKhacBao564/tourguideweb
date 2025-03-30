@@ -1,12 +1,12 @@
 import React, {useEffect} from 'react';
 import axios from "axios";
-import TourCard from "../components/TourCard"; 
+import TourCard from "../components/TourCard/TourCard"; 
 import Carousel from 'react-bootstrap/Carousel';
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Slider from "react-slick";
-import Tourlist from '../components/Tourlist';
+import Tourlist from '../components/TourList/Tourlist';
 import { SlArrowLeftCircle,SlArrowRightCircle } from "react-icons/sl";
 function SampleNextArrow(props) {
   const { className, style, onClick } = props;

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
-import "../assets/styles/pages/Register.scss";
-import FormInput from "../components/FormInput";
-import AlertUI from '../components/AlertUI';
-import SocialLogin from '../components/SocialLogin';
+import "../../styles/pages/Register.scss";
+import FormInput from "../../components/FormInput/FormInput";
+import AlertUI from '../../components/AlertUI/AlertUI';
+import SocialLogin from '../../components/SocialLogin/SocialLogin';
 
 function Register() {
     

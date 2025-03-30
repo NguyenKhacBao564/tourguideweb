@@ -1,11 +1,11 @@
 
 import { Routes, Route} from "react-router-dom";
 
-import Page from "./pages/Home";
-import Register from "./pages/Register";
-import Login from "./pages/Login";
+import Page from "./pages/User/Home";
+import Register from "./pages/User/Register";
+import Login from "./pages/User/Login";
 import ScrollToTop from "./feature/scrollToTop";
-import Contact from "./pages/Contact";
+import Contact from "./pages/User/Contact";
 function App() {
   return (
     <div className="App">

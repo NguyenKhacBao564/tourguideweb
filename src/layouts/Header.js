@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from "./Navbar";
-import '../assets/styles/layouts/Header.scss';
-import Searchbar from '../components/Searchbar';
+import '../styles/layouts/Header.scss';
+import Searchbar from '../components/Searchbar/Searchbar';
 function Header(props) {
     return (
         <div className='header'>

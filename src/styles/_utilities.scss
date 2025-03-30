@@ -1,4 +1,9 @@
-// _utilities.scss
+
+@use './mixin';
+
+  .button-primary-outline {
+    @include mixin.button-style(transparent, #123288, #123288, #123288, white);
+}
 
 .text-center {
     text-align: center;
@@ -20,7 +25,9 @@
   .pt-20{
     padding-top: 20px;
   }
-
+  .pl-10{
+    padding-left: 10px;
+  }
   .p-20-10{
     padding: 20px 10px;
   }

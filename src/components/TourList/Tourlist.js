@@ -1,13 +1,13 @@
 import React, {useEffect} from 'react';
 
-import '../assets/styles/components/TourList.scss';
-import TourCard from "./TourCard"; 
+
+import TourCard from "../TourCard/TourCard"; 
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import axios from "axios";
-import ShowAllButton from './ShowAllButton';
-
+import ShowAllButton from '../Button/ShowAllButton';
+import './TourList.scss';
 function Tourlist(props) {
     const [tours, setTours] = React.useState([]);
 
@@ -22,7 +22,7 @@ function Tourlist(props) {
         <Container>
                 <Row className="g-4">
                     {tours.map(tour => (
-                        <Col key={tour.id} xs={12} sm={6} md={6} lg={4} xl={4} xxl={3} style={{ display: "flex", justifyContent: "center"}}> 
+                        <Col key={tour.tour_id} xs={12} sm={6} md={6} lg={4} xl={4} xxl={3} style={{ display: "flex", justifyContent: "center"}}> 
                             <TourCard {...tour} />
                         </Col>
                     ))}

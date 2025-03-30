@@ -13,8 +13,8 @@
     transition: 0.3s ease-in-out;
   
     .logo {
-      font-size: 24px;
-      font-size: clamp(1.8rem,3rem, 4vw);
+      // font-size: 24px;
+      font-size: clamp(1.8rem,2rem, 4vw);
       font-weight: bold;
       color: white;
     }
@@ -25,12 +25,15 @@
       list-style: none;
       li{
         display: inline-block;
-  
       }
       li a {
         color: rgb(255, 255, 255);
         transition: color 0.3s;
         font-weight: bold;
+        &:hover {
+          color: #FFDA32;
+        }
+
       }
       .btn {
         padding: 15px 20px;
@@ -68,6 +71,7 @@
       cursor: pointer;
     }
   
+  //Animation for mobile menu
   @keyframes slideIn {
     from {
       transform: translateX(100%);

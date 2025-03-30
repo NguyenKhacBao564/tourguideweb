@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
 import Carousel from 'react-bootstrap/Carousel';
-import ShowAllButton from '../components/ShowAllButton';
-import '../assets/styles/layouts/MainContent.scss';
+import ShowAllButton from '../components/Button/ShowAllButton';
+import '../styles/layouts/MainContent.scss';
     // import AOS from 'aos';
     // import 'aos/dist/aos.css'; // You can also use <link> for styles
-import Tourlist from '../components/Tourlist';
-import Touroutstanding from './Touroutstanding';
+import Tourlist from '../components/TourList/Tourlist';
+import Touroutstanding from './TourOutstanding';
 import Slider from "react-slick";    // ..
     // AOS.init();
     function Maincontent() {

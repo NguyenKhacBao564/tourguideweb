@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 
-import "../assets/styles/pages/Login.scss";
+import "../../styles/pages/Login.scss";
 
-import FormInput from '../components/FormInput';
-import SocialLogin from '../components/SocialLogin';
+import FormInput from '../../components/FormInput/FormInput';
+import SocialLogin from '../../components/SocialLogin/SocialLogin';
 
 
 
