@@ -6,7 +6,7 @@ import '../styles/layouts/MainContent.scss';
     // import AOS from 'aos';
     // import 'aos/dist/aos.css'; // You can also use <link> for styles
 import Tourlist from '../components/TourList/Tourlist';
-import Touroutstanding from './TourOutstanding';
+import Touroutstanding from './Touroutstanding';
 import Slider from "react-slick";    // ..
     // AOS.init();
     function Maincontent() {

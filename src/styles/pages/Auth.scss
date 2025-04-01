@@ -1,7 +1,18 @@
 
-
-.loginPage{
-    height: 100vh;
+// .btn--backhome{
+//     position:absolute;
+//     text-decoration: none;
+//     color:#2e2b38;
+//     top: 5px;
+//     left: 5px;
+//     font-size: 18px;
+//     background-color: #2DB6A4;
+//     /* border-radius: 3px; */
+//     color: white;
+//     padding: 0.5rem;
+// }
+.authPage{
+    min-height: 100vh;
     width: 100%;
     margin: auto;
     overflow: hidden;
@@ -9,9 +20,8 @@
     background: #F0F4FC;
 }
 
-.containterLogin{
+.containerAuth{
     box-sizing: border-box;
-    
     height: 100vh;
     width: 100%;
     margin: auto;
@@ -19,37 +29,48 @@
     /* border-radius: 10px; */
     background: rgb(100, 100, 100);
     box-shadow: 0px 5px 35px -15px #2e2b38;
+    .alert{
+        width: 500px;
+        top: 10px;
+        right: 10px;
+        position: absolute;
+        z-index: 1000;
+    }
     .introduceDiv{
         height: 100%;
         width: 50%;
         padding: 40px;
         flex-direction: column;
         background: #1C2B38;
+        // justify-content: space-around;
         /* border-radius: 10px 0 0 10px; */
-        text-align: left;
-        line-height: 1.2;
-    
+        text-align: justify;
+        
         .introduceDiv--header{
-            flex-grow: 1;
+            flex-grow: 1;  //Muốn canh chỉnh thì bỏ cái này
             display: flex;
-            justify-content: flex-end;
+            justify-content: center;
             flex-direction: column;
-            margin-bottom: 50px;
+            
+            // padding-bottom: 50px;
             gap: 10px;
-            text-align: justify;
+    
             h1{
                 font-size: 50px;
+                margin: 0;
             }
     
             h2{
                 font-size: 50px;
+                font-weight: bold;
                 color: #FFA432;
+                margin: 0;
             }
     
             p{
                 font-size: 18px;
             }
-            .btn--login{
+            .btn--switch{
                 text-decoration: none;
                 padding: 0.5rem 2rem;
                 width: 12rem;
@@ -58,11 +79,8 @@
                 border: 1px solid #2DB6A4;
                 text-align: center;
     
-    
             }
         }
-    
-    
         p {
             font-size: 1rem;
             margin: 20px 0;
@@ -71,12 +89,12 @@
     
         img{
             width: 100%;
-            height: 50%;
+            aspect-ratio: 16 / 9;
             display: block;
         }
     
     }
-    
+
     .formDiv{
         flex-basis: 50%;
         height: 100%;
@@ -86,32 +104,35 @@
         background-color: #FFFFFF;
         justify-content: center;
         align-items: center;
-       
-        /* border-radius: 0px 10px 10px 0px; */
-        gap: 1.5em;
-        .header--LoginForm{
+        
+        
+        &.login{
+            gap: 1.5em;  
+        }
+
+        &.register{
+            gap: rem;
+        }
+        .header--AuthForm{
             text-align: center;
-    
+            
             img{
                 width: 60px;
-                padding-bottom: .5rem;
+                padding-bottom: 0.1rem;
             }
     
             h2{
-                // font-size: clamp(1.8rem,3rem, 4vw);
-                font-size: 48px;
+                font-size: 42px;
                 font-weight: bold;
             }
         } 
-        .login-form{
-            // border: 1px solid #1515ff;
+        .auth-form{
             width: 50%;
-            
+            gap: 0.5rem;
             span{
                 text-align: center; 
             }
-        
-            .btn--login{
+            .btn--submit{
                 padding: 1rem 0;
                 color: #FFFFFF;
                 font-size: large;
@@ -122,30 +143,44 @@
                 cursor: pointer;
             }
         
-            .btn--login:hover{
+            .btn--submit:hover{
                 background-color: #0e30da;
                 border: none;
                 cursor: pointer;
             }
-        
-            .forgotPassword{
-                font-size: 14px;
-                color: #6C737F;
-                text-decoration: none;
-                text-align: right;
+            .checkbox-container{
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                .forgotPassword{
+                    font-size: 14px;
+                    color: #6C737F;
+                    text-decoration: none;
+                    text-align: right;
+                }
             }
-        }   
+            
+            .or{
+                margin: 1rem 0;
+            }
+           
+            .switch--auth{
+                margin-top: 1em;
+            }
+            
+        
+            
+        }
     }
-    
 }
 
 
 @media screen and (max-width: 1920px){
-    .containterLogin {
+        .containerAuth {
             .introduceDiv {  
-                padding: 30px; 
+                padding: 40px;
                 .introduceDiv--header {
-                    margin-bottom: 20px;
+                    // margin-bottom: 20px;
                     gap: 5px;
                     h1 { font-size: 40px; }
                     h2 { font-size: 40px; }
@@ -154,61 +189,45 @@
             }
             
             .formDiv {
-                gap: 0.1em;
-                .login-form {
-                    gap: 0.8rem;
-                    .inputDiv input {
-                        padding: 0.5rem;
-                        box-shadow: 0px 5px 35px -15px rgba(68, 97, 242, 11);
-                    }
-                    .btn--login {
+                .auth-form {
+                    gap: 0.1rem;
+                    .btn--submit {
                         margin-top: 1rem;
                         padding: 0.8rem 0;
                     }
-                    .footer--LoginForm button {
-                        padding: 0.2rem;
-                        img { width: 40px; }
-                    }
+                 
                 }    
             }  
         }
-    
 }
+
+
 @media (max-width: 768px) {
-    .loginPage{
-        overflow-y: visible;
-    }
+
     .introduceDiv {
         display: none;
     }
-    .containterLogin {
-        height: 100vh;
+    .containerAuth {
+        &.login{
+            height: 100vh;
+        }
+        height: max-content;
         width: 100%;
         margin: auto;
-
+        
         .formDiv {
-            flex-basis: 100%;      
-
-            .login-form {
-                width: 90%;
-                
-                .inputDiv {
-                    width: 100%;
-
-                    input {
-                        width: 100%;
-                        font-size: 1rem;    
-                    }
-
-                    label {
-                        font-size: 14px;
-                        font-weight: bold;
-                        padding: 0.5rem 0;
-                        display: block;
-                    }
+            flex-basis: 100%;  
+            padding: 20px 0; //Kéo dài chiều cao của formDiv để trông dư ra tí
+            .introduceDiv--header {
+                h2 {
+                    font-size: 36px;
+                    font-weight: bold;
                 }
+            }
 
-                .btn--login {
+            .auth-form {
+                width: 90%;
+                .btn--register {
                     width: 100%;
                     padding: 1rem;
                     font-size: large;
@@ -221,26 +240,6 @@
 
                     &:hover {
                         background-color: #0e30da;
-                    }
-                }
-
-                .forgotPassword {
-                    font-size: 14px;
-                    color: #6C737F;
-                    text-decoration: none;
-                    text-align: right;
-                }
-
-                .footer--LoginForm {
-                    text-align: center;
-
-                    button {
-                        margin: 0 1rem;
-                        padding: 0.5rem;
-                        border: 2px solid #E0E0E9;
-                        border-radius: 15px;
-                        background-color: #FFFFFF;
-                        cursor: pointer;
                     }
                 }
             }

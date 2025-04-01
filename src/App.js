@@ -6,6 +6,7 @@ import Register from "./pages/User/Register";
 import Login from "./pages/User/Login";
 import ScrollToTop from "./feature/scrollToTop";
 import Contact from "./pages/User/Contact";
+import TourManagement from "./pages/Admin/TourManagement";
 function App() {
   return (
     <div className="App">
@@ -15,6 +16,7 @@ function App() {
           <Route path="/contact" element={<Contact/> } />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/admin" element={<TourManagement/>} />
         </Routes>
     </div>
   );

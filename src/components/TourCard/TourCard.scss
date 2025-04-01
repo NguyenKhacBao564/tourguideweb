@@ -1,26 +1,69 @@
 .tour-card {
+  // width: clamp(min(300px, 100%), 100%, max(90vw, 55rem));
   width: 100%;
   padding-bottom: 5px;
   background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0px 4px 10px 3px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  border-radius: 5px;
+  box-shadow: 0px 4px 12px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden; 
   text-align: left;
   font-size: 16px;
   font-family: Arial, sans-serif;
   max-width: 300px;
 
-  &__img {
+  &__image-container {
+    position: relative;
     width: 100%;
-    height: 200px;
-    object-fit: cover;
-    padding: 10px;
+    height: 200px; /* Điều chỉnh theo kích thước ảnh mong muốn */
+    overflow: hidden;
+    .tour-card__discount  {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background-color:#DB4444;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      padding: 2px 15px;
+      // border-radius: 5px;
+    }
+    .tour-card__favorite {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: rgba(255, 255, 255, 0.8);
+      border: none;
+      border-radius: 50%;
+      width: 35px;
+      height: 35px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      color: red;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      transition: background 0.3s ease;
+      &:hover{
+        background: white;
+      }
+      &:active{
+        transform: scale(0.9);
+      }
+    }
+    .tour-card__img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      padding: 10px;
+    }
   }
 
   &__info {
     padding: 0 10px;
-    h3 {
-      font-size: 1.2rem;
+    //Tên tour
+    .tour-card__name {
+      font-size: 13px;
       font-weight: bold;
       margin-bottom: 10px;
       line-height: 1.5;
@@ -35,17 +78,17 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
-    font-size: 90%;
+    // font-size: 90%;
     padding: 0;
     margin: 0;
     li {
       display: inline-block;
       width: 100%;
-      font-size: 90%;
     }
     p {
       display: flex;
-      font-size: 90%;
+      align-items: center;
+      font-size: 12px;
       gap: 8px;
       width: 100%;
       margin: 5px 0;
@@ -67,7 +110,7 @@
         margin: 0;
         padding: 0;
         text-align: left;
-        color: #646464;
+        color: #495560;
       }
       #price {
         font-size: clamp(min(0.8rem, 1rem), 16px, max(90vw, 55rem));
@@ -92,7 +135,7 @@
   cursor: pointer;
   box-sizing: content-box;
 
-  &--hover {
+  &:hover {
     background-color: #fc6934;
   }
 }

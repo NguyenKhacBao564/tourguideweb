@@ -81,7 +81,7 @@ function Touroutstanding(props) {
         }, []);
       return (
         <div className="TourOutStanding_container p-20-10 mt-30">
-          <h1 style={{color:"white"}} >Các tour nổi bật</h1>
+          <h1 style={{color:"white"}} >Điểm đến nổi bật</h1>
         <Slider {...settings}>
           {tours.map(tour => (
             <div key={tour.id} xs={12} sm={6} md={6} lg={4} xl={4} xxl={3} style={{ display: "flex", justifyContent: "center"}}> 

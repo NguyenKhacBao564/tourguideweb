@@ -1,11 +1,13 @@
 
 .tourlist{
-    display: flex;
-    justify-content: center;
-    gap: 20px;
     margin-top: 150px;
-    flex-wrap: wrap;
   }
+  .tourlist-container{
+    
+    border: 1px solid red;
+  }
+  
+ 
   
   .show-all-container {
     display: flex;
