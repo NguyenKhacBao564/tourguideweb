@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Carousel from 'react-bootstrap/Carousel';
 import ShowAllButton from '../components/Button/ShowAllButton';
@@ -11,6 +10,8 @@ import Slider from "react-slick";    // ..
     // AOS.init();
     function Maincontent() {
         const [provinces] = useState(["Hà Nội", "Đồng Tháp", "Phú Yên", "Đà Lạt", "Bình Định", "Huế", "Quảng Trị", "Đà Nẵng"]);
+        
+        // Đưa categories trở lại
         const [categories] = useState([
             {
                 name: "Hà Nội", 
@@ -54,48 +55,48 @@ import Slider from "react-slick";    // ..
             }
         ]);
         
-
         const [index, setIndex] = useState(0);
-
-        const handleSelect = (selectedIndex) => {
-            setIndex(selectedIndex);
-        };
 
         return (
             <div className='maincontent'>
-                <div> 
-                <h1>Explore Popular Cities</h1>
-                <p>Embark on unforgettable journeys with our expertly curated tours – whether you seek adventure, relaxation, or cultural exploration, we make booking your dream vacation effortless and exciting!</p>
+                <div className="header-section"> 
+                    <h1>Khám phá những hành trình mới</h1>
+                    <p>Hãy để mỗi chuyến đi trở thành một câu chuyện đáng nhớ. Trải nghiệm du lịch tuyệt vời với dịch vụ chất lượng và điểm đến hấp dẫn</p>
                 </div>
+                
                 <div className="list-provinces">
-                    {provinces.map((province, index) => (
-                        <div key={index} className="province" onClick={() => setIndex(index)}>
-                            <p>{province}</p>
-                        </div>
+                    {provinces.map((province, idx) => (
+                        <button 
+                            key={idx} 
+                            className={`province-btn ${idx === index ? 'active' : ''}`}
+                            onClick={() => setIndex(idx)}
+                        >
+                            {province}
+                        </button>
                     ))}
                 </div>
                 
-                <Carousel className='province-detail' activeIndex={index} onSelect={handleSelect}>
-                {categories.map((item, index)=> (
-                    <Carousel.Item>
-                        <img alt="anh" src={categories[index].image} className="province-img" />
-                        <Carousel.Caption>
-                            <div className="province-info" >
-                                <div className="province-title">
-                                    <h1>{categories[index].name}</h1>
-                                    <p>{categories[index].description}</p>
+                <Carousel className='province-detail' activeIndex={index} onSelect={setIndex}>
+                    {categories.map((item, idx) => (
+                        <Carousel.Item key={idx} >
+                            <img alt={item.name} src={item.image} className="province-img" />
+                            <Carousel.Caption className='province-caption'>
+                                <div className="province-info">
+                                    <div className="province-title">
+                                        <h1>{item.name}</h1>
+                                        <p>{item.description}</p>
+                                    </div>
+                                    <div className="cta-container">
+                                        <button className="cta-button">Khám phá ngay</button>
+                                    </div>
                                 </div>
-                                
-                                <div className="cta-container">
-                                    <button className="cta-button">Explore Now</button>
-                                </div>
-                            </div>
-                        </Carousel.Caption>
-                    </Carousel.Item>))}
+                            </Carousel.Caption>
+                        </Carousel.Item>
+                    ))}
                 </Carousel>
+
                 <h1 className="tourlist_Label">Các tour nổi bật</h1>
                 <Tourlist/>
-                
                 <Touroutstanding/>
             </div>
         );
