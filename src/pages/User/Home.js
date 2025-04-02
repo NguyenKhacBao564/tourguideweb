@@ -2,7 +2,7 @@ import React from 'react';
 import Maincontent from '../../layouts/MainContent';
 import Header from '../../layouts/Header';
 import Footer from '../../layouts/Footer/Footer';
-
+import { Link } from 'react-router-dom';
 import { useWindowSize } from "../../windowsize";
 
 function Page(props) {
@@ -11,6 +11,7 @@ function Page(props) {
         <div>
           <Header/>
           <Maincontent/>
+          <Link to="/admin/khachhang">Admin</Link>
           <Footer/>
         </div>
     );
