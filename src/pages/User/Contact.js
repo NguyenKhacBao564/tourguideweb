@@ -1,6 +1,15 @@
 import React from "react";
 import styles from "../../styles/pages/ContactUs.module.scss";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faPhoneVolume,
+  faEnvelope,
+  faLocationDot,
+  faFacebookF,
+  faInstagram,
+  faDiscord,
+} from "@fortawesome/free-solid-svg-icons";
+import { faFacebookF as fabFacebookF, faInstagram as fabInstagram, faDiscord as fabDiscord } from "@fortawesome/free-brands-svg-icons";
 function Contact() {
   return (
     <div>
@@ -14,9 +23,9 @@ function Contact() {
         <div className={styles.contactInfo}>
           <h4>Contact Information</h4>
           <p>Say something to start a live chat!</p>
-          <p><i className="fa-solid fa-phone-volume"></i> +012 3456 789</p>
-          <p><i className="fa-sharp fa-solid fa-envelope fa-flip-horizontal"></i> demo@gmail.com</p>
-          <p><i className="fa-solid fa-location-dot"></i> 97 Man Thiện, Phường Hiệp Phú, TP.Thủ Đức, TPHCM</p>
+          <p><FontAwesomeIcon icon={faPhoneVolume} /> +012 3456 789</p>
+          <p><FontAwesomeIcon icon={faEnvelope} /> demo@gmail.com</p>
+          <p><FontAwesomeIcon icon={faLocationDot} /> 97 Man Thiện, Phường Hiệp Phú, TP.Thủ Đức, TPHCM</p>
 
           {/* Circle Decoration */}
           <div className={styles.circleContainer}>
@@ -34,13 +43,13 @@ function Contact() {
           {/* Social Icons */}
           <div className={styles.socialIcons}>
             <a href="http://facebook.com/phan.tuan.anh.917546" target="_blank" className={styles.iconCircle}>
-              <i className="fa-brands fa-facebook-f"></i>
+              <FontAwesomeIcon icon={fabFacebookF} />
             </a>
             <a href="https://www.instagram.com/bean.284/" target="_blank" className={styles.iconCircle}>
-              <i className="fa-brands fa-instagram"></i>
+              <FontAwesomeIcon icon={fabInstagram} />
             </a>
             <a href="https://discord.com/users/yourprofile" target="_blank" className={styles.iconCircle}>
-              <i className="fa-brands fa-discord"></i>
+              <FontAwesomeIcon icon={fabDiscord} />
             </a>
           </div>
         </div>
@@ -83,10 +92,10 @@ function Contact() {
           </form>
 
           {/* Image */}
-          <div className={styles.imageContainer}>
-            <img src="https://s3-alpha-sig.figma.com/img/5e52/eb20/ee9158ca0835b430d0b6ef56e2d7385e?Expires=1742169600&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=gqUbetUKXujAA7cq56fiM2N1TnXCdejPsMi28rh7h08pUzwM7ZbgJcwA4-Vyb-EWSvPEE~TPBP2CaLSta1B7oqjUlWTjkngYrbuf3closVW6IbAYZcN03aXDwnzP6-usdZXzf57lzjtJuATo6qLAmgQoQp~QN5GV62ilaDf7n9yziEy~-SoTSeDZJqnX03XFUb~KCvjkyGK3NyB1vCqXgpNpkhpmGGGaEZNT00NkfFXSh7kTue~2Oo68EXTwucRYvqkrvmLNSvfb0sfCvL~7cr3wEOuy-0pTqUXZUmcjD4HcT45kiVWD6fhH1e14oNmQwivApVglYw8Wpj2awN8~DQ__" 
-                 alt="send-letter" width="200" height="100" />
-          </div>
+          {/* <div className={styles.imageContainer}>
+            <img src="https://s3-alpha-sig.figma.com/img/5e52/eb20/ee9158ca0835b430d0b6ef56e2d7385e?Expires=1742169600&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=gqUbetUKXujAA7cq56fiM2N1TnXCdejPsMi28rh7h08pUzwM7ZbgJcwA4-Vyb-EWSvPEE~TPBP2CaLSta1B7oqjUlWTjkngYrbuf3closVW6IbAYZcN03aXDwnzP6-usdZXzf57lzjtJuATo6qLAmgQoQp~QN5GV62ilaDf7n9yziEy~-SoTSeDZJqnX03XFUb~KCvjkyGK3NyB1vCqXgpNpkhpmGGGaEZNT00NkfFXSh7kTue~2Oo68EXTwucRYvqkrvmLNSvfb0sfCvL~7cr3wEOuy-0pTqUXZUmcjD4HcT45kiVWD6fhH1e14oNmQwivApVglYw8Wpj2awN8~DQ__"
+              alt="send-letter" width="200" height="100" />
+          </div> */}
         </div>
       </div>
     </div>
