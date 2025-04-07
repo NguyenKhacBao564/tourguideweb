@@ -23,3 +23,29 @@
     color: $text-color-hover;
   }
 }
+
+@mixin search-type-light($bg-color) {
+  background-color: $bg-color !important; /* Màu xanh */
+ 
+  outline: none;
+  // box-shadow: none;
+  // border-right: none;
+  &:focus {
+    box-shadow: none;
+    outline: none;
+    
+  }
+
+
+  &::placeholder{
+    color: #495560 !important; /* Màu chữ */
+  }
+}
+
+
+@mixin none-border{
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+
+}

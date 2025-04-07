@@ -50,19 +50,19 @@ function AddTourArea(props) {
                 message: 'Thêm tour thành công!'
             });
             // Reset form
-            setTourData({
-                tour_id: '',
-                name: '',
-                duration: '',
-                destination: '',
-                departure: '',
-                startDate: '',
-                endDate: '',
-                maxGuests: '',
-                transport: '',
-                description: '',
-                branch_id: 1
-            });
+            // setTourData({
+            //     tour_id: '',
+            //     name: '',
+            //     duration: '',
+            //     destination: '',
+            //     departure: '',
+            //     startDate: '',
+            //     endDate: '',
+            //     maxGuests: '',
+            //     transport: '',
+            //     description: '',
+            //     branch_id: 1
+            // });
         } catch (error) {
             setAlert({
                 show: true,

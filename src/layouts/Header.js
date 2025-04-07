@@ -12,7 +12,7 @@ function Header(props) {
                 <p className='intro-text'>Hãy để chúng tôi giúp bạn lên kế hoạch cho chuyến đi hoàn hảo nhất. Từ những bãi biển đầy nắng đến các điểm đến kỳ thú, mọi hành trình đều là một trải nghiệm đáng nhớ.</p>
                 <div className="videoArea">
                     <div className="circle-button">
-                        <a href='https://www.tiktok.com/@nadeshiko_edits/video/7204194299746045190'>
+                        <a href='https://github.com/DUYBEGINER/tour-booking-web.git'>
                             <div className="play-icon"></div>
                         </a>              
                     </div>
