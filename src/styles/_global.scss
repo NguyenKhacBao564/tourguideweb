@@ -1,0 +1,56 @@
+// _global.scss
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap');
+
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html{
+  font-size: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y:auto;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    // height: 300vh;
+    min-height: 100vh;
+    position: relative;
+    font-family: 'Roboto', sans-serif;
+    overflow-x: hidden;
+    overflow-y:auto;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+li{
+    list-style: none;
+  }
+
+  .footer--LoginForm{
+    text-align: center;
+
+    button{
+        margin: 0 1rem;
+        padding: 0.5rem;
+        border: 2px solid #E0E0E9;
+        border-radius: 15px;
+        background-color: #FFFFFF;
+        box-shadow: 0 15px 50px -15px rgba(68, 97, 242, 11);
+        cursor: pointer;
+        img { width: 40px; }
+    }
+}
+
+
+
+  

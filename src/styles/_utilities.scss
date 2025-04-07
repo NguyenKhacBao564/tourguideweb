@@ -1,0 +1,61 @@
+
+@use './mixin';
+
+  .button-primary-outline {
+    @include mixin.button-style(transparent, #123288, #123288, #123288, white);
+}
+
+.text-center {
+    text-align: center;
+  }
+  
+  .mt-10 {
+    margin-top: 10px;
+  }
+  .mt-20 {
+    margin-top: 220px;
+  }
+  .mt-30 {
+    margin-top: 30px;
+  }
+  .mb-20 {
+    margin-bottom: 20px;
+  }
+  
+  .pt-20{
+    padding-top: 20px;
+  }
+  .pl-10{
+    padding-left: 10px;
+  }
+  .p-20-10{
+    padding: 20px 10px;
+  }
+
+  .p-20-50{
+    padding: 20px 50px;
+  }
+
+  .shadow {
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+.btn{
+    border: none;
+    outline: none;
+    cursor: pointer;
+  }
+  
+.grid{
+    display: grid;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .flex{
+    display: flex;
+  }
+ 
+  .button-primary-outline {
+    @include button-style(transparent, #123288, #123288, #123288, white);
+}

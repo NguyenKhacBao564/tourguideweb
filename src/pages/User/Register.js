@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
-import "../assets/styles/register.scss";
-import FormInput from "../components/FormInput";
-import AlertUI from '../components/AlertUI';
+import "../../styles/pages/Register.scss";
+import AlertUI from '../../components/AlertUI/AlertUI';
+import FormInput from '../../components/FormInput/FormInput';
+import SocialLogin from '../../components/SocialLogin/SocialLogin';
 
 function Register() {
     
@@ -115,19 +116,19 @@ function Register() {
             <div className="containterRegister flex">
                 <AlertUI variant="success" show={show} text="Bạn đã đăng kí thành công" className="alert" />
                 <div className="introduceDiv flex">
+                    <Link to="/" >Trở lại trang chủ</Link>
                     <div className="introduceDiv--header">
                         <h1 className="title">Chào mừng dến với </h1>
                         <h2>Tour Guide</h2>
                         <p>Chào mừng bạn đến với hệ thống đặt tour du lịch số 1 PTIT! Hãy khám phá những chuyến đi tuyệt vời và lên kế hoạch cho hành trình sắp tới của bạn ngay hôm nay!</p>
                         <Link to="/login" className="btn--register">Đăng nhập</Link>
                     </div>
-                    <img  alt="anh3" src="/img1.png" alt="Illustration"/>
+                    <img src="/illus_Login_Regis.png" alt="Illustration"/>
                 </div>
                
                 <div className="formDiv flex">
-                   
                     <div className="header--RegisterForm">
-                        <img alt="anh4" src="./logo.png" alt="Logo" />
+                        <img src="./logo.png" alt="Logo" />
                         <h2>Đăng kí</h2>
                     </div>
                     <form action="" onSubmit={handleSubmit} className="register-form grid">
@@ -140,14 +141,7 @@ function Register() {
                         ))}
                         <button type="submit" className="btn--register">Đăng kí</button>
                         <span className="or">Hoặc</span>
-                        <div className="footer--RegisterForm">
-                            <button className="btn--loginWithGoogle">
-                                <img src="./google.png" className='icon-large'/>
-                            </button>
-                            <button className="btn--loginWithFacebook">
-                                <img src="./facebook.png" className='icon-large'/>
-                            </button>
-                        </div>
+                        <SocialLogin/>
                     </form>     
                 </div>
             </div>

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
-import "../assets/styles/login.scss";
 
-import FormInput from '../components/FormInput';
+import "../../styles/pages/Login.scss";
+
+import FormInput from '../../components/FormInput/FormInput';
+import SocialLogin from '../../components/SocialLogin/SocialLogin';
 
 
 
@@ -21,7 +23,7 @@ function Login() {
     });
 
     const [check, setCheck] = useState(false); // Kiểm tra đăng nhập thành công hay không
-
+    const [isChecked, setIsChecked] = useState(false); // Kiểm tra đã đồng ý chính sách bảo mật hay chưa
     const inputs = [
         {
             id: 1,
@@ -47,24 +49,13 @@ function Login() {
         setValues({...values, [e.target.name]: e.target.value});
     }
 
-    // const [data, setData] = useState([]);
-
-    // useEffect(() => {
-    //     const fetchUser = async () => {
-    //         const listuser = await fetch('http://localhost:3004/user');
-    //         const user= await listuser.json();
-    //         // console.log(tourlist.json());
-    //         setData(user);
-    //     }
-    //     fetchUser();
-        
-    //     }, []);
-
-
-   
-
     const handleSubmit = (e) => {  
         e.preventDefault();
+        if (isChecked) {
+            alert("Bạn đã đồng ý với chính sách!");
+          } else {
+            alert("Vui lòng đồng ý với chính sách trước khi tiếp tục.");
+          }
         // var username = data.find(user => user.username === values.mail);
         // console.log(data);
         // console.log(username);
@@ -85,13 +76,14 @@ function Login() {
              {/* <Link to="/" className="btn--backhome">Back to home</Link> */}
             <div className="containterLogin flex">
                 <div className="introduceDiv flex">
+                    <Link to="/" >Trở lại trang chủ</Link>
                     <div className="introduceDiv--header">
                         <h1 className="title">Chào mừng dến với </h1>
                         <h2>Tour Guide</h2>
                         <p>Chào mừng bạn đến với hệ thống đặt tour du lịch số 1 PTIT! Hãy khám phá những chuyến đi tuyệt vời và lên kế hoạch cho hành trình sắp tới của bạn ngay hôm nay!</p>
                         <Link to="/register" className="btn--login">Đăng ký</Link>
                     </div>
-                    <img src="/img1.png" alt="Illustration"/>
+                    <img src="/illus_Login_Regis.png" alt="Illustration"/>
                 </div>
 
                 <div className="formDiv flex">
@@ -102,18 +94,28 @@ function Login() {
                     <form action="" onSubmit={handleSubmit} className="login-form grid">
                         {/* Thất bại thì hiện ra */}
                         <p>{check && <span className="alertLoginFail">Tên đăng nhập hoặc mật khẩu không đúng</span>}</p>
-                        {inputs.map((input) => (<FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange}/>))}
+
+                        {inputs.map((input) => (
+                            <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange}/>
+                            ))}
+
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", height:"fit-content"}}>
+                        <label >
+                            <input 
+                            type="checkbox" 
+                            checked={isChecked} 
+                            onChange={(e) => setIsChecked(e.target.checked)}
+                            />
+                            Ghi nhớ đăng nhập.
+                        </label>
+                        
                         <a className="forgotPassword">Quên mật khẩu</a>
-                        <button type="submit" className="btn--login">Đăng nhập</button>
-                        <span className="or">Hoặc</span>
-                        <div className="footer--LoginForm">
-                            <button className="btn--loginWithGoogle">
-                                <img alt="anh1" src="./google.png" className='icon-large'/>
-                            </button>
-                            <button className="btn--loginWithFacebook">
-                                <img alt="anh2" src="./facebook.png" className='icon-large'/>
-                            </button>
                         </div>
+                        <button type="submit" className="btn--login">Đăng nhập</button>
+                       
+                        <span className="or">Hoặc</span>
+                        <SocialLogin />
+                        <p>Chưa có tài khoản? <Link to="/register" >Đăng kí ngay</Link></p>
                     </form>     
                 </div>
             </div>

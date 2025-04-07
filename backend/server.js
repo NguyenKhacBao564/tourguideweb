@@ -22,13 +22,16 @@ app.get("/users", async (req, res) => {
 app.get("/tours", async (req, res) => {
   try {
     const pool = await poolPromise;
-    const result = await pool.request().query("SELECT * FROM Tours"); // Đổi 'Users' thành bảng của bạn
+    const result = await pool.request().query("SELECT * FROM Tour"); // Đổi 'Users' thành bảng của bạn
     res.json(result.recordset);
   } catch (error) {
     res.status(500).json({ message: "Lỗi server", error });
   }
 });
 
+app.
+
+// app.post("/tours", async (req, res))
 
 app.listen(PORT, () => {
   console.log(`🚀 Server chạy tại http://localhost:${PORT}`);

@@ -1,0 +1,65 @@
+.header {
+    position: relative;
+    background-image: url("https://images.unsplash.com/photo-1484821582734-6c6c9f99a672?q=80&w=2666&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 100vw;
+    height: 800px;
+    font-size: 1rem;
+    color: #1C2B38;
+    padding: 20px 50px;
+    text-align: center;
+    .header-content{
+        margin: 0 auto;
+        h1 {
+            font-family: 'Volkhov', serif;
+            font-size: 48px;
+            font-weight: bold;
+            color: #1C2B38;
+          }
+    }
+  }
+  
+  .circle-button {
+    width: 80px;
+    height: 80px;
+    background-color: white;
+    border-radius: 50%;
+   
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 0 0 15px rgba(255, 255, 255, 0.568), 
+                0 0 0 30px rgba(255, 255, 255, 0.212), 
+                0 0 0 45px rgba(255, 255, 255, 0.05);
+  }
+  
+  .play-icon {
+    width: 0;
+    height: 0;
+    border-left: 20px solid #7DAFAF; /* Màu xanh nhạt */
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+  }
+  
+  
+  .videoArea{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+    p{
+        font-family: 'Mulish', sans-serif;
+        margin-left: 50px;
+        font-size: 24px;
+        font-weight: bold;
+    }
+  }
+  

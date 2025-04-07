@@ -35,16 +35,6 @@
             box-shadow: 0 10px 50px -20px rgba(68, 97, 242, 11);
             outline: none;
         }
-        // span{
-        //     font-size: 14px;
-        //     text-align: left;
-        //     font-weight: bold;
-        //     color: #e43d3d;
-        //     display: none;
-        // }
-        // input:invalid[focused="true"] ~ .errorText {
-        //     display: block;
-        // }
         input:invalid[focused="true"]{
             border: 1px solid #ff1717;
         }
@@ -58,4 +48,3 @@
         }
     }     
 }
-
