@@ -38,8 +38,7 @@
     width: 40%;
     background: #2da7ba;
     color: white;
-    padding-left: 20px;
-    padding-top: 20px;
+    padding: 20px 0 0 20px;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
@@ -81,7 +80,6 @@
     z-index: 1; // Đặt z-index thấp để hình tròn nằm phía sau văn bản và social icons
 
     .customCircle {
-        color: #36bed7;
         opacity: 0.5;
         position: absolute;
         bottom: 0;
@@ -96,7 +94,7 @@
         background: #2dc8e0;
         opacity: 0.5;
         position: absolute;
-        bottom: 95;
+        bottom: 95px;
         right: 85px;
         border-radius: 50%;
     }
@@ -115,7 +113,6 @@
         height: 25px;
         background: #36bed7;
         border-radius: 50%;
-        text-decoration: none;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -124,7 +121,7 @@
         i {
             font-size: 13px;
             color: white;
-            transition: all 0.3s ease;
+            // transition: all 0.3s ease;
         }
 
         &:hover {
@@ -148,7 +145,6 @@
 
         div {
             width: 48%;
-            position: relative;
         }
     }
 
@@ -181,7 +177,7 @@
             align-items: center;
             gap: 10px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 13px;
             white-space: nowrap;
             font-weight: 500;
             position: relative;
@@ -193,7 +189,6 @@
             span {
                 display: flex;
                 align-items: center;
-                font-weight: normal;
                 gap: 5px;
 
                 &::before {
@@ -211,9 +206,6 @@
             input:checked+span::before {
                 background-color: black;
                 border: 2px solid black;
-                display: flex;
-                align-items: center;
-                justify-content: center;
             }
 
             input:checked+span::after {
@@ -235,8 +227,12 @@
         border-radius: 5px;
         cursor: pointer;
         margin-top: 20px;
-        align-self: flex-end;
+        margin-left: auto;
+        /* Di chuyển button sang phải */
         width: auto;
+        /* Đảm bảo button không giãn full width */
+        display: block;
+        /* Đảm bảo button hoạt động như block để margin-left có hiệu lực */
 
         &:hover {
             background: #239fd8;
@@ -257,8 +253,6 @@
         .customCircle {
             width: 160px;
             height: 160px;
-            bottom: 0;
-            right: 0;
         }
 
         .smallCircle {
@@ -274,8 +268,14 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 0px 10px;
-            flex-wrap: unset;
             margin-top: 10px;
+        }
+
+        button {
+            margin-left: auto;
+            /* Giữ button ở bên phải */
+            width: auto;
+            /* Giữ kích thước tự nhiên */
         }
     }
 }
@@ -285,7 +285,6 @@
         flex-direction: column;
         width: 100%;
         max-width: 100%;
-        margin: 20px auto;
         padding: 10px;
     }
 
@@ -328,7 +327,9 @@
 
         button {
             width: 100%;
-            align-self: center;
+            /* Button chiếm toàn bộ chiều rộng trên mobile */
+            margin-left: 0;
+            /* Không cần căn phải nữa vì full width */
         }
     }
 
@@ -339,8 +340,6 @@
         .customCircle {
             width: 150px;
             height: 150px;
-            bottom: 0;
-            right: 0;
         }
 
         .smallCircle {
@@ -352,16 +351,10 @@
     }
 
     .socialIcons {
-        position: absolute; // Đảm bảo dùng position absolute để định vị
-        bottom: 10px; // Sát đáy container (có thể điều chỉnh giá trị)
-        left: 20px; // Sát cạnh phải (có thể điều chỉnh giá trị)
-        display: flex;
-
         .iconCircle {
 
             width: 25px; // Giảm kích thước trên mobile
             height: 25px;
-            margin-bottom: 0;
 
             i {
                 font-size: 11px;
@@ -370,6 +363,7 @@
     }
 }
 
+// Co the dung hoac khong dung toi
 // @media (max-width: 480px) {
 //     .contactInfo {
 //         min-height: 350px; // Giảm chiều cao trên mobile nhỏ
