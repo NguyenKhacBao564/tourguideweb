@@ -60,7 +60,7 @@ const authInputs = {
     login: [
         {
             id: 1,
-            name: "mail",
+            name: "email",
             type: "text",
             placeholder: "Nhập email",
             label: "Nhập email",
