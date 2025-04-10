@@ -1,4 +1,5 @@
 import React from "react";
+import Navbar from "../../layouts/Navbar";
 import styles from "../../styles/pages/ContactUs.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -10,6 +11,7 @@ import {
   faDiscord,
 } from "@fortawesome/free-solid-svg-icons";
 import { faFacebookF as fabFacebookF, faInstagram as fabInstagram, faDiscord as fabDiscord } from "@fortawesome/free-brands-svg-icons";
+import Footer from "../../layouts/Footer/Footer";
 function Contact() {
   return (
     <div>
@@ -98,7 +100,12 @@ function Contact() {
           </div> */}
         </div>
       </div>
+      <div>
+        <Navbar />
+        <Footer />
+      </div>
     </div>
+
   );
 }
 
