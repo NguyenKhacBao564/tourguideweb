@@ -6,26 +6,15 @@ import { Link } from 'react-router-dom';
 import { useWindowSize } from "../../windowsize";
 
 function Page(props) {
-<<<<<<< HEAD
   const { width, height } = useWindowSize();
   return (
     <div>
       <Header />
       <Maincontent />
+      <Link to="/admin/khachhang">Admin</Link>
       <Footer />
     </div>
   );
-=======
-    const { width, height } = useWindowSize();
-    return (
-        <div>
-          <Header/>
-          <Maincontent/>
-          <Link to="/admin/khachhang">Admin</Link>
-          <Footer/>
-        </div>
-    );
->>>>>>> origin/main
 }
 
 export default Page;
