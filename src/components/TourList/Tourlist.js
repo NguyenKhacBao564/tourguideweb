@@ -19,10 +19,10 @@ function Tourlist(props) {
    
     return (
         <div className='tourlist'>
-        <Container>
-                <Row className="g-4">
+        <Container className="tourlist-container"  fluid>
+                <Row className="custom-row g-3" xs={1} sm={2} md={3} xl={4} xxl={5} >
                     {tours.map(tour => (
-                        <Col key={tour.tour_id} xs={12} sm={6} md={6} lg={4} xl={4} xxl={3} style={{ display: "flex", justifyContent: "center"}}> 
+                        <Col key={tour.tour_id} className="custom-col" > 
                             <TourCard {...tour} />
                         </Col>
                     ))}

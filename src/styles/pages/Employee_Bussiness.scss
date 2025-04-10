@@ -1,0 +1,29 @@
+.EB__content {
+    // border: 5px solid rgb(7, 183, 253);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+   .EB__header-content {  
+        display: flex;
+        position: sticky;
+        top: 0;
+        padding: 20px 20px;
+        z-index: 9999;
+        background-color: white;
+        // border-bottom: 1px solid #e0e0e0;
+        // border: 1px solid rgb(98, 255, 7);
+    }
+
+    .admin-content {
+        padding: 20px 20px;
+        height: 100%;
+        background-color: #F5F7FA;
+        border: 1px solid #e6eff5c7;
+      }
+    
+}
+
+

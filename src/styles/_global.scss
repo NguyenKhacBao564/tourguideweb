@@ -17,14 +17,28 @@ html{
 }
 
 body {
-    margin: 0;
-    padding: 0;
-    // height: 300vh;
-    min-height: 100vh;
-    position: relative;
-    font-family: 'Roboto', sans-serif;
-    overflow-x: hidden;
-    overflow-y:auto;
+  margin: 0;
+  margin: 0 auto;
+  padding: 0;
+  // height: 300vh;
+  min-height: 100vh;
+  position: relative;
+  font-family: 'Roboto', sans-serif;
+  overflow-x: hidden;
+  overflow-y:auto;
+  font-size: 14px;
+
+  @media (min-width: $breakpoint-sm) {
+    font-size: 13px;
+  }
+
+  @media (min-width: $breakpoint-md) {
+    font-size: 14px;
+  }
+
+  @media (min-width: $breakpoint-lg) {
+    font-size: 16px;
+  }
 }
 
 a {
@@ -36,7 +50,8 @@ li{
     list-style: none;
   }
 
-  .footer--LoginForm{
+  // Các nút social
+  .socialLogin{
     text-align: center;
 
     button{

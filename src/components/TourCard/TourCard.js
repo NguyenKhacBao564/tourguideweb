@@ -1,19 +1,30 @@
 import React from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClock, faCar, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faClock, faCar, faUsers, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FaCalendarAlt } from "react-icons/fa";
 import "./TourCard.scss";
 
 function TourCard(props) {
     return (
         <div className="tour-card">
-            <img
-                src="https://images.pexels.com/photos/1658967/pexels-photo-1658967.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                alt="Phú Yên"
-                className="tour-card__img"
-            />
+            <div className="tour-card__image-container">
+                {/* Biểu tượng khuyến mãi */}
+                <div className="tour-card__discount">-20%</div>
+                {/* Nút yêu thích */}
+                <button className="tour-card__favorite">
+                    <FontAwesomeIcon icon={faHeart} />
+                </button>
+
+                {/* Hình ảnh */}
+                <img
+                    src="https://images.pexels.com/photos/1658967/pexels-photo-1658967.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+                    alt="Phú Yên"
+                    className="tour-card__img"
+                />
+            </div>
+
             <div className="tour-card__info">
-                <h3>{props.name}</h3>
+                <h3 className="tour-card__name">{props.name}</h3>
                 <ul className="tour-card__details">
                     <li>
                         <p>
