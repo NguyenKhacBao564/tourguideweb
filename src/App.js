@@ -1,5 +1,4 @@
 import { Routes, Route} from "react-router-dom";
-
 import Page from "./pages/User/Home";
 import Register from "./pages/User/Register";
 import Login from "./pages/User/Login";
@@ -11,6 +10,7 @@ import Dashboard from "./pages/Admin/Dashboard";
 import MainLayout from "./components/admin/layout/MainLayout";
 import StaffManagement from "./pages/Admin/StaffManagement";
 import BranchManagement from "./pages/Admin/BranchManagement";
+import EmployeeProfile from "./admin/EmployeeProfile";
 
 function App() {
   return (
@@ -27,6 +27,7 @@ function App() {
               <Route index element={<Dashboard />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="nhan-vien" element={<StaffManagement />} />
+              <Route path="nhan-vien/:id" element={<EmployeeProfile />} />
               <Route path="quan-ly-tour" element={<TourManagement />} />
               <Route path="quan-ly-chi-nhanh" element={<BranchManagement />} />
           </Route>

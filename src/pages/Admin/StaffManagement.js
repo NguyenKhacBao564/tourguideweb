@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Search, Plus, Edit, Trash2, MoreVertical } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const StaffManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
   // Sample staff data
   const staffData = [
@@ -59,6 +61,11 @@ const StaffManagement = () => {
     staff.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
     staff.phone.includes(searchTerm)
   );
+
+  const handleViewDetails = (staffId) => {
+    // Navigate to employee details page with the staff ID
+    navigate(`/admin/nhan-vien/${staffId}`);
+  };
 
   return (
     <div className="space-y-6">
@@ -118,7 +125,10 @@ const StaffManagement = () => {
                       <button className="btn btn-light p-1">
                         <Trash2 size={16} />
                       </button>
-                      <button className="btn btn-light p-1">
+                      <button 
+                        className="btn btn-light p-1"
+                        onClick={() => handleViewDetails(staff.id)}
+                      >
                         <MoreVertical size={16} />
                       </button>
                     </div>

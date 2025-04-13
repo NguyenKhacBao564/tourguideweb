@@ -37,14 +37,27 @@
   &:hover {
     background-color: #f3f4f6;
   }
-
   &.active {
     color: #2c5fe9;
     background-color: rgba(59, 130, 246, 0.1);
     border-left: 3px solid #2c5fe9;
   }
 }
+.sidebar-item-logout {
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #c70000;
+  font-size: 1.375rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
 
+  &:hover {
+    background-color: #f3f4f6;
+  }
+}
 .status-badge {
   padding: 0.25rem 0.75rem;
   border-radius: 9999px;
@@ -65,13 +78,23 @@
 }
 
 .stats-card {
-  background-color: #ffffff;
+  background-color: #f4f2f2;
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
   display: flex;
   align-items: center;
   gap: 1rem;
+}
+
+.revenue-card {
+  background-color: #55c190; // màu cam tùy chọn
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
 }
 
 .stats-icon {
@@ -83,19 +106,38 @@
   justify-content: center;
 }
 
+.stats-to-table-gap {
+  margin-top: 1.5rem;
+}
+
 .table-container {
   background-color: #ffffff;
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  min-width: 650px;
 }
-
+.table-container-recent {
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  min-width: 750px;
+}
+.table-container-chart {
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  min-width: 250px;
+  width: 35%;
+}
 .table-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #cecece;
 }
 
 .table-title {
@@ -105,14 +147,15 @@
 
 .table {
   width: 100%;
+  //background-color: #f9fafb;
 }
 
 .table th {
   text-align: left;
   padding: 0.75rem 1.5rem;
   font-weight: 500;
-  color: #6b7280;
-  background-color: #f9fafb;
+  color: #373737;
+  background-color: #ffffff;
   border-bottom: 1px solid #e5e7eb;
 }
 
@@ -137,14 +180,54 @@
   justify-content: center;
   gap: 0.5rem;
   border: none;
+  //position: absolute;
+  //right: 20px;
+}
+// .btn-add {
+//   padding: 0.5rem 1rem;
+//   border-radius: 0.375rem;
+//   font-size: 0.875rem;
+//   font-weight: 500;
+//   cursor: pointer;
+//   transition: all 0.3s ease;
+//   display: inline-flex;
+//   align-items: center;
+//   justify-content: center;
+//   gap: 0.5rem;
+//   border: none;
+//   position: absolute;
+//   right: 20px;
+// }
+.btn-view-all {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: none;
 }
 
 .btn-primary {
   background-color: #2c5fe9;
   color: #ffffff;
-
+  position: absolute;
+  right: 25px;
   &:hover {
     background-color: #1e40af;
+  }
+}
+
+.view-all-btn {
+  background-color: #c8cdca;
+  color: #373737;
+
+  &:hover {
+    background-color: #16a34a;
   }
 }
 
@@ -271,6 +354,11 @@
   color: #6b7280;
 }
 
+.legend-text-chart {
+  font-size: 0.875rem;
+  color: #000000;
+}
+
 // Admin layout styles
 .admin-layout {
   display: flex;
@@ -281,6 +369,7 @@
 .admin-content {
   flex: 1;
   overflow: auto;
+  background-color: #c2d3dc;
 }
 
 .admin-header {
@@ -302,6 +391,7 @@
   font-weight: 500;
   color: #1f2937;
   margin-bottom: 1.5rem;
+  
 }
 
 .admin-grid {
@@ -320,4 +410,15 @@
   .admin-grid {
     grid-template-columns: 1fr;
   }
-} 
+}
+
+.stats-chart-container {
+  display: flex;
+  flex-direction: row;  // sắp xếp theo hàng ngang
+  gap: 1.5rem;          // khoảng cách giữa các phần tử
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+  }
+}
+

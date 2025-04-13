@@ -19,7 +19,7 @@ const Sidebar = () => {
       </div>
 
       <div className="sidebar-menu">
-        <NavLink to="/admin" className={({isActive}) => `sidebar-item ${isActive ? 'active' : ''}`}>
+        <NavLink to="/admin/dashboard" className={({isActive}) => `sidebar-item ${isActive ? 'active' : ''}`}>
           <Home size={18} />
           <span>Tổng quan</span>
         </NavLink>
@@ -35,12 +35,11 @@ const Sidebar = () => {
           <Building size={18} />
           <span>Quản lý chi nhánh</span>
         </NavLink>
-        <div className="mt-auto">
-          <NavLink to="/admin/dang-xuat" className={({isActive}) => `sidebar-item ${isActive ? 'active' : ''}`}>
-            <LogOut size={18} />
-            <span>Đăng xuất</span>
-          </NavLink>
-        </div>
+        
+        <NavLink to="/" className="sidebar-item-logout mt-auto">
+          <LogOut size={26} />
+          <span>Đăng xuất</span>
+        </NavLink>
       </div>
     </div>
   );

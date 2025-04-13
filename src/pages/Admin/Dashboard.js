@@ -80,7 +80,7 @@ const Dashboard = () => {
       
       {/* Stats Cards */}
       <div className="admin-grid">
-        <div className="stats-card bg-teal-500 text-white">
+        <div className="stats-card revenue-card text-white">
           <div className="stats-icon bg-teal-400 bg-opacity-30 text-white">
             <DollarSign size={24} />
           </div>
@@ -111,54 +111,53 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Branch Statistics */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
-        <div className="lg:col-span-2">
-          <div className="table-container">
-            <div className="table-header">
-              <h3 className="table-title">Thống kê theo chi nhánh</h3>
-              <button className="text-blue-600 text-sm flex items-center gap-1">
-                Xem tất cả <ExternalLink size={14} />
-              </button>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Chi nhánh</th>
-                    <th>Doanh thu</th>
-                    <th>Tăng trưởng</th>
-                    <th>Tỷ lệ huỷ</th>
-                    <th>Sl tour</th>
+      {/* Branch Statistics and Chart */}
+      <div className="stats-chart-container mt-8 stats-to-table-gap">
+        {/* Branch Statistics */}
+        <div className="table-container" style={{ flex: 1 }}>
+          <div className="table-header">
+            <h3 className="table-title">Thống kê theo chi nhánh</h3>
+            <button className="text-blue-600 text-sm flex items-center gap-1 view-all-btn btn-view-all">
+              Xem tất cả 
+            </button>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Chi nhánh</th>
+                  <th>Doanh thu</th>
+                  <th>Tăng trưởng</th>
+                  <th>Tỷ lệ huỷ</th>
+                  <th>Sl tour</th>
+                </tr>
+              </thead>
+              <tbody>
+                {branchStats.map((branch, index) => (
+                  <tr key={index}>
+                    <td className="font-medium">{branch.branch}</td>
+                    <td>{branch.revenue}</td>
+                    <td>
+                      <span className="text-green-500 flex items-center gap-1">
+                        {branch.growth}% <ArrowUpRight size={14} />
+                      </span>
+                    </td>
+                    <td>
+                      <span className="text-red-500 flex items-center gap-1">
+                        {branch.decline}% <ArrowDownRight size={14} />
+                      </span>
+                    </td>
+                    <td>{branch.tours}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {branchStats.map((branch, index) => (
-                    <tr key={index}>
-                      <td className="font-medium">{branch.branch}</td>
-                      <td>{branch.revenue}</td>
-                      <td>
-                        <span className="text-green-500 flex items-center gap-1">
-                          {branch.growth}% <ArrowUpRight size={14} />
-                        </span>
-                      </td>
-                      <td>
-                        <span className="text-red-500 flex items-center gap-1">
-                          {branch.decline}% <ArrowDownRight size={14} />
-                        </span>
-                      </td>
-                      <td>{branch.tours}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
 
         {/* Tour Statistics Chart */}
-        <div className="table-container p-4">
-          <h3 className="text-lg font-semibold mb-4">Tỷ lệ tour đã hoàn thành/chưa khởi hành</h3>
+        <div className="table-container-chart  p-4" style={{ flex: 1/10 }}>
+          <h3 className="legend-text-chart font-semibold mb-1">Tỷ lệ tour đã hoàn thành/chưa khởi hành</h3>
           <div className="donut-chart flex justify-center">
             <PieChart width={200} height={200}>
               <Pie
@@ -194,11 +193,11 @@ const Dashboard = () => {
       </div>
 
       {/* Recent Transactions */}
-      <div className="table-container mt-8">
+      <div className="table-container-recent mt-8 stats-to-table-gap">
         <div className="table-header">
           <h3 className="table-title">Giao dịch gần đây</h3>
-          <button className="text-blue-600 text-sm flex items-center gap-1">
-            Xem tất cả <ExternalLink size={14} />
+          <button className="text-blue-600 text-sm flex items-center gap-1 view-all-btn btn-view-all">
+            Xem tất cả 
           </button>
         </div>
         <div className="overflow-x-auto">
