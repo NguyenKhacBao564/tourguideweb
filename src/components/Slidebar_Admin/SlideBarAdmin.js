@@ -1,15 +1,23 @@
-import React from "react";
+import React, {useContext} from "react";
 import { Nav } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaUserLarge } from "react-icons/fa6";
 import { BiCalendarCheck } from "react-icons/bi";
 import { MdDiscount } from "react-icons/md";
 import { IoLogOutSharp } from "react-icons/io5";
+import { AuthContext } from "../../context/AuthContext";
 import "./SlideBar.scss";
 
 function SidebarAdmin() {
     const navigate = useNavigate();
     const location = useLocation();
+    const {logout} = useContext(AuthContext);
+    const handleLogout = () => {
+        // Xóa token khỏi localStorage
+        logout();
+        // Chuyển hướng về trang đăng nhập
+        navigate("/login");
+    }
 
     return (
             <Nav  defaultActiveKey="/khach-hang" className="custom-nav flex-column">
@@ -47,7 +55,7 @@ function SidebarAdmin() {
 
                 <Nav.Item 
                     className="nav-item logout" 
-                    onClick={() => navigate("/logout")}
+                    onClick={handleLogout}
                     data-title="Đăng xuất"
                 >
                     <IoLogOutSharp />

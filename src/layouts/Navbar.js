@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 import "../styles/layouts/Navbar.scss";
 import { FaBars, FaTimes} from "react-icons/fa";
 
+import { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
 function Navbar() {
-
+    const { user, logout } = useContext(AuthContext);
     // State to manage the open/close state of the navbar (mobile view)
     const [isOpen, setIsOpen] = useState(false);
 
@@ -39,8 +41,18 @@ function Navbar() {
                     <li><a href="#">Popular Destination</a></li>
                     <li><a href="/contact">Contact</a></li>
                     <li><a href="#">Help</a></li>
-                    <li><Link to="/register" className="btn btn--signup">Đăng kí</Link></li>
-                    <li><Link to="/login" className="btn btn--login">Đăng nhập</Link></li>
+                    {!user && (
+                        <>
+                            <li><Link to="/register" className="btn btn--signup">Đăng kí</Link></li>
+                            <li><Link to="/login" className="btn btn--login">Đăng nhập</Link></li>
+                        </>
+                    )}
+                    {user && (
+                        <>
+                            <li><span>{user.name}</span></li>
+                            <li><button className="btn btn--login" onClick={logout}>Đăng xuất</button></li>
+                        </>
+                    )}
                 </ul>
 
                 <div className="menu-toggle" onClick={() => setIsOpen(!isOpen)}>

@@ -9,11 +9,6 @@ import { useNavigate } from 'react-router-dom';
 import { Alert } from 'react-bootstrap';
 function AuthForm({mode}) {
     
-    // useEffect(() => {
-    //     document.body.style.overflow = "hidden"; // Ẩn thanh cuộn khi vào trang đăng nhập
-    //     return () => {
-    //         document.body.style.overflow = "auto"; };// Hiện lại thanh cuộn khi rời trang đăng nhập
-    // },[]);
     const {login, regist, user} = useContext(AuthContext);
     const navigate = useNavigate();
     console.log("user token: ",user)
@@ -25,6 +20,7 @@ function AuthForm({mode}) {
         : { email: '', password: '' }
     );
     const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
     const [showAlert, setShowAlert] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
     console.log("value",values)
@@ -50,26 +46,30 @@ function AuthForm({mode}) {
         }else{
             // Xử lý đăng nhập
             try{
-                await login(values.email, values.password);
+                //Lấy user sau khi đăng nhập thành công
+                const getUser = await login(values.email, values.password);
                 console.log("user token: ",user)
-                switch (user.role) {
+                console.log("getUser: ",getUser)
+                setSuccess("Đăng nhập thành công!");
+                
+                setTimeout(() => {switch (getUser.role) {
                     case "customer":
-                      navigate("/");
+                      navigate("/", {replace: true});
                       break;
                     case "Support":
-                      navigate("support");
+                      navigate("/support", {replace: true});
                       break;
                     case "Sales":
-                      navigate("sale");
+                      navigate("/sale",{replace: true});
                       break;
                     case "Admin":
-                      navigate("admin");
+                      navigate("/admin/khachhang",{replace: true});
                       break;
                     default:
                       console.error("Unknown role:", user.role);
-                  }
+                  }},1000);
             }catch(error){
-                setError(error.message)
+                setError("Tên đăng nhập hoặc mật khẩu không đúng!");
             }
         }
     };
@@ -95,6 +95,7 @@ function AuthForm({mode}) {
                     <img src="./logo.png" alt="Logo" />
                     <h2>{isRegister ? "Đăng ký" : "Đăng nhập"}</h2>
                     {error && <Alert variant="danger">{error}</Alert>}
+                    {success && <Alert variant="success">{success}</Alert>}
                 </div>
                 
                 <form onSubmit={handleSubmit} className="auth-form grid">

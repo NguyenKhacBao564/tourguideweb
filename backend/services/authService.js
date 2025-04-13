@@ -16,6 +16,7 @@ const verifyPassword = async (password, hashedPassword) => {
 
   const match = await bcrypt.compare(password, hashedPasswordString);
   if (!match) {
+    console.log("Mật khẩu không đúng");
     return false; // Hoặc ném lỗi nếu cần
   }
   console.log("Xác thực mật khẩu thành công");
@@ -85,7 +86,7 @@ const loginUser = async (req, res) => {
     console.log("Đang kiểm tra trong bảng Customer...");
     let user = await checkUser("Customer", "cus_id", null);
     if(user?.error){
-      res.status(401).json({ message: user.error });
+      return res.status(401).json({ message: user.error });
     }
     if (user) {
       const token = generateToken({ userId: user.id, role: user.role , name: user.name});
@@ -99,7 +100,7 @@ const loginUser = async (req, res) => {
     console.log("Đang kiểm tra trong bảng Employee...");
     user = await checkUser("Employee", "emp_id", "role_id");
     if(user?.error){
-      res.status(401).json({ message: user.error });
+      return res.status(401).json({ message: user.error });
     }
     if (user){
       const token = generateToken({userId: user.id, role: user.role , name: user.name });
