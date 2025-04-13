@@ -1,19 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import FormInput from '../../components/FormInput/FormInput';
 import SocialLogin from '../../components/SocialLogin/SocialLogin';
-import authInputs from './authInput';
+import authInputs from '../../utils/AuthInput';
 import "../../styles/pages/Auth.scss";
-
-
+import { AuthContext } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { Alert } from 'react-bootstrap';
 function AuthForm({mode}) {
-
+    
     // useEffect(() => {
     //     document.body.style.overflow = "hidden"; // Ẩn thanh cuộn khi vào trang đăng nhập
     //     return () => {
     //         document.body.style.overflow = "auto"; };// Hiện lại thanh cuộn khi rời trang đăng nhập
     // },[]);
-
+    const {login, regist, user} = useContext(AuthContext);
+    const navigate = useNavigate();
+    console.log("user token: ",user)
     const isRegister = mode === "register";
 
     const [values, setValues] = useState(
@@ -21,22 +24,53 @@ function AuthForm({mode}) {
         ? { username: '', phone: '', email: '', password: '', confirmPassword: '' } 
         : { email: '', password: '' }
     );
-    
+    const [error, setError] = useState(null);
     const [showAlert, setShowAlert] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
-    
+    console.log("value",values)
     
     const onChange = (e) => {
         setValues({ ...values, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (isRegister) {
             setShowAlert(true);
-            setTimeout(() => setShowAlert(false), 3000);
+            // Xử lý đăng ký
+            try {
+                await regist(values.username, values.email, values.password, values.phone);
+                setValues({ username: '', phone: '', email: '', password: '', confirmPassword: '' });
+                setShowAlert(true);
+            } catch (error) {
+                console.error("Đăng ký thất bại [Auth Form]:", error);
+            }
         } else if (!isChecked) {
             alert("Vui lòng đồng ý với chính sách trước khi tiếp tục.");
+        }else{
+            // Xử lý đăng nhập
+            try{
+                await login(values.email, values.password);
+                console.log("user token: ",user)
+                switch (user.role) {
+                    case "customer":
+                      navigate("/");
+                      break;
+                    case "Support":
+                      navigate("support");
+                      break;
+                    case "Sales":
+                      navigate("sale");
+                      break;
+                    case "Admin":
+                      navigate("admin");
+                      break;
+                    default:
+                      console.error("Unknown role:", user.role);
+                  }
+            }catch(error){
+                setError(error.message)
+            }
         }
     };
 
@@ -60,12 +94,16 @@ function AuthForm({mode}) {
                 <div className="header--AuthForm">
                     <img src="./logo.png" alt="Logo" />
                     <h2>{isRegister ? "Đăng ký" : "Đăng nhập"}</h2>
+                    {error && <Alert variant="danger">{error}</Alert>}
                 </div>
                 
                 <form onSubmit={handleSubmit} className="auth-form grid">
-                    {showAlert && <span className="alert">Bạn đã đăng kí thành công</span>}
                     {authInputs[isRegister ? "register" : "login"].map(input => (
-                        <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} />
+                        <FormInput key={input.id} {...input} 
+                        value={values[input.name]} 
+                        onChange={onChange} 
+                        valueconfirm = {input.name === "confirmPassword" ? values.password : ""}
+                        />
                     ))}
                     
                     {isRegister ? null : (
@@ -77,7 +115,7 @@ function AuthForm({mode}) {
                         </div>
                     )}
                     
-                    <button type="submit" className="btn--submit">{isRegister ? "Đăng ký" : "Đăng nhập"}</button>
+                    <button type="submit" className="btn--submit" >{isRegister ? "Đăng ký" : "Đăng nhập"}</button>
                     
                     <span className="or">Hoặc</span>
                     <SocialLogin/>

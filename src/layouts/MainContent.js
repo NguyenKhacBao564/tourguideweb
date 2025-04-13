@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import Carousel from 'react-bootstrap/Carousel';
-import ShowAllButton from '../components/Button/ShowAllButton';
 import '../styles/layouts/MainContent.scss';
-    // import AOS from 'aos';
-    // import 'aos/dist/aos.css'; // You can also use <link> for styles
 import Tourlist from '../components/TourList/Tourlist';
 import Touroutstanding from './Touroutstanding';
 import Slider from "react-slick";    // ..
+// import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { TourProvider } from "../context/TourContext";
+
+// const queryClient = new QueryClient();
     // AOS.init();
     function Maincontent() {
+
         const [provinces] = useState(["Hà Nội", "Đồng Tháp", "Phú Yên", "Đà Lạt", "Bình Định", "Huế", "Quảng Trị", "Đà Nẵng"]);
         
         // Đưa categories trở lại
@@ -96,8 +98,13 @@ import Slider from "react-slick";    // ..
                 </Carousel>
 
                 <h1 className="tourlist_Label">Các tour nổi bật</h1>
-                <Tourlist/>
-                <Touroutstanding/>
+                
+                <TourProvider>
+                    <Tourlist />
+                    <Touroutstanding/>
+                </TourProvider>
+              
+                
             </div>
         );
     }

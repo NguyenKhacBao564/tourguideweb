@@ -11,8 +11,6 @@ function SidebarAdmin() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    
-
     return (
             <Nav  defaultActiveKey="/khach-hang" className="custom-nav flex-column">
                 <div className="intro d-flex align-items-center justify-content-center">
@@ -30,8 +28,8 @@ function SidebarAdmin() {
                 </Nav.Item>
 
                 <Nav.Item 
-                    className={`nav-item ${location.pathname === "/admin/lichdat" ? "active" : ""}`} 
-                    onClick={() => navigate("/admin/lichdat")}
+                    className={`nav-item ${location.pathname.startsWith("/admin/managetour") ? "active" : ""}`} 
+                    onClick={() => navigate("/admin/managetour")}
                     data-title="Lịch đặt"
                 >
                     <BiCalendarCheck />

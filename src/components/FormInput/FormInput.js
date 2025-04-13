@@ -14,7 +14,6 @@ function FormInput(props) {
     const handleFocus = (e) => {
         setFocused(true);
         checkValid(e);
-
     };
     const checkValid = (e) => {
         console.log(isValid)

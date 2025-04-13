@@ -11,12 +11,15 @@
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.8.2",
+    "bcrypt": "^5.1.1",
     "bootstrap": "^5.3.3",
     "concurrently": "^9.1.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "json-server": "^1.0.0-beta.3",
+    "jsonwebtoken": "^9.0.2",
+    "jwt-decode": "^4.0.0",
     "mssql": "^11.0.1",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.9",
@@ -28,6 +31,7 @@
     "react-slick": "^0.30.3",
     "sass": "^1.85.1",
     "slick-carousel": "^1.8.1",
+    "swiper": "^11.2.6",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
