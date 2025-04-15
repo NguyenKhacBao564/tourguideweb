@@ -21,8 +21,8 @@
       top: 15px;
       left: 15px;
       background-color:#DB4444;
-      color: white;
-      font-size: 14px;
+      color: white  !important;
+      font-size: 14px !important;
       font-weight: bold;
       padding: 2px 15px;
       // border-radius: 5px;
@@ -61,9 +61,10 @@
 
   &__info {
     padding: 0 10px;
+    color: #000000 !important;
     //Tên tour
     .tour-card__name {
-      font-size: 13px;
+      font-size: 16px;
       font-weight: bold;
       margin-bottom: 10px;
       line-height: 1.5;
@@ -89,6 +90,7 @@
       display: flex;
       align-items: center;
       font-size: 12px;
+      color: #000000 !important;
       gap: 8px;
       width: 100%;
       margin: 5px 0;
@@ -110,14 +112,14 @@
         margin: 0;
         padding: 0;
         text-align: left;
-        color: #495560;
+        color: #495560 !important;
       }
       #price {
         font-size: clamp(min(0.8rem, 1rem), 16px, max(90vw, 55rem));
         width: 100%;
         box-sizing: content-box;
         font-weight: bold;
-        color: #E01600;
+        color: #E01600 !important;
         font-family: 'Mulish', sans-serif;
       }
     }
@@ -126,7 +128,7 @@
 
 .book-btn {
   background-color: #FC7948;
-  color: white;
+  color: white !important;
   font-family: 'Open Sans', sans-serif;
   font-weight: 800;
   padding: 2% 5%;

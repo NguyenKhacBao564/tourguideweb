@@ -1,10 +1,10 @@
-
-
+@import '../_variables'; // Import _variables.scss
 .navbar {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 10px 25px;
+  // padding: 10px 25px;
+  height: $navbar-height;
   background: transparent;
   color: #171717;
   position: fixed;
@@ -21,17 +21,30 @@
       color: black !important;
     }
   }
+  // Style for another page not Homepage
+  &.not-home {
+    .navbar-content {
+      color: black;
+      .logo, .nav-links li a {
+        color: black;
+      }
+      .nav-links .btn--signup {
+        color: black;
+      }
+    }
+  }
   .navbar-content{
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 1400px;
-    color: #171717;
+    // width: 100%; //Tùy chọn
+    color: rgb(255, 255, 255);
     .logo {
       margin: 0;  //Thẻ h1 có margin mặc định nên phải đặt lại 0
       font-size: clamp(1.8rem,1.5rem, 4vw);
       font-weight: bold;
-      color: white;
+      // color: white;
     }
     .nav-links {
       display: flex;
@@ -44,7 +57,7 @@
         display: inline-block;
       }
       li a {
-        color: rgb(255, 255, 255);
+        
         transition: color 0.3s ease;
         font-weight: bold;
       }

@@ -1,6 +1,7 @@
-require("dotenv").config({ path: "./constant.env" }); // Thay vì chỉ require("dotenv").config();
+require("dotenv").config() // Thay vì chỉ require("dotenv").config();
 const sql = require("mssql");
 
+// Cấu hình kết nối SQL Server
 const config = {
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
@@ -13,6 +14,7 @@ const config = {
   },
 };
 
+// Tạo kết nối đến SQL Server
 const poolPromise = new sql.ConnectionPool(config)
   .connect()
   .then((pool) => {

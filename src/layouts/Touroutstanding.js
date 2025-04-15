@@ -1,33 +1,31 @@
-import React, {useEffect} from 'react';
-import axios from "axios";
-import TourCard from "../components/TourCard/TourCard"; 
-import Carousel from 'react-bootstrap/Carousel';
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Slider from "react-slick";
-import Tourlist from '../components/TourList/Tourlist';
-import { SlArrowLeftCircle,SlArrowRightCircle } from "react-icons/sl";
+import React, { useContext } from 'react';
+import Slider from 'react-slick';
+import { SlArrowLeftCircle, SlArrowRightCircle } from 'react-icons/sl';
+import TourCard from '../components/TourCard/TourCard';
+import { TourContext } from '../context/TourContext';
+
 function SampleNextArrow(props) {
   const { className, style, onClick } = props;
   return (
     <div
       className={className}
-      style={{ 
-        ...style, 
-        display: "flex", 
-        alignItems: "center",
-        justifyContent: "center",
-        background: "#272727", 
-        borderRadius: "50%", 
-        width: "40px", 
-        height: "40px",
-       
-        cursor: "pointer"
-      }}
+      style={{
+        ...style,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#FFDA32',
+        borderRadius: '50%',
+        width: '50px',
+        height: '50px',
+        zIndex: 1, // Đảm bảo nút nổi lên trên slider
+        right: '10px', // Căn chỉnh vị trí
+        cursor: 'pointer',
+        boxShadow: "0 0 3px rgba(236, 214, 115, 0.8),  0 0 10px rgba(224, 217, 108, 0.6), 0 0 20px rgba(230, 206, 73, 0.19)",
+    }}
       onClick={onClick}
     >
-      <SlArrowRightCircle size={24} color="white" />
+      <SlArrowRightCircle size={24} color='black' />
     </div>
   );
 }
@@ -37,60 +35,90 @@ function SamplePrevArrow(props) {
   return (
     <div
       className={className}
-      style={{ 
-        ...style, 
-        display: "flex", 
-        alignItems: "center",
-        justifyContent: "center",
-        background: "#272727", 
-        borderRadius: "50%", 
-        width: "40px", 
-        height: "40px",
-        left: "-50px", 
-        cursor: "pointer"
+      style={{
+        ...style,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#FFDA32',
+        borderRadius: '50%',
+        width: '50px',
+        height: '50px',
+        zIndex: 1,
+        left: '10px', // Căn chỉnh vị trí
+        cursor: 'pointer',
+        boxShadow: "0 0 3px rgba(236, 214, 115, 0.8),  0 0 10px rgba(224, 217, 108, 0.6), 0 0 20px rgba(230, 206, 73, 0.19)",
       }}
       onClick={onClick}
     >
-      <SlArrowLeftCircle size={24} color="white" />
+      <SlArrowLeftCircle size={24} color='black' />
     </div>
   );
 }
+
 function Touroutstanding(props) {
-      const settings = {
-        className: "center",
-        infinite: true,
-        centerPadding: "60px",
-        slidesToShow: 4,
-        arrows: true,
-        swipeToSlide: true,
-        nextArrow: <SampleNextArrow />,
-        prevArrow: <SamplePrevArrow />,
-        afterChange: function(index) {
-          console.log(
-            `Slider Changed to: ${index + 1}, background: #222; color: #bada55`
-          );
-        }
-      };
+  const settings = {
+    className: 'center',
+    infinite: true,
+    centerPadding: '20px', // Giảm padding để tận dụng không gian
+    slidesToShow: 5,
+    slidesToScroll: 1,
+    arrows: true,
+    swipeToSlide: true,
+    nextArrow: <SampleNextArrow />,
+    prevArrow: <SamplePrevArrow />,
+    responsive: [
+      {
+        breakpoint: 1400, // $breakpoint-xxl
+        settings: {
+          slidesToShow: 4,
+          centerPadding: '10px',
+        },
+      },
+      {
+        breakpoint: 1200, // $breakpoint-xl
+        settings: {
+          slidesToShow: 3,
+          centerPadding: '10px',
+        },
+      },
+      {
+        breakpoint: 768, // $breakpoint-md
+        settings: {
+          slidesToShow: 2,
+          centerPadding: '10px',
+        },
+      },
+      {
+        breakpoint: 576, // $breakpoint-sm
+        settings: {
+          slidesToShow: 1,
+          centerPadding: '0px',
+        },
+      },
+    ],
+  };
 
-      const [tours, setTours] = React.useState([]);
+  const { tours, isLoading, error } = useContext(TourContext);
 
-      useEffect(() => {
-          axios.get("http://localhost:5000/tours")
-            .then((res) => setTours(res.data))
-            .catch((err) => console.error(err));
-        }, []);
-      return (
-        <div className="TourOutStanding_container p-20-10 mt-30">
-          <h1 style={{color:"white"}} >Điểm đến nổi bật</h1>
-        <Slider {...settings}>
-          {tours.map(tour => (
-            <div key={tour.id} xs={12} sm={6} md={6} lg={4} xl={4} xxl={3} style={{ display: "flex", justifyContent: "center"}}> 
-                <TourCard {...tour} className="Tourout" style={{ boxShadow: "none" }}/>
-            </div>
-          ))}
-        </Slider>
-        </div>
-      );
+  if (isLoading) return <div className='loading'>Đang tải...</div>;
+  if (error) return <div className='error'>Lỗi: {error.message}</div>;
+
+  return (
+    <div className='TourOutStanding_container'>
+      <h1 className="title">Điểm đến nổi bật</h1>
+      <p className="description">
+        Trải nghiệm du lịch đẳng cấp với những tour được thiết kế chuyên nghiệp, hướng dẫn viên tận tâm và dịch vụ trọn gói. Hãy chọn ngay điểm đến yêu thích của bạn!
+      </p>
+      <Slider {...settings}>
+        {tours.map((tour) => (
+          <div key={tour.id} style={{ padding: '0 10px' }}>
+            <TourCard {...tour} className='Tourout' />
+          </div>
+        ))}
+      </Slider>
+    </div>
+  );
 }
 
 export default Touroutstanding;

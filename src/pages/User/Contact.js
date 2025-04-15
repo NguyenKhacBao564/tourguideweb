@@ -11,7 +11,7 @@ import {
   faDiscord,
 } from "@fortawesome/free-solid-svg-icons";
 import { faFacebookF as fabFacebookF, faInstagram as fabInstagram, faDiscord as fabDiscord } from "@fortawesome/free-brands-svg-icons";
-import Footer from "../../layouts/Footer/Footer";
+import Footer from "../../layouts/Footer";
 function Contact() {
   return (
     <div>
