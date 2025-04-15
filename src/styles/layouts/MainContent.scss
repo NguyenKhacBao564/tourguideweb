@@ -1,3 +1,5 @@
+
+@import "../variables";
 .maincontent {
   margin: 100px auto;
   margin-top: clamp(150px, 5vw, 200px);
@@ -205,8 +207,54 @@
 
 .TourOutStanding_container{
   background-color: #292D32;
+  position: relative ;
+  margin-top: 30px;
+  width: 100vw; // Chiếm full chiều rộng viewport
+  left: 50%; // Căn giữa
+  right: 50%;
+  margin-left: -50vw; // Kéo ra ngoài giới hạn container cha
+  margin-right: -50vw;
+  padding: 24px; // Dùng biến từ _variables.scss (24px)
   .Tourout{
     box-shadow: none !important;
+  }
+
+  .title {
+    font-size: clamp(24px, 5vw, 36px);
+    color: white;
+    font-family: 'Volkhov', serif;
+    width: max-content;
+    padding-bottom: 0.2rem;
+    margin-bottom: $spacing-sm;
+    border-bottom: 2px solid #ffffff;
+    text-shadow: 0 0 3px rgba(213, 211, 211, 0.8), 
+      0 0 10px rgba(213, 211, 211, 0.6), 
+      0 0 20px rgba(213, 211, 211, 0.192);
+    }
+
+  .description {
+    font-size: clamp(14px, 3vw, 16px);
+    color: #9DA8B2;
+    width: min(90%, 800px);
+  }
+
+  .slick-slider {
+    max-width: 100%; // Đảm bảo slider full container
+    margin: 0 auto;
+  }
+  
+  .slick-list {
+    overflow: visible; // Cho phép thẻ tràn ra ngoài nếu cần
+  }
+  
+  .slick-track {
+    display: flex;
+    align-items: stretch; // Đảm bảo các thẻ cao bằng nhau
+  }
+  
+  .slick-slide > div {
+    display: flex;
+    justify-content: center; // Căn giữa TourCard
   }
 }
 

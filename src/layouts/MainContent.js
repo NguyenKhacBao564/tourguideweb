@@ -6,6 +6,7 @@ import Touroutstanding from './Touroutstanding';
 import Slider from "react-slick";    // ..
 // import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TourProvider } from "../context/TourContext";
+import StatsOverview from './StatOverview';
 
 // const queryClient = new QueryClient();
     // AOS.init();
@@ -104,7 +105,7 @@ import { TourProvider } from "../context/TourContext";
                     <Touroutstanding/>
                 </TourProvider>
               
-                
+                <StatsOverview/>
             </div>
         );
     }
