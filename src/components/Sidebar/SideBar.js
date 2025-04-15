@@ -6,9 +6,9 @@ import { BiCalendarCheck } from "react-icons/bi";
 import { MdDiscount } from "react-icons/md";
 import { IoLogOutSharp } from "react-icons/io5";
 import { AuthContext } from "../../context/AuthContext";
-import "./SlideBar.scss";
+import "./SideBar.scss";
 
-function SidebarAdmin() {
+function Sidebar() {
     const navigate = useNavigate();
     const location = useLocation();
     const {logout} = useContext(AuthContext);
@@ -66,4 +66,4 @@ function SidebarAdmin() {
     );
 }
 
-export default SidebarAdmin;
+export default Sidebar;

@@ -1,8 +1,8 @@
 // src/context/AuthContext.js
 import React, { createContext, useState, useEffect } from "react";
-import axios from "axios";
 import {jwtDecode} from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { loginUser, registerUser } from "../api/authAPI";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -25,14 +25,9 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post("http://localhost:5000/auth/login", {
-        email,
-        password,
-      });
-
       console.log("Reach to Context...")
-      const data = response.data;
-      console.log("Data respone: ",data)
+      const data = await loginUser(email, password);
+      console.log("Data respone: ", data)
       localStorage.setItem("token", data.token);
       setUser(data.user)
       return data.user;
@@ -49,15 +44,9 @@ export const AuthProvider = ({ children }) => {
     navigate("/login")
   };
 
-  const regist =  async (fullname, email, password, phone) => {
+  const regist = async (fullname, email, password, phone) => {
     try {
-      const response = await axios.post("http://localhost:5000/auth/register", {
-        fullname,
-        email,
-        password,
-        phone,
-      });
-      const data = response.data;
+      const data = await registerUser(fullname, email, password, phone);
       localStorage.setItem("token", data.token);
       setUser(data.user)
       // return data.user;
@@ -67,7 +56,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, regist ,logout }}>
+    <AuthContext.Provider value={{ user, login, regist, logout }}>
       {children}
     </AuthContext.Provider>
   );

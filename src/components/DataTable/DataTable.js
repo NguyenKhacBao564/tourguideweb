@@ -1,32 +1,20 @@
 import React, { useState, useEffect, useContext} from 'react';
-import axios from "axios";
 import { Table, Container, Button } from "react-bootstrap";
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Form from 'react-bootstrap/Form';
-import './TourTable.scss';
+import './DataTable.scss';
 import { TourContext } from "../../context/TourContext";
 
 function TourTable(props) {
 const { filterStatus } = props;
 const { tours, isLoading, error, deleteTour } = useContext(TourContext);
-// const [filterActive, setFilterActive] = useState(filterType);
 const [selectedTour, setSelectedTour] = useState([]);
 const [selectedAll, setSelectedAll] = useState(false);
-// const [filterStatus, setFilterStatus] = useState("all");
-const [tourList, setTourList] = useState([]); 
-  // useEffect(() => {
-  //   setFilterActive(filterType);
-  // }, [filterType]);
 
-  // const filteredTours = filterType === "num" 
-  //   ? tours.filter(tour => tour.max_guests === 90)
-  //   : filterType === "num2"
-  //   ? tours.filter(tour => tour.max_guests === 100)
-    // : tours;
+ 
   const filteredTours = tours.filter((tour) => {
       const today = new Date();
       const startDate = new Date(tour.start_date);
-      const createdDate = new Date(tour.created_at);
   
       switch (filterStatus) {
         case "all":
