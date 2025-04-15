@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { Table, Container, Button } from "react-bootstrap";
 import { Row} from "react-bootstrap";
-import TourFilterAdmin from "../../../components/TourFilter_Admin/TourFilterAdmin";
-import TourTable from "../../../components/TourTable/TourTable";
+import TourFilterAdmin from "../../../../components/TourFilter_Admin/TourFilterAdmin";
+import TourTable from "../../../../components/TourTable/TourTable";
 
-import { TourProvider } from "../../../context/TourContext";
-import TourStatusFilter from "../../../components/TourStatusFilter_Admin/TourStatusFilter";
+import { TourProvider } from "../../../../context/TourContext";
+import TourStatusFilter from "../../../../components/TourStatusFilter_Admin/TourStatusFilter";
 
 const TourManagement = () => {
   
@@ -20,18 +20,19 @@ const TourManagement = () => {
     console.log("Lọc theo trạng thái:", filter);
   };
   return (
-    <Container fluid className="tour-management">
+    <Container fluid className="tour-management" >
       <Row className="tour-management__filter">
         <TourFilterAdmin />
       </Row>
       <Row>
         <TourStatusFilter onFilterChange={handleStatusFilterChange}/>
       </Row>
-      <Row>
+      <Row style={{height: "100%", border: "1px solid rgb(206, 42, 1)"}}>
         <TourProvider>
         <TourTable filterStatus={statusFilter}/>
         </TourProvider>
       </Row>
+      
     </Container>
   );
 };

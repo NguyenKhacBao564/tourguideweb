@@ -5,6 +5,11 @@
  .table-wrapper{
     // background-color:#131313 !important;
     // padding: 5px !important;
+    border: 1px solid #3d8bff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    
  }
 
  .tour-management__table{
