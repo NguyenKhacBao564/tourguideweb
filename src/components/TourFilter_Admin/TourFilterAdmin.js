@@ -8,9 +8,12 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import { GoPlus } from "react-icons/go";
+import { useNavigate, useLocation } from "react-router-dom";
+import TourStatusFilter from '../TourStatusFilter_Admin/TourStatusFilter';
 
 function TourFilterAdmin() {
 
+    const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
 
     const onSearch = (value) => {
@@ -38,14 +41,14 @@ function TourFilterAdmin() {
                         <Button variant="danger" className='flex-center gap-2' >Khóa tour đã chọn <RiDeleteBin2Fill /></Button>
                     </ButtonGroup>
                     <ButtonGroup className="me-2" aria-label="Second group" >
-                        <Button variant="success" className='flex-center gap-2'>Thêm tour <GoPlus /></Button>
+                        <Button variant="success" className='flex-center gap-2' onClick={() => navigate("addtour")}>Thêm tour <GoPlus /></Button>
                     </ButtonGroup>
                 </ButtonToolbar>
             </div>
 
-            <div className="tour-filter__area2">
-               <p> Vùng lọc  </p>
-            </div>
+            {/* <div className="tour-filter__area2">
+               <TourStatusFilter onFilterChange={(filter) => console.log("Lọc theo trạng thái:", filter)} />
+            </div> */}
         </div>
     );
 }

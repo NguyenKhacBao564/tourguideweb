@@ -1,5 +1,5 @@
 
-import { Routes, Route} from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 import Page from "./pages/User/Home";
 import Register from "./pages/User/Register";
@@ -9,25 +9,41 @@ import Contact from "./pages/User/Contact";
 import TourManagement from "./pages/Admin/Employee_Bussiness/TourManagement";
 import Employee_Bussiness from "./pages/Admin/Employee_Bussiness/Employee_Bussiness";
 import AddTourArea from "./components/AddTourArea/AddTourArea";
-
+import InforUser from "./pages/User/InforUser";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Unauthorized from "./components/Unauthorized";
+import NotFound from "./pages/NotFound";
 function App() {
+ 
   return (
     <div className="App">
-        <ScrollToTop /> 
-        <Routes>
-          <Route path="/" element={<Page /> } />
-          <Route path="/contact" element={<Contact/> } />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/addtour" element={<AddTourArea/>} />
-
-          <Route path="/admin" element={<Employee_Bussiness/>}>
-              <Route path="khachhang" element={<p>Khách hàng</p>} />
-              <Route path="lichdat" element={<TourManagement/>} />
-              <Route path="khuyenmai" element={<p>Khuyến mãi</p>} />
-          </Route>
-          
-        </Routes>
+      <ScrollToTop />
+      <AuthProvider>  
+      <Routes>
+        <Route path="/" element={<Page />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/thongtin" element={<InforUser />} />
+        <Route path="/customer" element={<p>customer</p>} />
+        <Route path="/sale" element={<p>sale</p>} />
+        <Route path="/support" element={<p>support</p>} />
+        <Route path="/admin" element={
+          <ProtectedRoute allowedRoles={["Admin"]}>
+             <Employee_Bussiness />
+          </ProtectedRoute>
+        }
+        >
+          <Route path="khachhang" element={<p>Khách hàng</p>} />
+          <Route path="managetour" element={<TourManagement />} />
+          <Route path="managetour/addtour" element={<AddTourArea />} />
+          <Route path="khuyenmai" element={<p>Khuyến mãi</p>} />
+        </Route>
+        <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="*" element={<NotFound/>} />
+      </Routes>
+      </AuthProvider>
     </div>
   );
 }
