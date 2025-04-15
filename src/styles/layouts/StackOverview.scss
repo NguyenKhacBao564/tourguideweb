@@ -55,9 +55,10 @@
         }
 
         p {
-        font-size: clamp(14px, 2vw, 16px);
+        font-size: clamp(14px, 2vw, 28px);
         color: #5B5A5B; // #778088
-        font-family: 'Poppins', serif;
+        font-family: 'Open Sans', serif;
+        font-weight: $font-weight-normal; // 400
         margin: $spacing-xs 0 0; // 8px
         }
   }
