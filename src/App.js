@@ -7,10 +7,10 @@ import Contact from "./pages/User/Contact";
 import TourManagement from "./pages/Admin/TourManagement";
 import EmployeeBussiness from "./pages/Admin/EmployeeBussiness";
 import Dashboard from "./pages/Admin/Dashboard";
-import MainLayout from "./components/admin/layout/MainLayout";
+import MainLayout from "./pages/Admin/layout/MainLayout";
 import StaffManagement from "./pages/Admin/StaffManagement";
 import BranchManagement from "./pages/Admin/BranchManagement";
-import EmployeeProfile from "./admin/EmployeeProfile";
+import EmployeeProfile from "./pages/Admin/EmployeeProfile";
 
 function App() {
   return (
