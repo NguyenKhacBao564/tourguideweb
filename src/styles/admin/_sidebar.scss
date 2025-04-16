@@ -1,0 +1,68 @@
+
+.sidebar {
+  width: 225px;
+  background-color: white;
+  border-right: 1px solid $border-color;
+  display: flex;
+  flex-direction: column;
+  color: $text-color;
+
+  .logo-container {
+    padding: $spacing-lg $spacing-md;
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    border-bottom: 1px solid $border-color;
+
+    .logo {
+      width: 40px;
+      height: 40px;
+    }
+
+    .logo-text {
+      font-weight: 600;
+      font-size: 18px;
+      color: $text-color;
+    }
+  }
+
+  .nav-list {
+    list-style-type: none;
+    padding: $spacing-md 0;
+
+    .nav-item {
+      padding: $spacing-md $spacing-lg;
+      display: flex;
+      align-items: center;
+      gap: $spacing-md;
+      color: $light-text;
+      text-decoration: none;
+      font-size: 14px;
+      
+      &:hover {
+        background-color: rgba(0, 82, 204, 0.05);
+        color: $primary-color;
+      }
+
+      &.active {
+        color: $primary-color;
+        font-weight: 500;
+        border-left: 3px solid $primary-color;
+        background-color: rgba(0, 82, 204, 0.05);
+      }
+
+      .nav-icon {
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+
+  .logout {
+    margin-top: auto;
+    color: $accent-color;
+  }
+}

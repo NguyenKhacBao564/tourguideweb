@@ -127,8 +127,43 @@ function AuthForm({mode}) {
                 </form>
             </div>
         </div>
-    </div>
-    );
-}
 
-export default AuthForm;
+        <div className={`formDiv ${isRegister ? "register" : "login"} flex`}>
+          <div className="header--AuthForm">
+            <img src="./logo.png" alt="Logo" />
+            <h2>{isRegister ? "Đăng ký" : "Đăng nhập"}</h2>
+          </div>
+          
+          <form onSubmit={handleSubmit} className="auth-form grid">
+            {showAlert && <span className="alert">Bạn đã đăng kí thành công</span>}
+            {authInputs[isRegister ? "register" : "login"].map(input => (
+              <FormInput key={input.id} {...input} value={values[input.name]} onChange={onChange} />
+            ))}
+            
+            {isRegister ? null : (
+              <div className="checkbox-container">
+                <label>
+                  <input type="checkbox" checked={isChecked} onChange={() => setIsChecked(!isChecked)} />
+                  Đồng ý với điều khoản
+                </label>
+                <a href="#" className="forgotPassword">Quên mật khẩu</a>
+              </div>
+            )}
+            
+            <button type="submit" className="btn--submit">{isRegister ? "Đăng ký" : "Đăng nhập"}</button>
+            
+            <span className="or">Hoặc</span>
+            <SocialLogin/>
+            <div className="switch--auth">
+              {isRegister 
+                ? <p>Đã có tài khoản? <Link to="/login"><span style={{color:"#4461F2"}}>Đăng nhập ngay</span></Link></p> 
+                : <p>Chưa có tài khoản? <Link to="/register"><span style={{color:"#4461F2"}}>Đăng kí ngay</span></Link></p>
+              }
+            </div>
+          </form>
+        </div>
+      </div>
+  );
+};
+
+export default AuthForm; 
