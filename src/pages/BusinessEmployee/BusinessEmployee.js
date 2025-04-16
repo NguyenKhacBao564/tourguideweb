@@ -1,10 +1,10 @@
 import React from 'react';
 import { Container, Table, Button, Row, Col } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
-import SlideBarAdmin from '../../../components/Slidebar_Admin/SlideBarAdmin';
-import NavBarAdmin from '../../../components/NavBar_Admin/NavBarAdmin';
+import SideBar from '../../components/Sidebar/SideBar';
+import NavBarAdmin from '../../components/NavBar_Admin/NavBarAdmin';
 import { BrowserRouter as Router, Routes, Route, Outlet} from "react-router-dom";
-import "../../../styles/pages/Employee_Bussiness.scss";
+import "../../styles/pages/Employee_Bussiness.scss";
 function Employee_Business(props) {
 
  
@@ -15,7 +15,7 @@ function Employee_Business(props) {
       <Row className='p-0 ' style={{ minHeight: '100vh' }}>
         {/* Sidebar */}
         <Col xs={2} className="p-0" style={{zIndex: 0}}>
-          <SlideBarAdmin />
+          <SideBar />
         </Col>
 
         {/* Nội dung chính */}

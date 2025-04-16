@@ -6,8 +6,8 @@ import Register from "./pages/User/Register";
 import Login from "./pages/User/Login";
 import ScrollToTop from "./feature/scrollToTop";
 import Contact from "./pages/User/Contact";
-import TourManagement from "./pages/Admin/Employee_Bussiness/TourManagement/TourManagement";
-import Employee_Bussiness from "./pages/Admin/Employee_Bussiness/Employee_Bussiness";
+import TourManagement from "./pages/BusinessEmployee/TourManagement";
+import BusinessEmployee from "./pages/BusinessEmployee/BusinessEmployee";
 import AddTourArea from "./components/AddTourArea/AddTourArea";
 import InforUser from "./pages/User/InforUser";
 import { AuthProvider } from "./context/AuthContext";
@@ -31,9 +31,9 @@ function App() {
         <Route path="/sale" element={<p>sale</p>} />
         <Route path="/support" element={<p>support</p>} />
         <Route path="/admin" element={
-          // <ProtectedRoute allowedRoles={["Admin"]}>
-             <Employee_Bussiness />
-          // </ProtectedRoute>
+          <ProtectedRoute allowedRoles={["Admin"]}>
+             <BusinessEmployee />
+          </ProtectedRoute>
         }
         >
           <Route path="khachhang" element={<p>Khách hàng</p>} />

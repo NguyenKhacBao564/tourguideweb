@@ -1,23 +1,22 @@
 import React, { useState, useEffect, useContext} from 'react';
-import axios from "axios";
 import { Table, Container, Button } from "react-bootstrap";
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Form from 'react-bootstrap/Form';
-import './TourTable.scss';
+import './DataTable.scss';
 import { TourContext } from "../../context/TourContext";
-import PaginationBar from '../Pagination/Pagination';
+import PaginationBar from '../Pagination/PaginationBar';
 
 function TourTable(props) {
 const { filterStatus } = props;
 const { tours, isLoading, error, deleteTour } = useContext(TourContext);
 const [selectedTour, setSelectedTour] = useState([]);
 const [selectedAll, setSelectedAll] = useState(false);
-const [tourList, setTourList] = useState([]); 
+
  
   const filteredTours = tours.filter((tour) => {
       const today = new Date();
       const startDate = new Date(tour.start_date);
-
+  
       switch (filterStatus) {
         case "all":
           return true; // Hiển thị tất cả tour
@@ -43,7 +42,6 @@ const [tourList, setTourList] = useState([]);
     
     const indexOfLastTour = currentPage * toursPerPage;
     const indexOfFirstTour = indexOfLastTour - toursPerPage;
-    //Lấy tour hiển thị trong trang hiện tại
     const currentTours = filteredTours.slice(indexOfFirstTour, indexOfLastTour);
     
     const totalPages = Math.ceil(filteredTours.length / toursPerPage);
@@ -56,7 +54,6 @@ const [tourList, setTourList] = useState([]);
       setSelectedAll(tours.length > 0 && selectedTour.length === tours.length);
     }, [tours, selectedTour]);
     
-  //Xử lý chọn tất cả tour  
   const handleSelectAll = () => {
     if (!selectedAll) {
       setSelectedTour(tours.map(tour => tour.tour_id));
@@ -67,14 +64,13 @@ const [tourList, setTourList] = useState([]);
     }
   };
 
-  //Xử lý chọn tour
   const handleChangeTour = (id) => {
     setSelectedTour(prev =>
       prev.includes(id) ? prev.filter(tourId => tourId !== id) : [...prev, id]
     );
   };
 
-  //Xử lý xóa tour
+
   const handleDelete = async (id) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa tour này không?")) {
       try {
