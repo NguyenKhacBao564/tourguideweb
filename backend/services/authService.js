@@ -1,6 +1,6 @@
 // services/authService.js
 const bcrypt = require("bcrypt");
-const { sql, poolPromise } = require("../config/db");
+const { sql, getPool } = require("../config/db");
 const { generateToken } = require("../utils/jwt");
 const { v4: uuidv4 } = require("uuid");
 const saltRounds = 10;
@@ -27,7 +27,7 @@ const verifyPassword = async (password, hashedPassword) => {
 // Hàm lấy vai trò từ role_id
 const getRoleById = async (roleId) => {
   console.log("Đang lấy vai trò từ role_id...");
-  const pool = await poolPromise;
+  const pool = await getPool();
   const roleQuery = await pool
     .request()
     .input("roleId", sql.Int, roleId)
@@ -58,7 +58,7 @@ const loginUser = async (req, res) => {
     }
     ///Tạo kết nối đến database
     console.log("Đang kết nối đến database...");
-    const pool = await poolPromise;
+    const pool = await getPool();
 
     // Hàm tìm kiếm người dùng trong bảng
     const checkUser = async (table, idField, roleField = null) => {
@@ -125,7 +125,7 @@ const registerUser = async (req, res) => {
     if (!fullname || !email || !password || !phone) {
       return res.status(400).json({ message: "Vui lòng điền đầy đủ thông tin" });
     }
-    const pool = await poolPromise;
+    const pool = await getPool();
     // Kiểm tra email đã tồn tại trong bảng customer
     const emailCheck = await pool
       .request()

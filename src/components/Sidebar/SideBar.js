@@ -27,8 +27,8 @@ function Sidebar() {
                 </div>
 
                 <Nav.Item 
-                    className={`nav-item ${location.pathname === "/admin/khachhang" ? "active" : ""}`} 
-                    onClick={() => navigate("/admin/khachhang")}
+                    className={`nav-item ${location.pathname === "/BusinessEmployee/khachhang" ? "active" : ""}`} 
+                    onClick={() => navigate("/BusinessEmployee/khachhang")}
                     data-title="Khách hàng"
                 >
                     <FaUserLarge />
@@ -36,8 +36,8 @@ function Sidebar() {
                 </Nav.Item>
 
                 <Nav.Item 
-                    className={`nav-item ${location.pathname.startsWith("/admin/managetour") ? "active" : ""}`} 
-                    onClick={() => navigate("/admin/managetour")}
+                    className={`nav-item ${location.pathname.startsWith("/BusinessEmployee/managetour") ? "active" : ""}`} 
+                    onClick={() => navigate("/BusinessEmployee/managetour")}
                     data-title="Lịch đặt"
                 >
                     <BiCalendarCheck />
@@ -45,8 +45,8 @@ function Sidebar() {
                 </Nav.Item>
 
                 <Nav.Item 
-                    className={`nav-iten ${location.pathname === "/admin/khuyenmai" ? "active" : ""}`} 
-                    onClick={() => navigate("/admin/khuyenmai")}
+                    className={`nav-iten ${location.pathname === "/BusinessEmployee/khuyenmai" ? "active" : ""}`} 
+                    onClick={() => navigate("/BusinessEmployee/khuyenmai")}
                     data-title="Khuyến mãi"
                 >
                     <MdDiscount />

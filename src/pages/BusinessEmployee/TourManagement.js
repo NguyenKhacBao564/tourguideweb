@@ -7,7 +7,7 @@ import DataTable from "../../components/DataTable/DataTable";
 import { TourProvider } from "../../context/TourContext";
 import TourStatusFilterEmployee from "../../components/TourStatusFilter_Employee/TourStatusFilterEmployee";
 
-const TourManagement = () => {
+const TourManagementEmp = () => {
   
   
   const [statusFilter, setStatusFilter] = useState("all");
@@ -35,4 +35,4 @@ const TourManagement = () => {
 };
 
 
-export default TourManagement;
+export default TourManagementEmp;

@@ -1,21 +1,20 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import styles from "./FormInput.scss"; // Import CSS Module
+import styles from "./FormInput.module.scss"; // Import CSS Module
 import validator from "../../feature/validator";
 import pattern from '../../utils/pattern';
-import './FormInput.scss';
 
-const FormInput = (props) => {
+function FormInput(props) {
     const { label, errorMessage, onChange, id, type, value, ...inputProps } = props;
     const [focused, setFocused] = useState(false);
     const [showPassword, setShowPassword] = useState(false); // Hiển thị/ẩn mật khẩu
     const [isValid, setIsValid] = useState(true);
 
+
     const handleFocus = (e) => {
         setFocused(true);
         checkValid(e);
     };
-
     const checkValid = (e) => {
         console.log(isValid)
         console.log(e.target.value)
@@ -32,7 +31,6 @@ const FormInput = (props) => {
             setIsValid(validator(e.target.value, inputProps.name));
         }
     }
-
     const hasErrorNotify = Object.keys(errorMessage).length > 1; // Kiểm tra có thông báo lỗi hay không
     const [errorType, setErrorType] = useState(Object.keys(errorMessage).length > 1 ? "Default" : "");
     
@@ -56,8 +54,8 @@ const FormInput = (props) => {
                         onChange(e);
                         checkTypeError(e);
                     }}
+                    // onFocus={(e) => inputProps.name === "confirmPassword" && setFocused(true)}
                     onBlur={(e) => handleFocus(e)}
-                    onFocus={() => inputProps.name === "confirmPassword" && setFocused(true)}
                     focused={focused.toString()}
                     isvalid = {isValid.toString()}
                 />
