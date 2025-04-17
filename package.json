@@ -11,24 +11,15 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^13.5.0",
-<<<<<<< HEAD
-    "axios": "^1.8.2",
-    "bcrypt": "^5.1.1",
-=======
     "axios": "^1.8.4",
->>>>>>> origin/bao
     "bootstrap": "^5.3.3",
     "concurrently": "^9.1.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "json-server": "^1.0.0-beta.3",
-<<<<<<< HEAD
-    "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
-=======
     "lucide-react": "^0.487.0",
->>>>>>> origin/bao
     "mssql": "^11.0.1",
     "myapp": "file:",
     "react": "^19.0.0",
@@ -41,8 +32,10 @@
     "react-slick": "^0.30.3",
     "recharts": "^2.15.2",
     "sass": "^1.86.3",
+    "sequelize": "^6.37.7",
     "slick-carousel": "^1.8.1",
     "swiper": "^11.2.6",
+    "tedious": "^18.6.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -69,5 +62,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.6.2"
   }
 }
