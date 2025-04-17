@@ -1,4 +1,4 @@
-.EB__content {
+.Manager__content {
     // border: 5px solid rgb(7, 183, 253);
     position: relative;
     display: flex;
@@ -6,7 +6,7 @@
     height: 100vh;
     overflow-y: auto;
     overflow-x: hidden;
-   .EB__header-content {  
+   .Manager__navbar{  
         display: flex;
         position: sticky;
         top: 0;
@@ -17,7 +17,7 @@
         // border: 1px solid rgb(98, 255, 7);
     }
 
-    .admin-content {
+    .Manager__main-content {
         padding: 20px 20px;
         height: 100%;
         background-color: #F5F7FA;

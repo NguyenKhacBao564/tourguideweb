@@ -11,7 +11,7 @@ function Page(props) {
         <div>
           <Header/>
           <Maincontent/>
-          <Link to="/admin/managetour">Admin</Link>
+          <Link to="/businessemployee/managetour">Admin</Link>
           <Footer/>
         </div>
     );

@@ -12,16 +12,19 @@
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.8.4",
+    "bcrypt": "^5.1.1",
     "bootstrap": "^5.3.3",
     "concurrently": "^9.1.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "json-server": "^1.0.0-beta.3",
+    "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.487.0",
     "mssql": "^11.0.1",
     "myapp": "file:",
+    "nodemon": "^3.1.9",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.9",
     "react-dom": "^19.0.0",
@@ -30,6 +33,7 @@
     "react-router-dom": "^7.2.0",
     "react-scripts": "^5.0.1",
     "react-slick": "^0.30.3",
+    "react-transition-group": "^4.4.5",
     "recharts": "^2.15.2",
     "sass": "^1.86.3",
     "sequelize": "^6.37.7",
@@ -43,7 +47,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "dev": "concurrently \" cd backend && npm start\" \" npm start\""
+    "dev": "concurrently \" cd backend && npm run dev\" \" npm start\""
   },
   "eslintConfig": {
     "extends": [

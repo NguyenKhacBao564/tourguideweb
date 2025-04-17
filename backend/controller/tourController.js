@@ -1,10 +1,10 @@
-const {sql, poolPromise} = require("../config/db");
+const {sql, getPool} = require("../config/db");
 
 
 //Lấy danh sách tất cả các tour
 const getTour =  async (req, res) => {
     try{
-        const pool = await poolPromise;
+        const pool =  await getPool();
         const result = await pool.request().query("SELECT * FROM Tour");
         res.json(result.recordset);
     }
@@ -31,7 +31,7 @@ const createTour =  async (req, res) => {
         branch_id
       } = req.body;
       const createdAt = new Date(); // Lấy thời gian hiện tại
-      const pool = await poolPromise;
+      const pool =  await getPool();
       await pool.request()
       .input("tour_id", sql.Int, tour_id)
         .input("branch_id", sql.Int, branch_id)
@@ -60,7 +60,7 @@ const createTour =  async (req, res) => {
 const getTourById = async (req, res) => {
     try {
       const tourId = parseInt(req.params.id, 10);
-      const pool = await poolPromise;
+      const pool = await getPool();
       const result = await pool.request()
         .input("tour_id", sql.Int, tourId)
         .query("SELECT * FROM Tour WHERE tour_id = @tour_id");
@@ -85,7 +85,7 @@ const deleteTour = async (req, res) => {
         return res.status(400).json({ error: "Invalid tour ID" });
       }
   
-      const pool = await poolPromise;
+      const pool = await getPool();
       const result = await pool.request()
         .input("tour_id", sql.Int, tourId)
         .query("DELETE FROM Tour WHERE tour_id = @tour_id");

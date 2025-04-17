@@ -5,7 +5,7 @@ import { AuthContext } from "../context/AuthContext";
 
 function ProtectedRoute({ children, allowedRoles }) {
   const { user } = useContext(AuthContext);
-
+  console.log("User in ProtectedRoute: ", user);
   if (!user) {
     // Nếu chưa đăng nhập, chuyển hướng về trang đăng nhập
     return <Navigate to="/login" />;

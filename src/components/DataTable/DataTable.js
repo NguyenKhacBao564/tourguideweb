@@ -1,32 +1,21 @@
 import React, { useState, useEffect, useContext} from 'react';
-import axios from "axios";
 import { Table, Container, Button } from "react-bootstrap";
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Form from 'react-bootstrap/Form';
-import './TourTable.scss';
+import './DataTable.scss';
 import { TourContext } from "../../context/TourContext";
+import PaginationBar from '../Pagination/PaginationBar';
 
 function TourTable(props) {
 const { filterStatus } = props;
 const { tours, isLoading, error, deleteTour } = useContext(TourContext);
-// const [filterActive, setFilterActive] = useState(filterType);
 const [selectedTour, setSelectedTour] = useState([]);
 const [selectedAll, setSelectedAll] = useState(false);
-// const [filterStatus, setFilterStatus] = useState("all");
-const [tourList, setTourList] = useState([]); 
-  // useEffect(() => {
-  //   setFilterActive(filterType);
-  // }, [filterType]);
 
-  // const filteredTours = filterType === "num" 
-  //   ? tours.filter(tour => tour.max_guests === 90)
-  //   : filterType === "num2"
-  //   ? tours.filter(tour => tour.max_guests === 100)
-    // : tours;
+ 
   const filteredTours = tours.filter((tour) => {
       const today = new Date();
       const startDate = new Date(tour.start_date);
-      const createdDate = new Date(tour.created_at);
   
       switch (filterStatus) {
         case "all":
@@ -167,29 +156,8 @@ const [tourList, setTourList] = useState([]);
           )}
         </tbody>
       </Table>
-      <div className="pagination d-flex justify-content-center mt-3">
-        <Button
-          disabled={currentPage === 1}
-          onClick={() => handlePageChange(currentPage - 1)}
-        >
-          Previous
-        </Button>
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-          <Button
-            key={page}
-            variant={currentPage === page ? "primary" : "outline-primary"}
-            onClick={() => handlePageChange(page)}
-            className="mx-1"
-          >
-            {page}
-          </Button>
-        ))}
-        <Button
-          disabled={currentPage === totalPages}
-          onClick={() => handlePageChange(currentPage + 1)}
-        >
-          Next
-        </Button>
+      <div className="d-flex justify-content-end mt-3">
+        <PaginationBar currentPage={currentPage} totalPages={totalPages} handlePageChange={handlePageChange}/>
       </div>
     </Container>
   );

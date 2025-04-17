@@ -1,11 +1,12 @@
 // src/context/AuthContext.js
 import React, { createContext, useState, useEffect } from "react";
-import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { loginUser, registerUser } from "../api/authAPI";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  console.log("AuthProvider render")
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {
@@ -25,19 +26,14 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post("http://localhost:5000/auth/login", {
-        email,
-        password,
-      });
-
       console.log("Reach to Context...")
-      const data = response.data;
+      const data = await loginUser(email, password);
       console.log("Data respone: ", data)
       localStorage.setItem("token", data.token);
       setUser(data.user)
       return data.user;
     } catch (error) {
-      console.error("Lỗi đăng nhập:", error);
+      // Chuyển tiếp lỗi
       throw error;
     }
   };
@@ -51,17 +47,12 @@ export const AuthProvider = ({ children }) => {
 
   const regist = async (fullname, email, password, phone) => {
     try {
-      const response = await axios.post("http://localhost:5000/auth/register", {
-        fullname,
-        email,
-        password,
-        phone,
-      });
-      const data = response.data;
+      const data = await registerUser(fullname, email, password, phone);
       localStorage.setItem("token", data.token);
       setUser(data.user)
-      // return data.user;
+      return data.user;
     } catch (error) {
+      // Chuyển tiếp lỗi
       throw error;
     }
   }

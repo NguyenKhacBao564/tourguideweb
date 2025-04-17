@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import DropDownButton from '../DropDown/DropDownButton';
-import "./TourFilterAdmin.scss";
-import { Form, InputGroup } from "react-bootstrap";
+import "./TourFilterEmployee.scss";
 import SearchFilter from '../SearchFilter/SearchFilter';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import { GoPlus } from "react-icons/go";
-import { useNavigate, useLocation } from "react-router-dom";
-import TourStatusFilter from '../TourStatusFilter_Admin/TourStatusFilter';
+import { useNavigate } from "react-router-dom";
 
-function TourFilterAdmin() {
+
+function TourFilterEmployee() {
 
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
@@ -46,11 +45,9 @@ function TourFilterAdmin() {
                 </ButtonToolbar>
             </div>
 
-            {/* <div className="tour-filter__area2">
-               <TourStatusFilter onFilterChange={(filter) => console.log("Lọc theo trạng thái:", filter)} />
-            </div> */}
+          
         </div>
     );
 }
 
-export default TourFilterAdmin;         
+export default TourFilterEmployee;         

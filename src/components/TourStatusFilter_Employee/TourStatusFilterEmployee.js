@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, ButtonGroup } from "react-bootstrap";
-// import "./TourStatusFilter.scss";
+
 
 function TourStatusFilter({ onFilterChange }) {
   const [activeFilter, setActiveFilter] = useState("all");
@@ -20,7 +20,7 @@ function TourStatusFilter({ onFilterChange }) {
   };
 
   return (
-    <ButtonGroup className="tour-status-filter mb-3">
+    <ButtonGroup className="tour-status-filter mb-3 mt-3">
       {filters.map((filter) => (
         <Button
           key={filter.key}

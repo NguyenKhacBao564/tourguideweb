@@ -1,8 +1,7 @@
-require("dotenv").config() // Thay vì chỉ require("dotenv").config();
-const sql = require("mssql");
+require('dotenv').config();
+const sql = require('mssql');
 
-// Cấu hình kết nối SQL Server
-const config = {
+const dbConfig = {
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   server: process.env.DB_SERVER,
@@ -14,18 +13,22 @@ const config = {
   },
 };
 
-// Tạo kết nối đến SQL Server
-const poolPromise = new sql.ConnectionPool(config)
-  .connect()
-  .then((pool) => {
-    console.log("✅ Đã kết nối SQL Server!");
-    return pool;
-  })
-  .catch((err) => {
-    console.error("❌ Lỗi kết nối SQL Server: ", err);
-  });
+let poolPromise;
+
+async function getPool() {
+  if (!poolPromise) {
+    try {
+      poolPromise = await sql.connect(dbConfig);
+      console.log('✅ Kết nối DB MSSQL thành công');
+    } catch (err) {
+      console.error('❌ Lỗi kết nối DB:', err);
+      throw err;
+    }
+  }
+  return poolPromise;
+}
 
 module.exports = {
   sql,
-  poolPromise,
+  getPool
 };
