@@ -12,16 +12,7 @@ import ScrollToTop from "./feature/scrollToTop";
 import Contact from "./pages/User/Contact";
 <<<<<<< HEAD
 import TourManagement from "./pages/Admin/Employee_Bussiness/TourManagement";
-import Employee_Bussiness from "./pages/Admin/Employee_Bussiness/Employee_Bussiness";
-import AddTourArea from "./components/AddTourArea/AddTourArea";
-import InforUser from "./pages/User/InforUser";
-import { AuthProvider } from "./context/AuthContext";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Unauthorized from "./components/Unauthorized";
-import NotFound from "./pages/NotFound";
-=======
-import TourManagement from "./pages/Admin/TourManagement";
-import EmployeeBussiness from "./pages/Admin/EmployeeBussiness";
+import EmployeeBussiness from "./pages/Admin/Employee_Bussiness/Employee_Bussiness";
 import Dashboard from "./pages/Admin/Dashboard";
 import MainLayout from "./pages/Admin/layout/MainLayout";
 import StaffManagement from "./pages/Admin/StaffManagement";
