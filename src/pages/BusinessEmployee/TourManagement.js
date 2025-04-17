@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Container } from "react-bootstrap";
-import { Row} from "react-bootstrap";
+import { Row } from "react-bootstrap";
 import TourFilterEmployee from "../../components/TourFilter_Employee/TourFilterEmployee";
 import DataTable from "../../components/DataTable/DataTable";
 
@@ -8,8 +8,8 @@ import { TourProvider } from "../../context/TourContext";
 import TourStatusFilterEmployee from "../../components/TourStatusFilter_Employee/TourStatusFilterEmployee";
 
 const TourManagementEmp = () => {
-  
-  
+
+
   const [statusFilter, setStatusFilter] = useState("all");
 
 
@@ -23,11 +23,11 @@ const TourManagementEmp = () => {
         <TourFilterEmployee />
       </Row>
       <Row>
-        <TourStatusFilterEmployee onFilterChange={handleStatusFilterChange}/>
+        <TourStatusFilterEmployee onFilterChange={handleStatusFilterChange} />
       </Row>
       <Row>
         <TourProvider>
-        <DataTable filterStatus={statusFilter}/>
+          <DataTable filterStatus={statusFilter} />
         </TourProvider>
       </Row>
     </Container>
