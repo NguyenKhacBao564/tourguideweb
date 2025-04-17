@@ -12,6 +12,7 @@ export const TourProvider = ({ children }) => {
 
   // Lấy danh sách tour khi component mount
   useEffect(() => {
+    console.log("tour context use effect run!")
     const fetchTours = async () => {
       setIsLoading(true);
       try {

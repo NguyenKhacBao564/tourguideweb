@@ -38,7 +38,7 @@ const [selectedAll, setSelectedAll] = useState(false);
     });
 
     const [currentPage, setCurrentPage] = useState(1);
-    const toursPerPage = 10;
+    const toursPerPage = 11;
     
     const indexOfLastTour = currentPage * toursPerPage;
     const indexOfFirstTour = indexOfLastTour - toursPerPage;
@@ -156,9 +156,11 @@ const [selectedAll, setSelectedAll] = useState(false);
           )}
         </tbody>
       </Table>
-      <div className="d-flex justify-content-end mt-3">
-        <PaginationBar currentPage={currentPage} totalPages={totalPages} handlePageChange={handlePageChange}/>
-      </div>
+      {totalPages > 1 && (
+        <div className="d-flex justify-content-end mt-3">
+          <PaginationBar currentPage={currentPage} totalPages={totalPages} handlePageChange={handlePageChange}/>
+        </div>
+      )}
     </Container>
   );
 }

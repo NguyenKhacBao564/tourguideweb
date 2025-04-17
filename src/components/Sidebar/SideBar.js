@@ -36,7 +36,7 @@ function Sidebar({navItems}) {
             {navItems.map((item, index) => (
                 <Nav.Item
                 key={index}
-                className={`sidebar__item ${item.link && location.pathname === item.link ? "active" : ""
+                className={`sidebar__item ${item.link && location.pathname.startsWith(item.link) ? "active" : ""
                 }`}
                 onClick={() => handleItemClick(item)}
                 data-title={item.label}

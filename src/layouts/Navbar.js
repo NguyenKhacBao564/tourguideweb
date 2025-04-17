@@ -56,7 +56,7 @@ function Navbar() {
                     {user && (
                         <>
                             <li><Link to="/thongtin"><UserAvatar name={user.name} image="avatar.jpg" size="50px"/></Link></li>
-                            <li><button className="btn btn--login" onClick={logout}>Đăng xuất</button></li>
+                            {/* <li><button className="btn btn--login" onClick={logout}>Đăng xuất</button></li> */}
                         </>
                     )}
                 </ul>

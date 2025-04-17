@@ -12,7 +12,7 @@ import EmployeeProfile from "./pages/Admin/EmployeeProfile";
 import TourManagement from "./pages/Admin/TourManagement";
 import BranchManagement from "./pages/Admin/BranchManagement";
 import BusinessEmployee from "./pages/BusinessEmployee/BusinessEmployee";
-import AddTourArea from "./components/AddTourArea/AddTourArea";
+import AddNewTour from "./pages/BusinessEmployee/AddNewTour/AddNewTour";
 import InforUser from "./pages/User/InforUser";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -42,7 +42,7 @@ function App() {
         >
           <Route path="customer" element={<p>Khách hàng</p>} />
           <Route path="managetour" element={<TourManagementEmp />} />
-          <Route path="managetour/addtour" element={<AddTourArea />} />
+          <Route path="managetour/addtour" element={<AddNewTour />} />
           <Route path="promotion" element={<p>Khuyến mãi</p>} />
         </Route>
         <Route path="/unauthorized" element={<Unauthorized />} />

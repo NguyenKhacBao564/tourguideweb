@@ -43,7 +43,7 @@ function AddTourArea(props) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:5000/tours/createtour", tourData);
+            const response = await axios.post("http://localhost:5000/tours", tourData);
             setAlert({
                 show: true,
                 type: 'success',

@@ -8,27 +8,32 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   console.log("AuthProvider render")
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  
   useEffect(() => {
     // Kiểm tra nếu có token trong localStorage khi tải trang
     const token = localStorage.getItem("token");
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        setUser(decoded);
         console.log("Decoded token:", decoded);
+        
+        // Đảm bảo đối tượng user có đủ thông tin cần thiết
+        setUser(decoded);
       } catch (error) {
         console.error("Token không hợp lệ:", error);
         localStorage.removeItem("token");
       }
     }
+    setLoading(false);
   }, []);
 
   const login = async (email, password) => {
     try {
       console.log("Reach to Context...")
       const data = await loginUser(email, password);
-      console.log("Data respone: ", data)
+      console.log("Data response: ", data)
       localStorage.setItem("token", data.token);
       setUser(data.user)
       return data.user;
@@ -55,6 +60,11 @@ export const AuthProvider = ({ children }) => {
        // Chuyển tiếp lỗi
       throw error;
     }
+  }
+
+  if (loading) {
+    // Có thể thêm một loader nếu cần
+    return <div>Loading...</div>;
   }
 
   return (

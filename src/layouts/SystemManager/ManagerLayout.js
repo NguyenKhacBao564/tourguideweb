@@ -12,7 +12,7 @@ import { Outlet } from 'react-router-dom';
 function ManagerLayout() {
 
 const { user } = useContext(AuthContext);
-console.log("user manaager: ", user);
+console.log("user manager: ", user);
   // Chọn layout dựa trên vai trò người dùng
   const layoutType = useMemo(() => {
     switch (user?.role) {
