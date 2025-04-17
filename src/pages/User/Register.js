@@ -15,6 +15,7 @@ function Register() {
     confirmPassword: '' 
   });
   const [error, setError] = useState(null);
+  const [errorCode, setErrorCode] = useState(null);
   const [success, setSuccess] = useState(null);
   
   const onChange = (e) => {
@@ -36,14 +37,16 @@ function Register() {
       setValues({ username: '', phone: '', email: '', password: '', confirmPassword: '' });
     } catch (error) {
       console.error("Đăng ký thất bại:", error);
-      setError("Đăng ký thất bại. Vui lòng kiểm tra lại thông tin!");
+      setErrorCode(error.code);
+      setError(error.message);
     }
   };
 
   return (
     <AuthBase 
       isRegister={true} 
-      error={error} 
+      error={error}
+      errorCode={errorCode}
       success={success} 
       handleSubmit={handleSubmit}
     >

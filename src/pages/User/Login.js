@@ -11,6 +11,7 @@ function Login() {
 
   const [values, setValues] = useState({ email: '', password: '' });
   const [error, setError] = useState(null);
+  const [errorCode, setErrorCode] = useState(null);
   const [success, setSuccess] = useState(null);
   const [isChecked, setIsChecked] = useState(false);
   
@@ -27,7 +28,11 @@ function Login() {
     }
     
     try {
+      setError(null);
+      setErrorCode(null);
+      
       const getUser = await login(values.email, values.password);
+      
       setSuccess("Đăng nhập thành công!");
       
       setTimeout(() => {
@@ -49,7 +54,10 @@ function Login() {
         }
       }, 1000);
     } catch(error) {
-      setError("Tên đăng nhập hoặc mật khẩu không đúng!");
+      setSuccess(null);
+      setErrorCode(error.code);
+      setError(error.message);
+      console.error("Login error:", error);
     }
   };
 
@@ -57,6 +65,7 @@ function Login() {
     <AuthBase 
       isRegister={false} 
       error={error} 
+      errorCode={errorCode}
       success={success} 
       handleSubmit={handleSubmit}
     >

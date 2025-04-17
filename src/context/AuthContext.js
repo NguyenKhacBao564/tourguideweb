@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
       setUser(data.user)
       return data.user;
     } catch (error) {
-      console.error("Lỗi đăng nhập:", error);
+      // Chuyển tiếp lỗi
       throw error;
     }
   };
@@ -50,8 +50,9 @@ export const AuthProvider = ({ children }) => {
       const data = await registerUser(fullname, email, password, phone);
       localStorage.setItem("token", data.token);
       setUser(data.user)
-      // return data.user;
+      return data.user;
     } catch (error) {
+       // Chuyển tiếp lỗi
       throw error;
     }
   }
