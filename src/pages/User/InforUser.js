@@ -56,7 +56,7 @@ function InforUser(props) {
                         </Col>
                         <Col md={4} className="avatar-section">
                             <div className="avatar-container">
-                                <UserAvatar  image="logo.png" size="180px"/>
+                                <UserAvatar  image="avatar.jpg" size="180px"/>
                                 <div className="avatar-update">
                                     <Button variant="light">Chọn ảnh</Button>
                                     <p>Drag photo here</p>

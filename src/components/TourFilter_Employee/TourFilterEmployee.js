@@ -45,9 +45,7 @@ function TourFilterEmployee() {
                 </ButtonToolbar>
             </div>
 
-            {/* <div className="tour-filter__area2">
-               <TourStatusFilter onFilterChange={(filter) => console.log("Lọc theo trạng thái:", filter)} />
-            </div> */}
+          
         </div>
     );
 }

@@ -139,7 +139,7 @@ const registerUser = async (req, res) => {
     const cusID = uuidv4().replace(/-/g, "").slice(0, 10); // Lấy 10 ký tự đầu của UUID
     // Băm mật khẩu
     const hashedPassword = await hashPassword(password);
-    // Thêm employee mới
+    //Thêm customer mới
     await pool
       .request()
       .input("cusID", sql.VarChar, cusID) // Sử dụng VarChar vì UUID là chuỗi
@@ -166,6 +166,36 @@ const registerUser = async (req, res) => {
     console.error("Lỗi đăng ký:", error.message);
     return res.status(500).json({ message: error.message || "Lỗi server" });
   }
+
+  //Thêm employee mới
+    // await pool
+    // .request()
+    // .input("empId", sql.Int, 19) // Sử dụng VarChar vì UUID là chuỗi
+    // .input("fullname", sql.NVarChar, fullname)
+    // .input("email", sql.NVarChar, email)
+    // .input("password", sql.VarBinary, hashedPassword)
+    // .input("phone", sql.NVarChar, phone)
+    // .input("roleid", sql.Int, 3)
+    // .input("branchid", sql.Int, 1)
+    // .query(
+    //   "INSERT INTO Employee (emp_id, fullname, email, password, phone, role_id, branch_id) VALUES (@empId, @fullname, @email, @password, @phone, @roleid, @branchid )"
+    // );
+    // // Tạo token cho người dùng
+    // const token = generateToken({ userId: cusID, role: "Sales" , name: fullname});
+    // return res.status(201).json({
+    //   token,
+    //   message: "Đăng ký thành công",
+    //   user: {
+    //     id: cusID,
+    //     name: fullname,
+    //     email: email,
+    //     role: "Sales",
+    //   },
+    // });
+    // } catch (error) {
+    // console.error("Lỗi đăng ký:", error.message);
+    // return res.status(500).json({ message: error.message || "Lỗi server" });
+    // }
 };
 
 module.exports = { loginUser, registerUser };

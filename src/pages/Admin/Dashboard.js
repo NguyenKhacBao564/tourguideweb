@@ -75,170 +75,171 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="space-y-6">
-      <h2 className="admin-title">Thống kê</h2>
+    // <div className="space-y-6">
+    //   <h2 className="admin-title">Thống kê</h2>
       
-      {/* Stats Cards */}
-      <div className="admin-grid">
-        <div className="stats-card revenue-card text-white">
-          <div className="stats-icon bg-teal-400 bg-opacity-30 text-white">
-            <DollarSign size={24} />
-          </div>
-          <div>
-            <div className="text-sm text-teal-100">Doanh thu</div>
-            <div className="text-2xl font-bold mt-1">12.000.000 VND</div>
-          </div>
-        </div>
+    //   {/* Stats Cards */}
+    //   <div className="admin-grid">
+    //     <div className="stats-card revenue-card text-white">
+    //       <div className="stats-icon bg-teal-400 bg-opacity-30 text-white">
+    //         <DollarSign size={24} />
+    //       </div>
+    //       <div>
+    //         <div className="text-sm text-teal-100">Doanh thu</div>
+    //         <div className="text-2xl font-bold mt-1">12.000.000 VND</div>
+    //       </div>
+    //     </div>
         
-        <div className="stats-card">
-          <div className="stats-icon bg-blue-100 text-blue-500">
-            <Users size={24} />
-          </div>
-          <div>
-            <div className="text-sm text-gray-500">Tổng số khách hàng</div>
-            <div className="text-2xl font-bold mt-1">1000</div>
-          </div>
-        </div>
+    //     <div className="stats-card">
+    //       <div className="stats-icon bg-blue-100 text-blue-500">
+    //         <Users size={24} />
+    //       </div>
+    //       <div>
+    //         <div className="text-sm text-gray-500">Tổng số khách hàng</div>
+    //         <div className="text-2xl font-bold mt-1">1000</div>
+    //       </div>
+    //     </div>
         
-        <div className="stats-card">
-          <div className="stats-icon bg-yellow-100 text-yellow-500">
-            <Map size={24} />
-          </div>
-          <div>
-            <div className="text-sm text-gray-500">Tổng số Tour</div>
-            <div className="text-2xl font-bold mt-1">500</div>
-          </div>
-        </div>
-      </div>
+    //     <div className="stats-card">
+    //       <div className="stats-icon bg-yellow-100 text-yellow-500">
+    //         <Map size={24} />
+    //       </div>
+    //       <div>
+    //         <div className="text-sm text-gray-500">Tổng số Tour</div>
+    //         <div className="text-2xl font-bold mt-1">500</div>
+    //       </div>
+    //     </div>
+    //   </div>
 
-      {/* Branch Statistics and Chart */}
-      <div className="stats-chart-container mt-8 stats-to-table-gap">
-        {/* Branch Statistics */}
-        <div className="table-container" style={{ flex: 1 }}>
-          <div className="table-header">
-            <h3 className="table-title">Thống kê theo chi nhánh</h3>
-            <button className="text-blue-600 text-sm flex items-center gap-1 view-all-btn btn-view-all">
-              Xem tất cả 
-            </button>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Chi nhánh</th>
-                  <th>Doanh thu</th>
-                  <th>Tăng trưởng</th>
-                  <th>Tỷ lệ huỷ</th>
-                  <th>Sl tour</th>
-                </tr>
-              </thead>
-              <tbody>
-                {branchStats.map((branch, index) => (
-                  <tr key={index}>
-                    <td className="font-medium">{branch.branch}</td>
-                    <td>{branch.revenue}</td>
-                    <td>
-                      <span className="text-green-500 flex items-center gap-1">
-                        {branch.growth}% <ArrowUpRight size={14} />
-                      </span>
-                    </td>
-                    <td>
-                      <span className="text-red-500 flex items-center gap-1">
-                        {branch.decline}% <ArrowDownRight size={14} />
-                      </span>
-                    </td>
-                    <td>{branch.tours}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+    //   {/* Branch Statistics and Chart */}
+    //   <div className="stats-chart-container mt-8 stats-to-table-gap">
+    //     {/* Branch Statistics */}
+    //     <div className="table-container" style={{ flex: 1 }}>
+    //       <div className="table-header">
+    //         <h3 className="table-title">Thống kê theo chi nhánh</h3>
+    //         <button className="text-blue-600 text-sm flex items-center gap-1 view-all-btn btn-view-all">
+    //           Xem tất cả 
+    //         </button>
+    //       </div>
+    //       <div className="overflow-x-auto">
+    //         <table className="table">
+    //           <thead>
+    //             <tr>
+    //               <th>Chi nhánh</th>
+    //               <th>Doanh thu</th>
+    //               <th>Tăng trưởng</th>
+    //               <th>Tỷ lệ huỷ</th>
+    //               <th>Sl tour</th>
+    //             </tr>
+    //           </thead>
+    //           <tbody>
+    //             {branchStats.map((branch, index) => (
+    //               <tr key={index}>
+    //                 <td className="font-medium">{branch.branch}</td>
+    //                 <td>{branch.revenue}</td>
+    //                 <td>
+    //                   <span className="text-green-500 flex items-center gap-1">
+    //                     {branch.growth}% <ArrowUpRight size={14} />
+    //                   </span>
+    //                 </td>
+    //                 <td>
+    //                   <span className="text-red-500 flex items-center gap-1">
+    //                     {branch.decline}% <ArrowDownRight size={14} />
+    //                   </span>
+    //                 </td>
+    //                 <td>{branch.tours}</td>
+    //               </tr>
+    //             ))}
+    //           </tbody>
+    //         </table>
+    //       </div>
+    //     </div>
 
-        {/* Tour Statistics Chart */}
-        <div className="table-container-chart  p-4" style={{ flex: 1/10 }}>
-          <h3 className="legend-text-chart font-semibold mb-1">Tỷ lệ tour đã hoàn thành/chưa khởi hành</h3>
-          <div className="donut-chart flex justify-center">
-            <PieChart width={200} height={200}>
-              <Pie
-                data={tourData}
-                cx={100}
-                cy={100}
-                innerRadius={60}
-                outerRadius={80}
-                paddingAngle={5}
-                dataKey="value"
-              >
-                {tourData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-            </PieChart>
-            <div className="donut-text">
-              <div className="donut-number">899</div>
-              <div className="donut-label">Tour</div>
-            </div>
-          </div>
-          <div className="flex justify-center gap-4 mt-4">
-            <div className="chart-legend">
-              <div className="legend-color" style={{ backgroundColor: '#4fe3c1' }}></div>
-              <div className="legend-text">Đã khởi hành</div>
-            </div>
-            <div className="chart-legend">
-              <div className="legend-color" style={{ backgroundColor: '#ff7a7a' }}></div>
-              <div className="legend-text">Chưa khởi hành</div>
-            </div>
-          </div>
-        </div>
-      </div>
+    //     {/* Tour Statistics Chart */}
+    //     <div className="table-container-chart  p-4" style={{ flex: 1/10 }}>
+    //       <h3 className="legend-text-chart font-semibold mb-1">Tỷ lệ tour đã hoàn thành/chưa khởi hành</h3>
+    //       <div className="donut-chart flex justify-center">
+    //         <PieChart width={200} height={200}>
+    //           <Pie
+    //             data={tourData}
+    //             cx={100}
+    //             cy={100}
+    //             innerRadius={60}
+    //             outerRadius={80}
+    //             paddingAngle={5}
+    //             dataKey="value"
+    //           >
+    //             {tourData.map((entry, index) => (
+    //               <Cell key={`cell-${index}`} fill={entry.color} />
+    //             ))}
+    //           </Pie>
+    //         </PieChart>
+    //         <div className="donut-text">
+    //           <div className="donut-number">899</div>
+    //           <div className="donut-label">Tour</div>
+    //         </div>
+    //       </div>
+    //       <div className="flex justify-center gap-4 mt-4">
+    //         <div className="chart-legend">
+    //           <div className="legend-color" style={{ backgroundColor: '#4fe3c1' }}></div>
+    //           <div className="legend-text">Đã khởi hành</div>
+    //         </div>
+    //         <div className="chart-legend">
+    //           <div className="legend-color" style={{ backgroundColor: '#ff7a7a' }}></div>
+    //           <div className="legend-text">Chưa khởi hành</div>
+    //         </div>
+    //       </div>
+    //     </div>
+    //   </div>
 
-      {/* Recent Transactions */}
-      <div className="table-container-recent mt-8 stats-to-table-gap">
-        <div className="table-header">
-          <h3 className="table-title">Giao dịch gần đây</h3>
-          <button className="text-blue-600 text-sm flex items-center gap-1 view-all-btn btn-view-all">
-            Xem tất cả 
-          </button>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Khách hàng</th>
-                <th>Số điện thoại</th>
-                <th>Mã tour đã đặt</th>
-                <th>Thời gian</th>
-                <th>Số tiền</th>
-                <th>Trạng thái</th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentTransactions.map((transaction) => (
-                <tr key={transaction.id}>
-                  <td className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
-                      <img
-                        src="/lovable-uploads/24449661-392d-48a0-833e-05a036efec05.png"
-                        alt={transaction.customer}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <span className="font-medium">{transaction.customer}</span>
-                  </td>
-                  <td>{transaction.phone}</td>
-                  <td><span className="text-orange-500">{transaction.tourCode}</span></td>
-                  <td>{transaction.time}</td>
-                  <td className="font-medium">{transaction.amount}</td>
-                  <td>
-                    <span className="btn btn-success py-1 px-2">{transaction.status}</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+    //   {/* Recent Transactions */}
+    //   <div className="table-container-recent mt-8 stats-to-table-gap">
+    //     <div className="table-header">
+    //       <h3 className="table-title">Giao dịch gần đây</h3>
+    //       <button className="text-blue-600 text-sm flex items-center gap-1 view-all-btn btn-view-all">
+    //         Xem tất cả 
+    //       </button>
+    //     </div>
+    //     <div className="overflow-x-auto">
+    //       <table className="table">
+    //         <thead>
+    //           <tr>
+    //             <th>Khách hàng</th>
+    //             <th>Số điện thoại</th>
+    //             <th>Mã tour đã đặt</th>
+    //             <th>Thời gian</th>
+    //             <th>Số tiền</th>
+    //             <th>Trạng thái</th>
+    //           </tr>
+    //         </thead>
+    //         <tbody>
+    //           {recentTransactions.map((transaction) => (
+    //             <tr key={transaction.id}>
+    //               <td className="flex items-center gap-3">
+    //                 <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
+    //                   <img
+    //                     src="/lovable-uploads/24449661-392d-48a0-833e-05a036efec05.png"
+    //                     alt={transaction.customer}
+    //                     className="w-full h-full object-cover"
+    //                   />
+    //                 </div>
+    //                 <span className="font-medium">{transaction.customer}</span>
+    //               </td>
+    //               <td>{transaction.phone}</td>
+    //               <td><span className="text-orange-500">{transaction.tourCode}</span></td>
+    //               <td>{transaction.time}</td>
+    //               <td className="font-medium">{transaction.amount}</td>
+    //               <td>
+    //                 <span className="btn btn-success py-1 px-2">{transaction.status}</span>
+    //               </td>
+    //             </tr>
+    //           ))}
+    //         </tbody>
+    //       </table>
+    //     </div>
+    //   </div>
+    // </div>
+    <p>test</p>
   );
 };
 

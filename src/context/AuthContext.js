@@ -6,6 +6,7 @@ import { loginUser, registerUser } from "../api/authAPI";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  console.log("AuthProvider render")
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {

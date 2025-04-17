@@ -34,23 +34,27 @@ function App() {
         <Route path="/customer" element={<p>customer</p>} />
         <Route path="/sale" element={<p>sale</p>} />
         <Route path="/support" element={<p>support</p>} />
-        <Route path="/BusinessEmployee" element={
-          <ProtectedRoute allowedRoles={["Admin"]}>
-             <BusinessEmployee />
-          </ProtectedRoute>
+        <Route path="/businessemployee" element={
+            <ProtectedRoute allowedRoles={["Sales"]}>
+              <BusinessEmployee />
+            </ProtectedRoute>
         }
         >
-          <Route path="khachhang" element={<p>Khách hàng</p>} />
+          <Route path="customer" element={<p>Khách hàng</p>} />
           <Route path="managetour" element={<TourManagementEmp />} />
           <Route path="managetour/addtour" element={<AddTourArea />} />
-          <Route path="khuyenmai" element={<p>Khuyến mãi</p>} />
+          <Route path="promotion" element={<p>Khuyến mãi</p>} />
         </Route>
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="*" element={<NotFound/>} />
 
          {/* Admin Routes */}
-         <Route path="/admin" element={<MainLayout />}>
-              <Route index element={<Dashboard />} />
+         <Route path="/admin" element={
+              <ProtectedRoute allowedRoles={["Admin"]}>
+                <MainLayout />
+              </ProtectedRoute>
+          }>
+              {/* <Route index element={<Dashboard />} /> */}
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="nhan-vien" element={<StaffManagement />} />
               <Route path="nhan-vien/:id" element={<EmployeeProfile />} />

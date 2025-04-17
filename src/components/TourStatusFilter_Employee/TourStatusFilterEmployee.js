@@ -20,7 +20,7 @@ function TourStatusFilter({ onFilterChange }) {
   };
 
   return (
-    <ButtonGroup className="tour-status-filter mb-3">
+    <ButtonGroup className="tour-status-filter mb-3 mt-3">
       {filters.map((filter) => (
         <Button
           key={filter.key}
