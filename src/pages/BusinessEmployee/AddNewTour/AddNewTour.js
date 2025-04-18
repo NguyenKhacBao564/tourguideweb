@@ -4,9 +4,14 @@ import Form from 'react-bootstrap/Form';
 import InputFiledIcon from '../../../components/InputFieldIcon/InputFieldIcon';
 import InputFieldIcon2 from '../../../components/InputFieldIcon/InputFieldIcon2';
 import PriceSection from '../../../components/PriceSelector/PriceSection';
+import AddShedule from './components/AddShedule';
+import Schedule from './components/Schedule';
 import { FaClock } from "react-icons/fa6";
+import { CiCirclePlus } from "react-icons/ci";
+import { GiHamburgerMenu } from "react-icons/gi";
 import { FaLocationDot } from "react-icons/fa6";
-import { ImCancelCircle } from "react-icons/im";
+import { RiDeleteBin2Fill } from "react-icons/ri";
+import { AiFillEdit } from "react-icons/ai";
 import { MdCancel } from "react-icons/md";
 import DatePicker from '../../../components/DatePicker/DatePicker';
 import CouterInput from '../../../components/CounterInput/CouterInput';
@@ -15,7 +20,7 @@ import { FaCar } from "react-icons/fa";
 import "./AddNewTour.scss"
 
 function AddTourPage(props) {
-
+  const [activeField, setActiveField] = useState(false);
   // const [value, setValue] = useState({
   //   tourName: '',
   //   departureLocation: 'TP HCM',
@@ -37,12 +42,48 @@ function AddTourPage(props) {
   const [adultPrice, setAdultPrice] = useState('1.000.000');
   const [childPrice, setChildPrice] = useState('1.000.000');
   const [infantPrice, setInfantPrice] = useState('1.000.000');
+  
   const [formData, setFormData] = useState({
     // other form fields...
     adultPrice: '1.000.000',
     childPrice: '500.000',
     infantPrice: '200.000'
   });
+
+
+  const handleActiveField = () => {
+    console.log('activeField', activeField);
+    setActiveField(!activeField);
+  }
+
+  const closeOverlay = () => {
+    setActiveField(false);
+  }
+
+  const [scheduleList, setScheduleList] = useState([
+    {
+      id: 1,
+      day_number: 1,
+      tour_route: 'Đà Lạt - Lâm Đồng',
+      description: "nothing"
+    },
+    {
+      id: 2,
+      day_number: 2,
+      tour_route: 'Đà Lạt - Quảng Nam',
+      description: "nothing"
+    }
+  ]);
+
+  const addSchedule = (schedule) => {
+    setScheduleList([...scheduleList, {
+      id: scheduleList.length + 1,
+      day_number: scheduleList.length + 1,
+      tour_route: schedule.tour_route,
+      description: schedule.description
+    }])
+  }
+
   const [description, setDescription] = useState(
     'Đà Lạt – thành phố ngàn hoa, điểm đến lý tưởng cho những ai yêu thích không khí se lạnh, cảnh quan thơ mộng và những trải nghiệm đầy thú vị. Đến với Đà Lạt bạn sẽ được đắm chìm trong vẻ đẹp lãng mạn của hồ Xuân Hương, khám phá những đồi chè xanh bát ngát, thác nước hùng vĩ và những cảnh đồng hoa rực rỡ sắc màu. Không chỉ vậy, Đà Lạt còn hấp dẫn du khách với nền ẩm thực độc đáo, từ bánh tráng nướng giòn rụm đến ly sữa đậu nành nóng hổi giữa trời đêm se lạnh. Hãy cùng chúng tôi tận hưởng hành trình khám phá Đà Lạt đầy ấn tượng và đáng nhớ!'
   );
@@ -50,20 +91,12 @@ function AddTourPage(props) {
   const [displayImages, setDisplayImages] = useState([]);
   const imageCount = displayImages.length;
 
-  const [filename, setFilename] = useState('Dalat.jpg');
-
   const optionList = [
     {value: 'TP HCM'},
     {value: 'Hà Nội'},
     {value: 'Đà Nẵng'},
   ];
-  // const handleSeatDecrease = () => {
-  //   if (seats > 1) setSeats(seats - 1);
-  // };
-
-  // const handleSeatIncrease = () => {
-  //   setSeats(seats + 1);
-  // };
+ 
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -255,7 +288,32 @@ function AddTourPage(props) {
           </div>
         </div>
       </div>
+      <Container className="schedule-section">
+        <Row >
+          <Col md={9}>
+            <h3>Lịch trình</h3>
+          </Col>
+          <Col md={3} className="d-flex justify-content-end">
+            <Button variant="dark" className="d-flex align-items-center gap-2" onClick={handleActiveField}><CiCirclePlus size={24}/> Thêm lịch trình</Button>
+          </Col>
+        </Row>
+        {
+          scheduleList.map((schedule) => (
+            <Schedule key={schedule.id} schedule={schedule}/>
+          ))
+        }
+      </Container>
+      <Button variant="success" className="mt-3 p-20-50" style={{display: "block",marginLeft: 'auto'}}>Thêm Tour</Button> 
+      
+      {activeField && (
+        <AddShedule setActiveField={setActiveField} addSchedule={addSchedule} scheduleLength={scheduleList.length}/>
+      )}
     </Container>
+    {activeField && (
+            <div 
+                className="overlay"
+            />
+        )}
     </>
   );
 }
