@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa6";
 import Navbar from "../../layouts/Navbar";
 import styles from "../../styles/pages/ContactUs.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,59 +15,64 @@ import Footer from "../../layouts/Footer";
 import { createSupportRequest } from "../../api/supportAPI";
 import { AuthContext } from "../../context/AuthContext";
 
-// Hàm tách fullname thành firstName và lastName
-const splitFullName = (fullName) => {
-  if (!fullName) return { firstName: "", lastName: "" };
-  const parts = fullName.trim().split(" ");
-  const lastName = parts.pop();
-  const firstName = parts.join(" ");
-  return { firstName: firstName || lastName, lastName: lastName || "" };
-};
 function Contact() {
-  const { user } = useContext(AuthContext); // Lấy user từ AuthContext
+  const { user, isAuthenticated, isLoading } = useContext(AuthContext);
   const navigate = useNavigate();
-
-  // Kiểm tra đăng nhập, nếu không có user thì chuyển hướng đến login
-  useEffect(() => {
-    if (!user) {
-      navigate("/login", { state: { from: "/contact" } });
-    }
-  }, [user, navigate]);
+  const location = useLocation();
 
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    email: user?.email || "",
-    phone: user?.phone || "",
+    email: "",
+    phone: "",
     subject: "",
     message: "",
   });
+
   const [errors, setErrors] = useState({
     subject: "",
     message: "",
   });
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
-  // Cập nhật formData khi user thay đổi
+  // Kiểm tra đăng nhập và chuyển hướng nếu chưa đăng nhập
   useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      navigate("/login", { state: { from: location.pathname } });
+    }
+  }, [isAuthenticated, isLoading, navigate, location]);
+
+  // Cập nhật form data khi có thông tin user
+  useEffect(() => {
+    console.log("Current user data:", user); // Debug log
     if (user) {
-      const { firstName, lastName } = splitFullName(user.name);
-      setFormData((prev) => ({
+      const nameParts = user.name ? user.name.trim().split(" ") : ["", ""];
+      const lastName = nameParts.pop() || "";
+      const firstName = nameParts.join(" ") || lastName;
+
+      setFormData(prev => ({
         ...prev,
         firstName,
         lastName,
         email: user.email || "",
-        phone: user.phone || "",
+        phone: user.phone || ""
       }));
+      console.log("Updated form data:", {
+        firstName,
+        lastName,
+        email: user.email,
+        phone: user.phone
+      }); // Debug log
     }
   }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: "" }));
+    setFormData(prev => ({ ...prev, [name]: value }));
+    setErrors(prev => ({ ...prev, [name]: "" }));
   };
 
   const validateForm = () => {
@@ -103,15 +110,11 @@ function Contact() {
     try {
       const response = await createSupportRequest(formData);
       setSuccess(response.message);
-      setFormData((prev) => ({
+      setFormData(prev => ({
         ...prev,
         subject: "",
         message: "",
       }));
-      setErrors({
-        subject: "",
-        message: "",
-      });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -119,13 +122,17 @@ function Contact() {
     }
   };
 
-  // Nếu không có user, không render form
-  if (!user) {
+  if (isLoading) {
+    return <div>Đang tải...</div>;
+  }
+
+  if (!isAuthenticated) {
     return null;
   }
 
   return (
     <div>
+      <Navbar />
       <div className={styles.header}>
         <h2>Liên Hệ Với Chúng Tôi</h2>
         <p>Có câu hỏi hoặc ý kiến? Hãy gửi tin nhắn cho chúng tôi!</p>
@@ -152,13 +159,13 @@ function Contact() {
           </div>
 
           <div className={styles.socialIcons}>
-            <a href="http://facebook.com/phan.tuan.anh.917546" target="_blank" rel="noreferrer" className={styles.iconCircle}>
+            <a href="http://facebook.com" target="_blank" rel="noreferrer" className={styles.iconCircle}>
               <FontAwesomeIcon icon={fabFacebookF} />
             </a>
-            <a href="https://www.instagram.com/bean.284/" target="_blank" rel="noreferrer" className={styles.iconCircle}>
+            <a href="https://instagram.com" target="_blank" rel="noreferrer" className={styles.iconCircle}>
               <FontAwesomeIcon icon={fabInstagram} />
             </a>
-            <a href="https://discord.com/users/yourprofile" target="_blank" rel="noreferrer" className={styles.iconCircle}>
+            <a href="https://discord.com" target="_blank" rel="noreferrer" className={styles.iconCircle}>
               <FontAwesomeIcon icon={fabDiscord} />
             </a>
           </div>
@@ -175,7 +182,6 @@ function Contact() {
                   value={formData.firstName}
                   disabled
                 />
-                {errors.firstName && <p className={styles.error}>{errors.firstName}</p>}
               </div>
               <div>
                 <label>Tên</label>
@@ -185,7 +191,6 @@ function Contact() {
                   value={formData.lastName}
                   disabled
                 />
-                {errors.lastName && <p className={styles.error}>{errors.lastName}</p>}
               </div>
             </div>
             <div className={styles.inputGroup}>
@@ -197,7 +202,6 @@ function Contact() {
                   value={formData.email}
                   disabled
                 />
-                {errors.email && <p className={styles.error}>{errors.email}</p>}
               </div>
               <div>
                 <label>Số Điện Thoại</label>
@@ -207,7 +211,6 @@ function Contact() {
                   value={formData.phone}
                   disabled
                 />
-                {errors.phone && <p className={styles.error}>{errors.phone}</p>}
               </div>
             </div>
             <label>Chọn Chủ Đề:</label>
@@ -250,10 +253,7 @@ function Contact() {
           {error && <p className={styles.error}>{error}</p>}
         </div>
       </div>
-      <div>
-        <Navbar />
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 }
