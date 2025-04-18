@@ -109,14 +109,14 @@ function Contact() {
 
     try {
       const response = await createSupportRequest(formData);
-      setSuccess(response.message);
+      setSuccess("Yêu cầu hỗ trợ đã được gửi đi thành công!");
       setFormData(prev => ({
         ...prev,
         subject: "",
         message: "",
       }));
     } catch (err) {
-      setError(err.message);
+      setError("Có lỗi xảy ra khi gửi yêu cầu. Vui lòng thử lại sau.");
     } finally {
       setLoading(false);
     }
@@ -228,13 +228,12 @@ function Contact() {
                     value={subject.toLowerCase()}
                     checked={formData.subject === subject.toLowerCase()}
                     onChange={handleChange}
-                    required
                   />
                   <span>{subject}</span>
                 </label>
               ))}
             </div>
-            {errors.subject && <p className={styles.error}>{errors.subject}</p>}
+            {errors.subject && <p className={styles.validationError}>{errors.subject}</p>}
             <label>Tin Nhắn</label>
             <input
               type="text"
@@ -242,15 +241,16 @@ function Contact() {
               value={formData.message}
               onChange={handleChange}
               placeholder="Write your message..."
-              required
             />
-            {errors.message && <p className={styles.error}>{errors.message}</p>}
+            {errors.message && <p className={styles.validationError}>{errors.message}</p>}
+            
+            {error && <div className={styles.error}>{error}</div>}
+            {success && <div className={styles.success}>{success}</div>}
+            
             <button type="submit" disabled={loading}>
               {loading ? "Đang Gửi..." : "Gửi Tin Nhắn"}
             </button>
           </form>
-          {success && <p className={styles.success}>{success}</p>}
-          {error && <p className={styles.error}>{error}</p>}
         </div>
       </div>
       <Footer />
