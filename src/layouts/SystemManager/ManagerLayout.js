@@ -3,7 +3,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { useContext, useMemo } from 'react';
 import SideBar from '../../components/Sidebar/SideBar';
 import NavBarAdmin from '../../components/NavBar_Admin/NavBarAdmin';
-import "../../styles/pages/Employee_Bussiness.scss";
+import "../../styles/layouts/Manager_layout.scss";
 import { BusinessEmployeeSideBar, AdminSideBar , ConsultantEmployeeSideBar } from '../../utils/SideBarItem';
 import { AuthContext } from '../../context/AuthContext';
 import { Outlet } from 'react-router-dom';

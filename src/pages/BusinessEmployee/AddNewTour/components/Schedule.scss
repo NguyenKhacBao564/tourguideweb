@@ -1,31 +1,30 @@
 .schedule {
       
-      display: flex;
-      align-items: center;
-    
-      &-icon{
-        color: #495560;
-        flex-basis:5%;
-      }
-      &-content{
-        border: 1px solid #d1d1d1;
-        display: flex;
-        padding: 0;
-        align-items: center;
-        .day{
-          color: #DB4444;
-          flex-basis: 10%;
-          text-align: center;
-        }
-        &-name{
-          flex-grow: 1;
-          font-size: 1.2rem;
-        }
+  display: flex;
+  align-items: center;
+
+  &-icon{
+    color: #495560;
+    flex-basis:5%;
+  }
+  &-content{
+    border: 1px solid #d1d1d1;
+    display: flex;
+    padding: 0;
+    align-items: center;
+    .day{
+      color: #DB4444;
+      flex-basis: 10%;
+      text-align: center;
     }
-    .day {
-  
+    &-name{
+      flex-grow: 1;
       font-size: 1.2rem;
-      font-weight: 600;
     }
 }
-  
+.day {
+
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+}

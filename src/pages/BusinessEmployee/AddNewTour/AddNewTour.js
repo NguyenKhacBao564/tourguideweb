@@ -17,6 +17,9 @@ import DatePicker from '../../../components/DatePicker/DatePicker';
 import CouterInput from '../../../components/CounterInput/CouterInput';
 import DropDownIconBtn from '../../../components/DropDownIcon/DropDownIconBtn';
 import { FaCar } from "react-icons/fa";
+import { v4 as uuidv4 } from 'uuid';
+import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { SortableContext, arrayMove, verticalListSortingStrategy, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import "./AddNewTour.scss"
 
 function AddTourPage(props) {
@@ -50,7 +53,14 @@ function AddTourPage(props) {
     infantPrice: '200.000'
   });
 
-
+  // Trong AddTourPage.js
+  const deleteSchedule = (id) => {
+    console.log('id bi xoa', id);
+    const updatedList = scheduleList
+      .filter((schedule) => schedule.id !== id)
+      .map((schedule, index) => ({ ...schedule, day_number: index + 1 }));
+    setScheduleList(updatedList);
+  };
   const handleActiveField = () => {
     console.log('activeField', activeField);
     setActiveField(!activeField);
@@ -61,29 +71,17 @@ function AddTourPage(props) {
   }
 
   const [scheduleList, setScheduleList] = useState([
-    {
-      id: 1,
-      day_number: 1,
-      tour_route: 'Đà Lạt - Lâm Đồng',
-      description: "nothing"
-    },
-    {
-      id: 2,
-      day_number: 2,
-      tour_route: 'Đà Lạt - Quảng Nam',
-      description: "nothing"
-    }
   ]);
 
   const addSchedule = (schedule) => {
     setScheduleList([...scheduleList, {
-      id: scheduleList.length + 1,
+      id: uuidv4().replace(/-/g, '').slice(0, 10),
       day_number: scheduleList.length + 1,
       tour_route: schedule.tour_route,
       description: schedule.description
     }])
   }
-
+  console.log('scheduleList', scheduleList);
   const [description, setDescription] = useState(
     'Đà Lạt – thành phố ngàn hoa, điểm đến lý tưởng cho những ai yêu thích không khí se lạnh, cảnh quan thơ mộng và những trải nghiệm đầy thú vị. Đến với Đà Lạt bạn sẽ được đắm chìm trong vẻ đẹp lãng mạn của hồ Xuân Hương, khám phá những đồi chè xanh bát ngát, thác nước hùng vĩ và những cảnh đồng hoa rực rỡ sắc màu. Không chỉ vậy, Đà Lạt còn hấp dẫn du khách với nền ẩm thực độc đáo, từ bánh tráng nướng giòn rụm đến ly sữa đậu nành nóng hổi giữa trời đêm se lạnh. Hãy cùng chúng tôi tận hưởng hành trình khám phá Đà Lạt đầy ấn tượng và đáng nhớ!'
   );
@@ -97,6 +95,35 @@ function AddTourPage(props) {
     {value: 'Đà Nẵng'},
   ];
  
+  // Thiết lập sensors cho desktop và mobile
+   // Thiết lập sensors cho desktop và mobile
+   const sensors = useSensors(
+    useSensor(PointerSensor),
+    // useSensor(TouchSensor, {
+    //   coordinateGetter: sortableKeyboardCoordinates,
+    // })
+  );
+
+  // Xử lý khi kéo thả kết thúc
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+    if (active.id === over.id) return;
+    
+    if (active.id !== over.id) {
+      setScheduleList((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+
+        const newItems = arrayMove(items, oldIndex, newIndex);
+        // Cập nhật day_number dựa trên vị trí mới
+        return newItems.map((item, index) => ({
+          ...item,
+          day_number: index + 1,
+        }));
+      });
+    }
+  };
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -288,6 +315,9 @@ function AddTourPage(props) {
           </div>
         </div>
       </div>
+
+
+
       <Container className="schedule-section">
         <Row >
           <Col md={9}>
@@ -297,17 +327,29 @@ function AddTourPage(props) {
             <Button variant="dark" className="d-flex align-items-center gap-2" onClick={handleActiveField}><CiCirclePlus size={24}/> Thêm lịch trình</Button>
           </Col>
         </Row>
-        {
-          scheduleList.map((schedule) => (
-            <Schedule key={schedule.id} schedule={schedule}/>
-          ))
-        }
+        <Row className="mt-3">
+          <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={scheduleList.map((schedule) => schedule.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                {scheduleList.map((schedule) => (
+                  <Schedule key={schedule.id} schedule={schedule} onDeleteSchedule={deleteSchedule} />
+                ))}
+            </SortableContext>
+          </DndContext>
+        </Row>
       </Container>
       <Button variant="success" className="mt-3 p-20-50" style={{display: "block",marginLeft: 'auto'}}>Thêm Tour</Button> 
       
-      {activeField && (
-        <AddShedule setActiveField={setActiveField} addSchedule={addSchedule} scheduleLength={scheduleList.length}/>
-      )}
+        {activeField && (
+          <AddShedule setActiveField={setActiveField} addSchedule={addSchedule} scheduleLength={scheduleList.length}/>
+        )}
+      
     </Container>
     {activeField && (
             <div 
