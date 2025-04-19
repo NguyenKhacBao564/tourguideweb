@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000"; // Có thể lưu vào biến môi trường sau
+const API_URL = "http://localhost:3001"; // Có thể lưu vào biến môi trường sau
 
 // Lấy danh sách tour
 export const getTour = async () => {
