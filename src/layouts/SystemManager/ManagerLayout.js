@@ -1,8 +1,8 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { useContext, useMemo } from 'react';
-import SideBar from '../../components/Sidebar/SideBar';
-import NavBarAdmin from '../../components/NavBar_Admin/NavBarAdmin';
+import SideBar from '../../components/Common/Sidebar/SideBar';
+import NavBarAdmin from '../../components/Common/NavBar_Admin/NavBarAdmin';
 import "../../styles/layouts/Manager_layout.scss";
 import { BusinessEmployeeSideBar, AdminSideBar , ConsultantEmployeeSideBar } from '../../utils/SideBarItem';
 import { AuthContext } from '../../context/AuthContext';

@@ -18,6 +18,7 @@ import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./components/Unauthorized";
 import NotFound from "./pages/NotFound";
+import UserManagement from "./pages/BusinessEmployee/UserManagement";
 
 function App() {
  
@@ -40,7 +41,7 @@ function App() {
             </ProtectedRoute>
         }
         >
-          <Route path="customer" element={<p>Khách hàng</p>} />
+          <Route path="customer" element={<UserManagement />} />
           <Route path="managetour" element={<TourManagementEmp />} />
           <Route path="managetour/addtour" element={<AddNewTour />} />
           <Route path="promotion" element={<p>Khuyến mãi</p>} />

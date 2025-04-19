@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import {Container, Row, Col, Button, InputGroup} from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
-import InputFiledIcon from '../../../components/InputFieldIcon/InputFieldIcon';
-import InputFieldIcon2 from '../../../components/InputFieldIcon/InputFieldIcon2';
-import PriceSection from '../../../components/PriceSelector/PriceSection';
+import InputFiledIcon from '../../../components/Common/InputFieldIcon/InputFieldIcon';
+import InputFieldIcon2 from '../../../components/Common/InputFieldIcon/InputFieldIcon2';
+import PriceSection from '../../../components/Employee/PriceSelector/PriceSection';
 import AddShedule from './components/AddShedule';
 import Schedule from './components/Schedule';
 import { FaClock } from "react-icons/fa6";
@@ -13,16 +13,18 @@ import { FaLocationDot } from "react-icons/fa6";
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import { AiFillEdit } from "react-icons/ai";
 import { MdCancel } from "react-icons/md";
-import DatePicker from '../../../components/DatePicker/DatePicker';
-import CouterInput from '../../../components/CounterInput/CouterInput';
-import DropDownIconBtn from '../../../components/DropDownIcon/DropDownIconBtn';
+import DatePicker from '../../../components/Common/DatePicker/DatePicker';
+import CouterInput from '../../../components/Common/Button/CounterInput/CouterInput';
+import DropDownIconBtn from '../../../components/Common/DropDownIcon/DropDownIconBtn';
 import { FaCar } from "react-icons/fa";
 import { v4 as uuidv4 } from 'uuid';
 import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, arrayMove, verticalListSortingStrategy, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import "./AddNewTour.scss"
+import { useNavigate } from 'react-router-dom';
 
 function AddTourPage(props) {
+  const navigate = useNavigate();
   const [activeField, setActiveField] = useState(false);
   // const [value, setValue] = useState({
   //   tourName: '',
@@ -61,14 +63,13 @@ function AddTourPage(props) {
       .map((schedule, index) => ({ ...schedule, day_number: index + 1 }));
     setScheduleList(updatedList);
   };
+  
   const handleActiveField = () => {
     console.log('activeField', activeField);
     setActiveField(!activeField);
   }
 
-  const closeOverlay = () => {
-    setActiveField(false);
-  }
+  
 
   const [scheduleList, setScheduleList] = useState([
   ]);
@@ -81,7 +82,7 @@ function AddTourPage(props) {
       description: schedule.description
     }])
   }
-  console.log('scheduleList', scheduleList);
+ 
   const [description, setDescription] = useState(
     'Đà Lạt – thành phố ngàn hoa, điểm đến lý tưởng cho những ai yêu thích không khí se lạnh, cảnh quan thơ mộng và những trải nghiệm đầy thú vị. Đến với Đà Lạt bạn sẽ được đắm chìm trong vẻ đẹp lãng mạn của hồ Xuân Hương, khám phá những đồi chè xanh bát ngát, thác nước hùng vĩ và những cảnh đồng hoa rực rỡ sắc màu. Không chỉ vậy, Đà Lạt còn hấp dẫn du khách với nền ẩm thực độc đáo, từ bánh tráng nướng giòn rụm đến ly sữa đậu nành nóng hổi giữa trời đêm se lạnh. Hãy cùng chúng tôi tận hưởng hành trình khám phá Đà Lạt đầy ấn tượng và đáng nhớ!'
   );
@@ -99,9 +100,9 @@ function AddTourPage(props) {
    // Thiết lập sensors cho desktop và mobile
    const sensors = useSensors(
     useSensor(PointerSensor),
-    // useSensor(TouchSensor, {
-    //   coordinateGetter: sortableKeyboardCoordinates,
-    // })
+    useSensor(TouchSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
   );
 
   // Xử lý khi kéo thả kết thúc
@@ -133,12 +134,56 @@ function AddTourPage(props) {
   const handleImageUpload = (e) => {
     const files = e.target.files;
     if (files) {
-      const newImages = Array.from(files);
-      setSelectedImages([...selectedImages, ...newImages]);
-      
-      // Create image URLs for display
-      const newUrls = newImages.map(file => URL.createObjectURL(file));
-      setDisplayImages([...displayImages, ...newUrls]);
+      processFiles(files);
+    }
+  };
+
+  // Process files function to handle both input and drop events
+  const processFiles = (files) => {
+    const newImages = [];
+    const newUrls = [];
+    
+    // Check if each file is an image
+    Array.from(files).forEach(file => {
+      if (file.type.match('image.*')) {
+        newImages.push(file);
+        newUrls.push(URL.createObjectURL(file));
+      } else {
+        alert('Chỉ chấp nhận file ảnh. File "' + file.name + '" không phải là ảnh.');
+      }
+    });
+    
+    // Check if we would exceed the maximum of 5 images
+    if (selectedImages.length + newImages.length > 5) {
+      alert('Chỉ được phép tải lên tối đa 5 ảnh.');
+      return;
+    }
+    
+    setSelectedImages([...selectedImages, ...newImages]);
+    setDisplayImages([...displayImages, ...newUrls]);
+  };
+
+  // Handle drag events
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.currentTarget.classList.add('drag-over');
+  };
+  
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.currentTarget.classList.remove('drag-over');
+  };
+  
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.currentTarget.classList.remove('drag-over');
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      processFiles(files);
     }
   };
 
@@ -155,14 +200,7 @@ function AddTourPage(props) {
     setDisplayImages(updatedDisplayImages);
   };
 
-  // For demo purposes, let's use the sample images from the mockup
-  React.useEffect(() => {
-    // Initialize with sample images for demonstration
-    setDisplayImages([
-      '/lovable-uploads/e8d10b84-cc41-4183-b163-5e8ee01c8e9b.png',
-      'https://images.unsplash.com/photo-1477414348463-c0eb7f1359b6?w=500&auto=format&fit=crop&q=60'
-    ]);
-  }, []);
+  
 
   return (
     <>
@@ -179,7 +217,7 @@ function AddTourPage(props) {
           />
         </Col>
         <Col md={3} className="d-flex justify-content-end">
-          <Button variant="danger" className="px-4 exit-button">
+          <Button variant="danger" className="px-4 exit-button" onClick={() => navigate('/businessemployee/managetour')}>
             Thoát
           </Button>
         </Col>
@@ -232,14 +270,14 @@ function AddTourPage(props) {
             onChange={(e) => setReturnDate(e.target.value)}
           />
         </Col>
-        <Col md={3}>
+        <Col md={2}>
           <CouterInput
             label="Số lượng chỗ"
             value={seats}
             onChange={(e) => setSeats(e.target.value)}
           />
         </Col>
-        <Col md={3}>
+        <Col md={4}>
         <InputFieldIcon2
             label="Phương tiện"
             value={transportation}
@@ -298,7 +336,12 @@ function AddTourPage(props) {
         
         <div className="add-images mt-3">
           <Form.Label className="mb-0">Thêm ảnh</Form.Label>
-          <div className="upload-area p-3 mt-2">
+          <div 
+            className="upload-area p-3 mt-2"
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
             <div className="text-center">
               <p className="text-muted mb-0">Chọn ảnh từ máy hoặc kéo thả</p>
               <Form.Control
@@ -307,6 +350,7 @@ function AddTourPage(props) {
                 onChange={handleImageUpload}
                 className="d-none"
                 id="imageUpload"
+                accept="image/*"
               />
               <label htmlFor="imageUpload" className="btn btn-outline-secondary mt-2">
                 Chọn ảnh

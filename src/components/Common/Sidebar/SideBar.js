@@ -5,7 +5,7 @@ import { FaUserLarge } from "react-icons/fa6";
 import { BiCalendarCheck } from "react-icons/bi";
 import { MdDiscount } from "react-icons/md";
 import { IoLogOutSharp } from "react-icons/io5";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../../context/AuthContext";
 import "./SideBar.scss";
 
 function Sidebar({navItems}) {

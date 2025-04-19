@@ -1,25 +1,25 @@
 import { useState } from "react";
 import { Container } from "react-bootstrap";
 import { Row} from "react-bootstrap";
-import TourFilterEmployee from "../../components/TourFilter_Employee/TourFilterEmployee";
-import DataTable from "../../components/DataTable/DataTable";
+import TourFilterEmployee from "../../components/Employee/Filter/TourFilterEmployee";
+import DataTable from "../../components/Common/DataTable/DataTable";
 
 import { TourProvider } from "../../context/TourContext";
-import TourStatusFilterEmployee from "../../components/TourStatusFilter_Employee/TourStatusFilterEmployee";
+import TourStatusFilterEmployee from "../../components/Employee/TourStatusFilter_Employee/TourStatusFilterEmployee";
 
 const TourManagementEmp = () => {
   
   
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [status, setStatus] = useState("all");
 
 
   const handleStatusFilterChange = (filter) => {
-    setStatusFilter(filter);
+    setStatus(filter);
     console.log("Lọc theo trạng thái:", filter);
   };
   return (
     <Container fluid className="tour-management">
-      <Row className="tour-management__filter">
+      <Row>
         <TourFilterEmployee />
       </Row>
       <Row>
@@ -27,7 +27,7 @@ const TourManagementEmp = () => {
       </Row>
       <Row>
         <TourProvider>
-        <DataTable filterStatus={statusFilter}/>
+        <DataTable filterStatus={status}/>
         </TourProvider>
       </Row>
     </Container>

@@ -3,7 +3,7 @@ import { Table, Container, Button } from "react-bootstrap";
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Form from 'react-bootstrap/Form';
 import './DataTable.scss';
-import { TourContext } from "../../context/TourContext";
+import { TourContext } from "../../../context/TourContext";
 import PaginationBar from '../Pagination/PaginationBar';
 
 function TourTable(props) {

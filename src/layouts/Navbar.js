@@ -2,7 +2,7 @@ import React, { useState, useEffect, use } from 'react';
 import { Link } from "react-router-dom";
 import "../styles/layouts/Navbar.scss";
 import { FaBars, FaTimes} from "react-icons/fa";
-import UserAvatar from '../components/UserAvatar/UserAvatar';
+import UserAvatar from '../components/Common/UserAvatar/UserAvatar';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate, useLocation } from "react-router-dom";
