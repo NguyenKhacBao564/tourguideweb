@@ -3,8 +3,9 @@ import FormInput from '../../components/Common/FormInput/FormInput';
 import AuthBase from '../../components/Auth/AuthBase';
 import authInputs from '../../utils/AuthInput';
 import { AuthContext } from '../../context/AuthContext';
-
+import { useNavigate } from 'react-router';
 function Register() {
+  const navigate = useNavigate();
   const { regist } = useContext(AuthContext);
   
   const [values, setValues] = useState({ 
@@ -33,7 +34,10 @@ function Register() {
     
     try {
       await regist(values.username, values.email, values.password, values.phone);
-      setSuccess("Đăng ký thành công! Bạn có thể đăng nhập ngay bây giờ.");
+      setSuccess("Đăng ký thành công! Chuyển hướng về trang chủ.");
+      setTimeout(() => {
+        navigate("/", {replace: true});
+      }, 1000);
       setValues({ username: '', phone: '', email: '', password: '', confirmPassword: '' });
     } catch (error) {
       console.error("Đăng ký thất bại:", error);

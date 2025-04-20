@@ -3,12 +3,12 @@ import { CiSearch } from "react-icons/ci";
 
 
 
-const SearchFilter = ({ onSearch }) => {
+const SearchFilter = ({ onSearch, placeholder }) => {
   return (
     <InputGroup >
       <Form.Control
         type="text"
-        placeholder="Tìm kiếm theo mã tour"
+        placeholder={placeholder}
         onChange={(e) => onSearch(e.target.value)}
         className="search-type-light p-2"
 

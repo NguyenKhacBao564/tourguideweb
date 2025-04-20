@@ -4,16 +4,23 @@ import { GoPlus } from "react-icons/go";
 import { RiSubtractFill } from "react-icons/ri";
 import "./CounterInput.scss";
 
-function CouterInput({label, value, onChange}) {
-
-    const [num, setNum] = useState(value);
+function CouterInput({label, value, onChange, name}) {
 
     const handleSeatDecrease = () => {
-        if (num > 1) setNum(num - 1);
-      };
-    
+      if (value >= 1) {
+        const newValue = value - 1;
+        onChange({ target: { name, value: newValue } }); // Gọi onChange để cập nhật giá trị
+      }
+    };
+
     const handleSeatIncrease = () => {
-        setNum(num + 1);
+      const newValue = value + 1;
+      onChange({ target: { name, value: newValue } }); // Gọi onChange để cập nhật giá trị
+    };
+
+    const handleInputChange = (e) => {
+      const newValue = parseInt(e.target.value) || 0;
+      onChange({ target: { name, value: newValue } }); // Cập nhật khi người dùng nhập trực tiếp
     };
     
     return (
@@ -26,8 +33,9 @@ function CouterInput({label, value, onChange}) {
               <Form.Control
                 type="text" 
                 className="text-center shadow-none border-0"
-                value={num}
-                onChange={onChange}
+                value={value}
+                onChange={handleInputChange}
+                name={name}
               />
               <Button variant="light" className="button-plus" onClick={handleSeatIncrease}>
                     <GoPlus size={20}/>

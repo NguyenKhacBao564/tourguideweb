@@ -1,5 +1,5 @@
 const {sql, getPool} = require("../config/db");
-
+const { insertItinerary } = require("./scheduleController");
 
 //Lấy danh sách tất cả các tour
 const getTour =  async (req, res) => {
@@ -16,6 +16,7 @@ const getTour =  async (req, res) => {
   
 // Thêm tour mới
 const createTour =  async (req, res) => {
+    let transaction;
     try {
       const {
         tour_id,
@@ -28,12 +29,19 @@ const createTour =  async (req, res) => {
         maxGuests,
         transport,
         description,
-        branch_id
+        branch_id,
+        itinerary,
       } = req.body;
       const createdAt = new Date(); // Lấy thời gian hiện tại
       const pool =  await getPool();
-      await pool.request()
-      .input("tour_id", sql.Int, tour_id)
+
+      transaction = pool.transaction();
+
+      // Bắt đầu transaction
+      await transaction.begin();
+      const tourRequest = transaction.request();
+      await tourRequest
+        .input("tour_id", sql.Int, tour_id)
         .input("branch_id", sql.Int, branch_id)
         .input("name", sql.NVarChar, name)
         .input("duration", sql.Int, duration)
@@ -49,8 +57,15 @@ const createTour =  async (req, res) => {
           INSERT INTO Tour (tour_id, branch_id, name, duration, destination, departure_location, start_date, end_date, description, max_guests, transport, created_at)
           VALUES (@tour_id, @branch_id, @name, @duration, @destination, @departure_location, @start_date, @end_date, @description, @max_guests, @transport, @created_at)
         `);
-      res.status(201).json({ message: "Thêm tour thành công" });
+
+         await insertItinerary(transaction, tour_id, itinerary);
+         await transaction.commit();
+
+        res.status(201).json({ message: "Thêm tour thành công" });
     } catch (error) {
+      if (transaction) {
+        await transaction.rollback();
+      }
       console.error("Lỗi khi thêm tour:", error);
       res.status(500).json({ error: "Lỗi server khi thêm tour", details: error });
     }
@@ -80,14 +95,14 @@ const getTourById = async (req, res) => {
 const deleteTour = async (req, res) => {
     try {
       console.log("Received delete request for tour_id:", req.params.id);
-      const tourId = parseInt(req.params.id, 10); // Chuyển về số nguyên
-      if (isNaN(tourId)) {
-        return res.status(400).json({ error: "Invalid tour ID" });
-      }
-  
+      // const tourId = parseInt(req.params.id, 10); // Chuyển về số nguyên
+      // if (isNaN(tourId)) {
+      //   return res.status(400).json({ error: "Invalid tour ID" });
+      // }
+      const tourId = req.params.id;
       const pool = await getPool();
       const result = await pool.request()
-        .input("tour_id", sql.Int, tourId)
+        .input("tour_id", sql.NVarChar, tourId)
         .query("DELETE FROM Tour WHERE tour_id = @tour_id");
 
       console.log("Rows affected:", result.rowsAffected);
