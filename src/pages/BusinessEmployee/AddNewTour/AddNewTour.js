@@ -38,6 +38,7 @@ function AddTourPage(props) {
     childPrice: '0',
     infantPrice: '0',
     description: '',
+    branch_id: 1,
     itinerary: [],
   });
   
@@ -113,12 +114,12 @@ function AddTourPage(props) {
   const onChange = (e) => {
     const { name, value } = e.target;
     let newValues = { ...values, [name]: value };
-
     if (name === 'departureDate' || name === 'returnDate') {
       const departureDate = name === 'departureDate' ? value : values.departureDate;
       const returnDate = name === 'returnDate' ? value : values.returnDate;
       newValues.duration = calculateDuration(departureDate, returnDate);
-      newValues.itinerary = [];
+      newValues.itinerary = []; // Reset itinerary when departure or return date changes
+      setScheduleList([]); // Reset schedule list when departure or return date changes
     }
     setValues(newValues);
   };
@@ -141,7 +142,7 @@ function AddTourPage(props) {
       const durationDay = Math.ceil(duration / (1000 * 60 * 60 * 24));
 
       if (durationDay <= 0) {
-        return 'Ngày khởi hành phải sau ngày trở về';
+        return 0;
       }
 
       return durationDay+1;
@@ -219,8 +220,11 @@ function AddTourPage(props) {
     setDisplayImages(updatedDisplayImages);
   };
 
-  const handelAddTour = () => {
-    console.log('values', values);
+  const handelAddTour = async (e) => {
+    e.preventDefault();
+    const result = await addTour(values);
+    console.log('result', result);
+   
   }
 
   return (

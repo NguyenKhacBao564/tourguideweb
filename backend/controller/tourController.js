@@ -1,6 +1,6 @@
 const {sql, getPool} = require("../config/db");
 const { insertItinerary } = require("./scheduleController");
-
+const { v4: uuidv4 } = require("uuid");
 //Lấy danh sách tất cả các tour
 const getTour =  async (req, res) => {
     try{
@@ -19,21 +19,24 @@ const createTour =  async (req, res) => {
     let transaction;
     try {
       const {
-        tour_id,
-        name,
-        duration,
+        tourName,
+        departureLocation,
         destination,
-        departure,
-        startDate,
-        endDate,
-        maxGuests,
-        transport,
+        duration,
+        departureDate ,
+        returnDate,
+        seats,
+        transportation,
+        adultPrice,
+        childPrice,
+        infantPrice,
         description,
         branch_id,
         itinerary,
       } = req.body;
       const createdAt = new Date(); // Lấy thời gian hiện tại
       const pool =  await getPool();
+      const tour_id = uuidv4().replace(/-/g, '').slice(0, 10);
 
       transaction = pool.transaction();
 
@@ -41,17 +44,17 @@ const createTour =  async (req, res) => {
       await transaction.begin();
       const tourRequest = transaction.request();
       await tourRequest
-        .input("tour_id", sql.Int, tour_id)
+        .input("tour_id", sql.NVarChar, tour_id)
         .input("branch_id", sql.Int, branch_id)
-        .input("name", sql.NVarChar, name)
+        .input("name", sql.NVarChar, tourName)
         .input("duration", sql.Int, duration)
         .input("destination", sql.NVarChar, destination)
-        .input("departure_location", sql.NVarChar, departure)
-        .input("start_date", sql.Date, startDate)
-        .input("end_date", sql.Date, endDate)
+        .input("departure_location", sql.NVarChar,  departureLocation)
+        .input("start_date", sql.Date, departureDate)
+        .input("end_date", sql.Date, returnDate)
         .input("description", sql.NVarChar, description)
-        .input("max_guests", sql.Int, maxGuests)
-        .input("transport", sql.NVarChar, transport)
+        .input("max_guests", sql.Int, seats)
+        .input("transport", sql.NVarChar, transportation)
         .input("created_at", sql.DateTime, createdAt)
         .query(`
           INSERT INTO Tour (tour_id, branch_id, name, duration, destination, departure_location, start_date, end_date, description, max_guests, transport, created_at)
@@ -61,13 +64,13 @@ const createTour =  async (req, res) => {
          await insertItinerary(transaction, tour_id, itinerary);
          await transaction.commit();
 
-        res.status(201).json({ message: "Thêm tour thành công" });
+        return res.status(201).json({ message: "Thêm tour thành công" });
     } catch (error) {
       if (transaction) {
         await transaction.rollback();
       }
       console.error("Lỗi khi thêm tour:", error);
-      res.status(500).json({ error: "Lỗi server khi thêm tour", details: error });
+      return res.status(500).json({ error: "Lỗi server khi thêm tour", details: error });
     }
   }
   

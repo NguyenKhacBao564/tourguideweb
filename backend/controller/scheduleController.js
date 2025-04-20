@@ -20,6 +20,7 @@ const insertItinerary = async (transaction, tour_id, itinerary) => {
           INSERT INTO Tour_Schedule (schedule_id, tour_id, day_number, tour_route, detail)
           VALUES (@scheduleID, @tourId, @dayNumber, @tourRoute, @description)
         `);
+        console.log('insert itinerary', id, tour_id, day_number, tour_route, description);
     }
   };
 

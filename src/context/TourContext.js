@@ -45,9 +45,10 @@ export const TourProvider = ({ children }) => {
   const handleAddTour = async (tourData) => {
     try {
       setIsLoading(true);
-      await addTour(tourData);
+      const result = await addTour(tourData);
       setTours((prevTours) => [...prevTours, tourData]);
       setError(null);
+      return result;
     } catch (err) {
       setError(err.message);
     } finally {
