@@ -4,7 +4,7 @@ import './DropDownIconBtn.scss';
 import Dropdown from 'react-bootstrap/Dropdown';
 
 function DropDownIconBtn(props) {
-    const {optionList, label, value, onChange, icon, name} = props;
+    const {optionList, label, value, onChange, icon, name, required = false} = props;
 
     const [selectedItem, setSelectedItem] = useState(value || '');
     
@@ -32,7 +32,7 @@ function DropDownIconBtn(props) {
     const Icon = icon;
     
     return (  
-        <Dropdown className='drop-down-icon-btn'>
+        <Dropdown className='drop-down-icon-btn' required={required}>
             <Form.Label className="drop-down-icon-btn--label">{label}</Form.Label>
             <InputGroup>
                 <Dropdown.Toggle id="dropdown-basic" className='drop-down-icon-btn--toggle'>

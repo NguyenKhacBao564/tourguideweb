@@ -8,6 +8,7 @@ function PriceSelector({
   value,
   onChange,
   name,
+  required = false,
   currency = 'VND',
   step = 100000,
   min = 0
@@ -61,6 +62,7 @@ function PriceSelector({
           value={value}
           onChange={handleInputChange}
           className="text-danger"
+          required={required}
         />
         <InputGroup.Text className="text-secondary">{currency}</InputGroup.Text>
         <Button variant="light" className="border" onClick={handleDecrease}>

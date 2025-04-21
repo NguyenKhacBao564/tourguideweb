@@ -26,9 +26,9 @@ const TourManagementEmp = () => {
   const columns = [
     { key: 'tour_id', label: 'Mã tour' },
     { key: 'name', label: 'Tên tour' },
-    { key: 'created_at', label: 'Thời điểm tạo' },
-    { key: 'max_guests', label: 'Số lượng chỗ đã đặt' },
+    { key: 'max_guests', label: 'Chổ trống' },
     { key: 'start_date', label: 'Ngày khởi hành' },
+    { key: 'end_date', label: 'Ngày trở về' },
   ];
 
   // Định nghĩa các hành động cho mỗi cột trong bảng

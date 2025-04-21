@@ -1,16 +1,46 @@
 const {sql, getPool} = require("../config/db");
 const { insertItinerary } = require("./scheduleController");
+const { addTourPrice } = require("./tourPriceController");
 const { v4: uuidv4 } = require("uuid");
 //Lấy danh sách tất cả các tour
 const getTour =  async (req, res) => {
-    try{
-        const pool =  await getPool();
-        const result = await pool.request().query("SELECT * FROM Tour");
-        res.json(result.recordset);
-    }
-    //Trả về lỗi chi tiết
-    catch (error){
-        res.status(500).json({message: "Lỗi server", error});
+  try{
+    const pool = await getPool();
+    const result = await pool.request()
+    .query(`SELECT t.tour_id,t.branch_id, t.name, t.destination,t.departure_location,t.start_date,t.end_date,t.max_guests,t.transport,t.created_at,tp.age_group,tp.price 
+        FROM Tour AS t
+        LEFT JOIN Tour_Price AS tp 
+        ON t.tour_id = tp.tour_id`);
+
+      // Nhóm dữ liệu theo tour_id
+    const toursMap = {};
+    result.recordset.forEach((row) => {
+      if (!toursMap[row.tour_id]) {
+        toursMap[row.tour_id] = {
+          tour_id: row.tour_id,
+          branch_id: row.branch_id,
+          name: row.name,
+          destination: row.destination,
+          departure_location: row.departure_location,
+          start_date: row.start_date,
+          end_date: row.end_date,
+          max_guests: row.max_guests,
+          transport: row.transport,
+          created_at: row.created_at,
+          prices: [],
+        };
+      }
+      if (row.age_group && row.price !== null) {
+        toursMap[row.tour_id].prices.push({
+          age_group: row.age_group,
+          price: row.price,
+        });
+      }
+    });
+    const tours = Object.values(toursMap);
+    return res.status(200).json(tours);
+    } catch (error) {
+        return res.status(500).json({error: error.message});
     }
 }
   
@@ -19,13 +49,14 @@ const createTour =  async (req, res) => {
     let transaction;
     try {
       const {
-        tourName,
+        tour_id,
+        name,
         departureLocation,
         destination,
         duration,
         departureDate ,
         returnDate,
-        seats,
+        max_guests,
         transportation,
         adultPrice,
         childPrice,
@@ -36,7 +67,7 @@ const createTour =  async (req, res) => {
       } = req.body;
       const createdAt = new Date(); // Lấy thời gian hiện tại
       const pool =  await getPool();
-      const tour_id = uuidv4().replace(/-/g, '').slice(0, 10);
+      // const tour_id = uuidv4().replace(/-/g, '').slice(0, 10);
 
       transaction = pool.transaction();
 
@@ -46,22 +77,30 @@ const createTour =  async (req, res) => {
       await tourRequest
         .input("tour_id", sql.NVarChar, tour_id)
         .input("branch_id", sql.Int, branch_id)
-        .input("name", sql.NVarChar, tourName)
+        .input("name", sql.NVarChar, name)
         .input("duration", sql.Int, duration)
         .input("destination", sql.NVarChar, destination)
         .input("departure_location", sql.NVarChar,  departureLocation)
         .input("start_date", sql.Date, departureDate)
         .input("end_date", sql.Date, returnDate)
         .input("description", sql.NVarChar, description)
-        .input("max_guests", sql.Int, seats)
+        .input("max_guests", sql.Int, max_guests)
         .input("transport", sql.NVarChar, transportation)
         .input("created_at", sql.DateTime, createdAt)
+        .input("status", sql.NVarChar, "active")
         .query(`
-          INSERT INTO Tour (tour_id, branch_id, name, duration, destination, departure_location, start_date, end_date, description, max_guests, transport, created_at)
-          VALUES (@tour_id, @branch_id, @name, @duration, @destination, @departure_location, @start_date, @end_date, @description, @max_guests, @transport, @created_at)
+          INSERT INTO Tour (tour_id, branch_id, name, duration, destination, departure_location, start_date, end_date, description, max_guests, transport, created_at, status)
+          VALUES (@tour_id, @branch_id, @name, @duration, @destination, @departure_location, @start_date, @end_date, @description, @max_guests, @transport, @created_at, @status)
         `);
 
          await insertItinerary(transaction, tour_id, itinerary);
+
+         const listPrice = [
+            {age_group: "adultPrice", price: adultPrice},
+            {age_group: "childPrice", price: childPrice},
+            {age_group: "infantPrice", price: infantPrice},
+         ]
+         await addTourPrice(transaction, tour_id, listPrice);
          await transaction.commit();
 
         return res.status(201).json({ message: "Thêm tour thành công" });

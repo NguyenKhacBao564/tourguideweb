@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import { getTour, deleteTour, addTour } from "../api/tourAPI";
+import { getTour, deleteTour, addTour} from "../api/tourAPI";
 
 // Tạo Context
 export const TourContext = createContext();
@@ -46,6 +46,16 @@ export const TourProvider = ({ children }) => {
     try {
       setIsLoading(true);
       const result = await addTour(tourData);
+      
+      // // Map fields to the format expected by the DataTable
+      // const formattedTourData = {
+      //   ...tourData,
+      //   name: tourData.tourName,
+      //   start_date: tourData.departureDate,
+      //   max_guests: tourData.seats,
+      //   created_at: new Date().toISOString()
+      // };
+      
       setTours((prevTours) => [...prevTours, tourData]);
       setError(null);
       return result;
