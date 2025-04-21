@@ -21,11 +21,12 @@ import { SortableContext, arrayMove, verticalListSortingStrategy, sortableKeyboa
 import "./AddNewTour.scss"
 import { useNavigate } from 'react-router-dom';
 import { TourContext } from '../../../context/TourContext';
-
+import { AuthContext } from '../../../context/AuthContext';
 function AddTourPage(props) {
   const navigate = useNavigate();
   const { addTour, error} = useContext(TourContext);
   const [activeField, setActiveField] = useState(false);
+  const { user } = useContext(AuthContext);
 
   const [alert, setAlert] = useState({
     show: false,
@@ -47,7 +48,7 @@ function AddTourPage(props) {
     childPrice: '0',
     infantPrice: '0',
     description: '',
-    branch_id: 1,
+    branch_id: user.branch_id,
     itinerary: [],
   });
   
@@ -231,7 +232,7 @@ function AddTourPage(props) {
 
   const handelAddTour = async (e) => {
     e.preventDefault();
-    
+    console.log("user", user.branch_id)
     // Only check the itinerary requirement - the rest will be handled by HTML5 validation
     if (values.duration > 0 && scheduleList.length !== values.duration) {
       setAlert({
@@ -248,6 +249,15 @@ function AddTourPage(props) {
       }, 3000);
       return;
     }
+    if(values.duration === 0){
+      setAlert({
+        show: true,
+        message: 'Vui lòng nhập thời gian hợp lệ',
+        variant: 'danger'
+      });
+
+      return;
+    }
     
     try{
       await addTour({...values, tour_id: uuidv4().replace(/-/g, '').slice(0, 10)});
@@ -256,7 +266,10 @@ function AddTourPage(props) {
         message: 'Thêm tour thành công',
         variant: 'success'
       });
-      navigate('/businessemployee/managetour');
+      // setTimeout(() => {
+      //   navigate('/businessemployee/managetour');
+      // }, 1000);
+      
     } catch (error) {
       setAlert({
         show: true,

@@ -79,9 +79,7 @@ const loginUser = async (req, res) => {
       }
       const role = roleField ? await getRoleById(user[roleField]) : "customer";
       return{
-        id: user[idField],
-        name: user.fullname,
-        email: user.email,
+        user: user,
         role: role,
       }
     }
@@ -113,7 +111,7 @@ const loginUser = async (req, res) => {
       });
     }
     if (user){
-      const token = generateToken({userId: user.id, role: user.role , name: user.name });
+      const token = generateToken({userId: user.id, role: user.role , name: user.name, branch_id: user.branch_id});
       return res.status(200).json({
         token,
         message: "Đăng nhập thành công",

@@ -41,5 +41,13 @@ export const deleteTour = async (id) => {
   }
 };
 
-
+// Khóa tour
+export const blockTour = async (id) => {
+  try {
+    const response = await axios.put(`${API_URL}/tours/${id}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Lỗi khi khóa tour");
+  }
+}
 

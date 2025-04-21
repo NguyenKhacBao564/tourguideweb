@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { getCustomerAccount, deleteBatchCustomer, deleteCustomer } from '../api/customer_accountAPI';
+import { getCustomerAccount, deleteBatchCustomer, deleteCustomer } from '../api/customerAccountAPI';
 
 export const CustomerContext = createContext();
 

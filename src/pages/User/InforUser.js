@@ -13,7 +13,7 @@ import { FaArrowLeft } from "react-icons/fa6";
 import { AuthContext } from '../../context/AuthContext';
 
 function InforUser(props) {
-    const {logout} = useContext(AuthContext);
+    const {user, logout} = useContext(AuthContext);
 
     return (
         <div className='inforUser_page'>
@@ -30,7 +30,7 @@ function InforUser(props) {
                             <Form className="user-form">
                                 <Form.Group className="mb-4" controlId="fullName">
                                     <Form.Label>Họ và tên</Form.Label>
-                                    <Form.Control type="text" defaultValue="Nguyễn Khắc Bảo" />
+                                    <Form.Control type="text" defaultValue={user.fullname} />
                                 </Form.Group>
                                 
                                 <Form.Group className="mb-4" controlId="phone">

@@ -14,7 +14,7 @@ import {
 } from "../../utils/tourFilterHelpers";
 
 const TourManagementEmp = () => {
-  const { tours, isLoading, error, deleteTour } = useContext(TourContext);
+  const { tours, isLoading, error, deleteTour, blockTour } = useContext(TourContext);
   
   // Các trạng thái lọc và sắp xếp
   const [statusFilter, setStatusFilter] = useState(FILTER_KEYS.ALL);
@@ -37,12 +37,12 @@ const TourManagementEmp = () => {
       label: 'Khóa',
       variant: 'danger',
       onClick: async (id) => {
-        if (window.confirm('Bạn có chắc chắn muốn xóa tour này không?')) {
+        if (window.confirm('Bạn có chắc chắn muốn khóa tour này không?')) {
           try {
-            await deleteTour(id);
+            await blockTour(id);
             setSelectedTour((prev) => prev.filter((tourId) => tourId !== id));
           } catch (err) {
-            console.error('Lỗi khi xóa tour:', err);
+            console.error('Lỗi khi khóa tour:', err);
           }
         }
       },
@@ -90,11 +90,11 @@ const TourManagementEmp = () => {
       try {
         // Xóa lần lượt các tour đã chọn
         for (const id of ids) {
-          await deleteTour(id);
+          await blockTour(id);
         }
         setSelectedTour([]);
       } catch (err) {
-        console.error('Lỗi khi xóa tour:', err);
+        console.error('Lỗi khi khóa tour:', err);
       }
     }
   };

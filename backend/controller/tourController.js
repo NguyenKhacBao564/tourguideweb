@@ -10,7 +10,7 @@ const getTour =  async (req, res) => {
     .query(`SELECT t.tour_id,t.branch_id, t.name, t.destination,t.departure_location,t.start_date,t.end_date,t.max_guests,t.transport,t.created_at,tp.age_group,tp.price 
         FROM Tour AS t
         LEFT JOIN Tour_Price AS tp 
-        ON t.tour_id = tp.tour_id`);
+        ON t.tour_id = tp.tour_id WHERE t.status = 'active'`);
 
       // Nhóm dữ liệu theo tour_id
     const toursMap = {};
@@ -54,8 +54,8 @@ const createTour =  async (req, res) => {
         departureLocation,
         destination,
         duration,
-        departureDate ,
-        returnDate,
+        start_date,
+        end_date,
         max_guests,
         transportation,
         adultPrice,
@@ -81,8 +81,8 @@ const createTour =  async (req, res) => {
         .input("duration", sql.Int, duration)
         .input("destination", sql.NVarChar, destination)
         .input("departure_location", sql.NVarChar,  departureLocation)
-        .input("start_date", sql.Date, departureDate)
-        .input("end_date", sql.Date, returnDate)
+        .input("start_date", sql.Date, start_date)
+        .input("end_date", sql.Date, end_date)
         .input("description", sql.NVarChar, description)
         .input("max_guests", sql.Int, max_guests)
         .input("transport", sql.NVarChar, transportation)
@@ -160,4 +160,32 @@ const deleteTour = async (req, res) => {
     }
   }
 
-  module.exports = {getTour, createTour, getTourById, deleteTour};
+  // Cập nhật trạng thái tour
+  const blockTour = async (req, res) => {
+    try {
+      console.log("Received delete request for tour_id:", req.params.id);
+      // const tourId = parseInt(req.params.id, 10); // Chuyển về số nguyên
+      // if (isNaN(tourId)) {
+      //   return res.status(400).json({ error: "Invalid tour ID" });
+      // }
+      const tourId = req.params.id;
+      const pool = await getPool();
+      const result = await pool.request()
+        .input("tour_id", sql.NVarChar, tourId)
+        .query("UPDATE Tour SET status = 'inactive' WHERE tour_id = @tour_id");
+
+      console.log("Rows affected:", result.rowsAffected);
+  
+      if (result.rowsAffected[0] > 0) {
+        res.json({ message: "Khóa tour thành công" });
+      } else {
+        res.status(404).json({ message: "Không tìm thấy tour" });
+      }
+    } catch (err) {
+      console.error("Lỗi khi khóa tour:", err);
+      res.status(500).send({ error: "Lỗi khi khóa tour", details: err });
+    }
+  }
+
+
+  module.exports = {getTour, createTour, getTourById, deleteTour, blockTour};
