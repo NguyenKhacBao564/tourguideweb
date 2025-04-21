@@ -1,6 +1,5 @@
 import axios from "axios";
-
-const API_URL = "http://localhost:3001"; // Có thể lưu vào biến môi trường sau
+import { API_URL } from "./API_Port";
 
 // Lấy danh sách tour
 export const getTour = async () => {
@@ -23,7 +22,7 @@ export const getTourById = async (id) => {
 };
 
 // Thêm tour mới
-export const createTour = async (tourData) => {
+export const addTour = async (tourData) => {
   try {
     const response = await axios.post(`${API_URL}/tours`, tourData);
     return response.data;

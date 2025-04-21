@@ -1,7 +1,8 @@
 import React, {use, useContext, useEffect} from 'react';
 import ManagerLayout from '../../layouts/SystemManager/ManagerLayout'; 
  import { AuthContext } from '../../context/AuthContext';
-
+ import { TourProvider } from '../../context/TourContext';
+ import { CustomerProvider } from '../../context/CustomerContext';
 function Employee_Business(props) {
   const   { user } = useContext(AuthContext);
   console.log("User in Employee_Business: ", user);
@@ -10,7 +11,11 @@ function Employee_Business(props) {
   }
   , [user]);
   return (
-    <ManagerLayout/>
+    <TourProvider> 
+      <CustomerProvider>
+      <ManagerLayout/>
+      </CustomerProvider>
+    </TourProvider>
   );
 }
 

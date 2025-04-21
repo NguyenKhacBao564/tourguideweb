@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import { getTour, deleteTour } from "../api/tourAPI";
+import { getTour, deleteTour, addTour } from "../api/tourAPI";
 
 // Tạo Context
 export const TourContext = createContext();
@@ -42,12 +42,28 @@ export const TourProvider = ({ children }) => {
     }
   };
 
+  const handleAddTour = async (tourData) => {
+    try {
+      setIsLoading(true);
+      const result = await addTour(tourData);
+      setTours((prevTours) => [...prevTours, tourData]);
+      setError(null);
+      return result;
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
   // Giá trị cung cấp cho Context
   const value = {
     tours,
     isLoading,
     error,
     deleteTour: handleDeleteTour,
+    addTour: handleAddTour,
   };
 
   return <TourContext.Provider value={value}>{children}</TourContext.Provider>;

@@ -20,7 +20,10 @@
         border-bottom: 1px solid #F2F4F7;
         padding: 10px 20px !important;
         td{
-           
+           max-width: 250px; /* Chiều rộng tối đa cho mỗi ô */
+           white-space: nowrap; /* Không cho phép xuống dòng */
+           overflow: hidden; /* Ẩn phần nội dung bị tràn */
+           text-overflow: ellipsis; /* Hiển thị dấu 3 chấm cho nội dung bị cắt */
         }
         &:last-child {
             border-bottom: none; /* Xóa border-bottom cho dòng cuối cùng */
