@@ -52,32 +52,40 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
+      <p className="text-muted ">Thống kê</p>
       <div className="row stats-cards mb-4">
         <StatCard
-    variant="primary"
-    icon={<DollarSign />}
-    title="Doanh thu"
-    value={overview.totalRevenue.toLocaleString()}
-    suffix=" VND"
-  />
-  <StatCard
-    variant="secondary"
-    icon={<Users />}
-    title="Khách hàng"
-    value={overview.totalCustomers}
-  />
-  <StatCard
-    variant="tertiary"
-    icon={<MapPin />}
-    title="Số Tour"
-    value={overview.totalTours}
-  />
-</div>
-
-      <BranchTable data={branches} />
-
-      <ChartDonut data={chartData} />
-
+          variant="primary"
+          icon={<DollarSign />}
+          title="Doanh thu"
+          value={overview.totalRevenue.toLocaleString()}
+          suffix=" VND"
+        />
+        <StatCard
+          variant="secondary"
+          icon={<Users />}
+          title="Khách hàng"
+          value={overview.totalCustomers}
+        />
+        <StatCard
+          variant="tertiary"
+          icon={<MapPin />}
+          title="Số Tour"
+          value={overview.totalTours}
+        />
+      </div>
+      {/* <div >
+        <BranchTable data={branches} style={{ flex: 1 }}/>
+        <ChartDonut data={chartData} style={{ flex: 1/10 }}/>
+      </div> */}
+      <div className="stats-chart-container row gx-4 ">
+        <div className="col-lg-6 col-12 " style={{ flex: 1 }}>
+          <BranchTable data={branches} />
+        </div>
+        <div className=" col-lg-6 col-12 " style={{ flex: 1/10 }}>
+          <ChartDonut data={chartData} />
+        </div>
+      </div>
       <TransactionsTable data={transactions} />
     </div>
   );

@@ -5,7 +5,10 @@ import { useNavigate } from 'react-router-dom';
 const StaffManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
-
+  const handleAdd = () => {
+    // Navigate to add new employee page
+    navigate('addNewEmployee');
+  };
   // Sample staff data
   const staffData = [
     {
@@ -71,7 +74,7 @@ const StaffManagement = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="admin-title">Quản lý nhân viên</h2>
-        <button className="btn btn-primary">
+        <button className="btn btn-primary" onClick={handleAdd}>
           <Plus size={16} />
           <span>Thêm nhân viên</span>
         </button>

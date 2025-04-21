@@ -1,50 +1,65 @@
-// src/pages/Admin/components/ChartDonut.js
 import React from 'react';
 import {
   PieChart,
   Pie,
   Cell,
-  Tooltip,
-  ResponsiveContainer,
-  Legend
+  ResponsiveContainer
 } from 'recharts';
+import './Styles/ChartDonut.scss';
 
 /**
  * Props:
- * - data: Array<{ month: string; count: number }>
+ * - completed: number   // số tour đã khởi hành
+ * - pending: number     // số tour chưa khởi hành
  */
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A28AFF', '#FF6384'];
+const ChartDonut = ({ completed, pending }) => {
+  const pieData = [
+    { name: 'Đã khởi hành', value: completed },
+    { name: 'Chưa khởi hành', value: pending }
+  ];
 
-const ChartDonut = ({ data }) => {
-  // transform to { name, value }
-  const pieData = data.map((item, idx) => ({
-    name: item.month,
-    value: item.count
-  }));
+  const COLORS = ['#2BC289', '#FF4D4F'];
+  const total = completed + pending;
 
   return (
-    <div className="card mb-4">
-      <div className="card-header">Booking Theo Tháng (6 tháng gần nhất)</div>
-      <div className="card-body" style={{ height: 300 }}>
+    <div className="chart-donut">
+      <div className="chart-donut__header">
+        Tỷ lệ tour đã hoàn thành / chưa khởi hành
+      </div>
+
+      <div className="chart-donut__body">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
-            <Legend verticalAlign="top" height={36} />
             <Pie
               data={pieData}
               dataKey="value"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              outerRadius={80}
-              label
+              innerRadius={90}
+              outerRadius={120}
+              startAngle={90}
+              endAngle={-270}
+              paddingAngle={4}
+              cornerRadius={60}
             >
-              {pieData.map((_, index) => (
-                <Cell key={index} fill={COLORS[index % COLORS.length]} />
+              {pieData.map((entry, idx) => (
+                <Cell key={`cell-${idx}`} fill={COLORS[idx]} />
               ))}
             </Pie>
-            <Tooltip />
           </PieChart>
         </ResponsiveContainer>
+
+        <div className="chart-donut__center">
+          <div className="chart-donut__center-count">{total}</div>
+          <div className="chart-donut__center-label">Tour</div>
+        </div>
+      </div>
+
+      <div className="chart-donut__legend">
+        <div className="chart-donut__legend-item">
+          <span className="chart-donut__legend-item-dot chart-donut__legend-item-completed" /> Đã khởi hành
+        </div>
+        <div className="chart-donut__legend-item">
+          <span className="chart-donut__legend-item-dot chart-donut__legend-item-pending" /> Chưa khởi hành
+        </div>
       </div>
     </div>
   );

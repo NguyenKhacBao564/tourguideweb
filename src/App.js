@@ -19,6 +19,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./components/Unauthorized";
 import NotFound from "./pages/NotFound";
 import UserManagement from "./pages/BusinessEmployee/UserManagement";
+import AddNewEmployee from "./pages/Admin/addNewEmployee";
 
 function App() {
  
@@ -57,10 +58,11 @@ function App() {
           }>
               {/* <Route index element={<Dashboard />} /> */}
               <Route path="dashboard" element={<Dashboard />} />
-              <Route path="nhan-vien" element={<StaffManagement />} />
-              <Route path="nhan-vien/:id" element={<EmployeeProfile />} />
-              <Route path="quan-ly-tour" element={<TourManagement />} />
-              <Route path="quan-ly-chi-nhanh" element={<BranchManagement />} />
+              <Route path="staffManagement" element={<StaffManagement />} />
+              <Route path="staffManagement/:id" element={<EmployeeProfile />} />
+              <Route path="staffManagement/addNewEmployee" element={<AddNewEmployee />} />
+              <Route path="tourManagement" element={<TourManagement />} />
+              <Route path="branchManagement" element={<BranchManagement />} />
           </Route>
       </Routes>
       </AuthProvider>

@@ -42,12 +42,12 @@ export const getTransactions = async () => {
   }
 };
 
-
-export const getBranchforDashboard = async () => {
+// Lấy danh sách nhân viên
+export const getEmployees = async () => {
   try {
-    const response = await axios.get(`${API_URL}/api/admin/dashboardBranch`);
+    const response = await axios.get(`${API_URL}/api/admin/employees`);
     return response.data;
   } catch (error) {
-    throw new Error(error.response?.data?.message || "Lỗi khi lấy số liệu tổng quan cho dashboard");
+    throw new Error(error.response?.data?.message || "Lỗi khi lấy danh sách nhân viên");
   }
-}
+};

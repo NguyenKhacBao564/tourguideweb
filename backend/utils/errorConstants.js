@@ -19,6 +19,10 @@ const ERROR_MESSAGES = {
         code: "AUTH_004",
         message: "Token đã hết hạn. Vui lòng đăng nhập lại.",
       },
+      ACCOUNT_INACTIVE: {
+        code: "AUTH_INACTIVE",
+        message: "Tài khoản hiện không hoạt động"
+      },
     },
     API: {
       NETWORK_ERROR: {

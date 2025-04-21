@@ -70,13 +70,22 @@ const loginUser = async (req, res) => {
       const result = await pool
         .request()
         .input("email", sql.VarChar, email)
-        .query(`SELECT * FROM ${table} WHERE email = @email`);
+        .query(`SELECT * FROM ${table} WHERE email = @email `);
       const user = result.recordset[0];
+
       if(!user) return null;
+      
+
+      // K.Bao: Điều kiện tài khoản phải không bị khoá
+      const statusField = table === "Customer" ? user.cus_status : user.em_status;
+      if (statusField !== "active") {
+        return { error: ERROR_MESSAGES.AUTH.ACCOUNT_INACTIVE };
+      }
       const matchPassword = await verifyPassword(password, user.password);
       if (!matchPassword) {
         return { error: ERROR_MESSAGES.AUTH.LOGIN_FAILED };
       }
+
       const role = roleField ? await getRoleById(user[roleField]) : "customer";
       return{
         id: user[idField],
@@ -96,7 +105,7 @@ const loginUser = async (req, res) => {
       });
     }
     if (user) {
-      const token = generateToken({ userId: user.id, role: user.role , name: user.name});
+      const token = generateToken({ userId: user.id, role: user.role , name: user.name ,});
       return res.status(200).json({
         token,
         message: "Đăng nhập thành công",
@@ -160,6 +169,7 @@ const registerUser = async (req, res) => {
     }
     // Tạo emp_id mới bằng uuid
     const cusID = uuidv4().replace(/-/g, "").slice(0, 10); // Lấy 10 ký tự đầu của UUID
+    const status = "active";
     // Băm mật khẩu
     const hashedPassword = await hashPassword(password);
     //Thêm customer mới
@@ -170,8 +180,9 @@ const registerUser = async (req, res) => {
       .input("email", sql.NVarChar, email)
       .input("password", sql.VarBinary, hashedPassword)
       .input("phone", sql.NVarChar, phone)
+      .input("cus_status", sql.NVarChar, status)
       .query(
-        "INSERT INTO Customer (cus_id, fullname, email, password, phone) VALUES (@cusID, @fullname, @email, @password, @phone)"
+        "INSERT INTO Customer (cus_id, fullname, email, password, phone, cus_status) VALUES (@cusID, @fullname, @email, @password, @phone, @cus_status)"
       );
     // Tạo token cho người dùng
     const token = generateToken({ userId: cusID, role: "customer" , name: fullname});
@@ -192,35 +203,6 @@ const registerUser = async (req, res) => {
       message: ERROR_MESSAGES.API.SERVER_ERROR.message 
     });
   }
-  //Thêm employee mới
-    // await pool
-    // .request()
-    // .input("empId", sql.Int, 19) // Sử dụng VarChar vì UUID là chuỗi
-    // .input("fullname", sql.NVarChar, fullname)
-    // .input("email", sql.NVarChar, email)
-    // .input("password", sql.VarBinary, hashedPassword)
-    // .input("phone", sql.NVarChar, phone)
-    // .input("roleid", sql.Int, 3)
-    // .input("branchid", sql.Int, 1)
-    // .query(
-    //   "INSERT INTO Employee (emp_id, fullname, email, password, phone, role_id, branch_id) VALUES (@empId, @fullname, @email, @password, @phone, @roleid, @branchid )"
-    // );
-    // // Tạo token cho người dùng
-    // const token = generateToken({ userId: cusID, role: "Sales" , name: fullname});
-    // return res.status(201).json({
-    //   token,
-    //   message: "Đăng ký thành công",
-    //   user: {
-    //     id: cusID,
-    //     name: fullname,
-    //     email: email,
-    //     role: "Sales",
-    //   },
-    // });
-    // } catch (error) {
-    // console.error("Lỗi đăng ký:", error.message);
-    // return res.status(500).json({ message: error.message || "Lỗi server" });
-    // }
 };
 
 module.exports = { loginUser, registerUser };

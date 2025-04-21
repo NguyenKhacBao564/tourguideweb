@@ -6,7 +6,8 @@ const {
   getBranchStats,
   getTourChartData,
   getRecentTransactions,
-  getBranchforDashboard
+  getEmployeesByPageAndStatus,
+  getBranch
 } = require('../services/adminServices');
 const router = express.Router();
 
@@ -50,10 +51,20 @@ router.get('/transactions', async (req, res) => {
   }
 });
 
-// 5. Lấy số liệu tổng quan cho dashboard
-router.get('/dashboardBranch', async (req, res) => {
+// 5. Liệt kê nhân viên theo điều kiện 
+router.get('/employeeFilter', async (req, res) => {
   try {
-    const data = await getBranchforDashboard();
+    const data = await getEmployeesByPageAndStatus();
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 6. Lấy thông tin các chi nhánh
+router.get('/getBranch', async (req, res) => {
+  try {
+    const data = await getBranch();
     res.json(data);
   } catch (err) {
     res.status(500).json({ error: err.message });
