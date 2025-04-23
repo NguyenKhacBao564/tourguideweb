@@ -1,5 +1,6 @@
 const { sql, getPool } = require("../config/db");
 const bcrypt = require("bcrypt");
+const { v4: uuidv4 } = require("uuid");
 const ERROR_MESSAGES = require("../utils/errorConstants");
 
 // Hàm băm mật khẩu (tái sử dụng từ authService.js)
@@ -9,6 +10,8 @@ const hashPassword = async (password) => {
     let hashedBuffer = Buffer.from(hashedPassword, "utf8");
     return hashedBuffer;
 };
+
+
 
 // Hàm tạo yêu cầu hỗ trợ
 const createSupportRequest = async (req, res) => {
@@ -52,30 +55,26 @@ const createSupportRequest = async (req, res) => {
             OUTPUT INSERTED.cus_id
             VALUES (@fullname, @email, @password, @phone)
             `);
-
-            cusId = customerResult.recordset[0].cus_id;
-            console.log(`Đã tạo khách hàng mới với cus_id: ${cusId}`);
         }
-
+        // Tạo emp_id mới bằng uuid
+        const requestID = uuidv4().replace(/-/g, "").slice(0, 10); // Lấy 10 ký tự đầu của UUID
         // Lưu yêu cầu hỗ trợ vào bảng Customer_Support_Request
         const supportResult = await pool
             .request()
+            .input("request_id", sql.NVarChar, requestID)
             .input("cus_id", sql.VarChar, cusId)
             .input("subject", sql.NVarChar, subject)
             .input("message", sql.NVarChar, message)
             .input("status", sql.NVarChar, "PENDING")
             .query(`
-            INSERT INTO Customer_Support_Request (cus_id, subject, message, status)
-            OUTPUT INSERTED.request_id
-            VALUES (@cus_id, @subject, @message, @status)
+            INSERT INTO Customer_Support_Request (request_id, cus_id, subject, message, status)
+            VALUES (@request_id, @cus_id, @subject, @message, @status)
         `);
 
-        const requestId = supportResult.recordset[0].request_id;
-        console.log(`Đã tạo yêu cầu hỗ trợ với request_id: ${requestId}`);
+        console.log(`Đã tạo yêu cầu hỗ trợ`);
 
         return res.status(201).json({
             message: "Yêu cầu hỗ trợ đã được gửi thành công",
-            requestId: requestId
         });
     } catch (error) {
         console.error("Lỗi khi gửi yêu cầu hỗ trợ:", error.message);
