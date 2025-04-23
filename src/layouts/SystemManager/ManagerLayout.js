@@ -1,30 +1,18 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { useContext, useMemo } from 'react';
-<<<<<<< HEAD
-import SideBar from '../../components/Sidebar/SideBar';
-import NavBarAdmin from '../../components/NavBar_Admin/NavBarAdmin';
-import "../../styles/pages/Employee_Bussiness.scss";
-import { BusinessEmployeeSideBar, AdminSideBar, ConsultantEmployeeSideBar } from '../../utils/SideBarItem';
-=======
 import SideBar from '../../components/Common/Sidebar/SideBar';
 import NavBarAdmin from '../../components/Common/NavBar_Admin/NavBarAdmin';
 import "../../styles/layouts/Manager_layout.scss";
-import { BusinessEmployeeSideBar, AdminSideBar , ConsultantEmployeeSideBar } from '../../utils/SideBarItem';
->>>>>>> 72c24a91b735585caef8c4924f9eccabdbcf446a
+import { BusinessEmployeeSideBar, AdminSideBar, ConsultantEmployeeSideBar } from '../../utils/SideBarItem';
 import { AuthContext } from '../../context/AuthContext';
 import { Outlet } from 'react-router-dom';
 
 
 function ManagerLayout() {
 
-<<<<<<< HEAD
   const { user } = useContext(AuthContext);
-  console.log("user manaager: ", user);
-=======
-const { user } = useContext(AuthContext);
-console.log("user manager: ", user);
->>>>>>> 72c24a91b735585caef8c4924f9eccabdbcf446a
+  console.log("user manager: ", user);
   // Chọn layout dựa trên vai trò người dùng
   const layoutType = useMemo(() => {
     switch (user?.role) {

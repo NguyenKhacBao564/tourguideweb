@@ -8,7 +8,6 @@ import { AuthContext } from '../../context/AuthContext';
 function Login() {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
-  const location = useLocation();
 
   const [values, setValues] = useState({ email: '', password: '' });
   const [error, setError] = useState(null);
@@ -35,34 +34,25 @@ function Login() {
       const getUser = await login(values.email, values.password);
       setSuccess("Đăng nhập thành công!");
 
-      // Kiểm tra location.state.from để chuyển hướng
-      const redirectTo = location.state?.from || null;
-
       setTimeout(() => {
-        if (redirectTo) {
-          // Nếu có trang đích (ví dụ: /contact), chuyển hướng đến đó
-          navigate(redirectTo, { replace: true });
-        } else {
-          // Nếu không có trang đích, chuyển hướng theo role
-          switch (getUser.role) {
-            case "customer":
-              navigate("/", { replace: true });
-              break;
-            case "Support":
-              navigate("/consultantemployee/chatbot", { replace: true });
-              break;
-            case "Sales":
-              navigate("/businessemployee/customer", { replace: true });
-              break;
-            case "Admin":
-              navigate("/admin/dashboard", { replace: true });
-              break;
-            default:
-              console.error("Unknown role:", getUser.role);
-              navigate("/", { replace: true }); // Mặc định về trang chính
-          }
+        switch (getUser.role) {
+          case "customer":
+            navigate("/", { replace: true });
+            break;
+          case "Support":
+            navigate("/consultantemployee/chatbot", { replace: true });
+            break;
+          case "Sales":
+            navigate("/businessemployee/customer", { replace: true });
+            break;
+          case "Admin":
+            navigate("/admin/dashboard", { replace: true });
+            break;
+          default:
+            console.error("Unknown role:", getUser.role);
+            navigate("/", { replace: true }); // Mặc định về trang chính
         }
-      }, 1000);
+      });
     } catch (error) {
       setSuccess(null);
       setErrorCode(error.code);
