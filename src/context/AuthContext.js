@@ -8,17 +8,24 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   console.log("AuthProvider render")
   const [user, setUser] = useState(null);
+<<<<<<< HEAD
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
 
+=======
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  
+>>>>>>> 72c24a91b735585caef8c4924f9eccabdbcf446a
   useEffect(() => {
     // Kiểm tra nếu có token trong localStorage khi tải trang
     const token = localStorage.getItem("token");
     if (token) {
       try {
         const decoded = jwtDecode(token);
+<<<<<<< HEAD
         // Lấy thêm thông tin user từ localStorage nếu có
         const storedUser = JSON.parse(localStorage.getItem("userData") || "{}");
         setUser({
@@ -26,7 +33,12 @@ export const AuthProvider = ({ children }) => {
           ...storedUser
         });
         setIsAuthenticated(true);
+=======
+>>>>>>> 72c24a91b735585caef8c4924f9eccabdbcf446a
         console.log("Decoded token:", decoded);
+        
+        // Đảm bảo đối tượng user có đủ thông tin cần thiết
+        setUser(decoded);
       } catch (error) {
         console.error("Token không hợp lệ:", error);
         localStorage.removeItem("token");
@@ -34,7 +46,11 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(false);
       }
     }
+<<<<<<< HEAD
     setIsLoading(false);
+=======
+    setLoading(false);
+>>>>>>> 72c24a91b735585caef8c4924f9eccabdbcf446a
   }, []);
 
   const login = async (email, password) => {
@@ -80,6 +96,11 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(false);
       throw error;
     }
+  }
+
+  if (loading) {
+    // Có thể thêm một loader nếu cần
+    return <div>Loading...</div>;
   }
 
   return (

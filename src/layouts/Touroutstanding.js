@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import Slider from 'react-slick';
 import { SlArrowLeftCircle, SlArrowRightCircle } from 'react-icons/sl';
-import TourCard from '../components/TourCard/TourCard';
+import TourCard from '../components/Common/TourCard/TourCard';
 import { TourContext } from '../context/TourContext';
 
 function SampleNextArrow(props) {

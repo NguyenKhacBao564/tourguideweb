@@ -5,7 +5,7 @@ import { FaUserLarge } from "react-icons/fa6";
 import { BiCalendarCheck } from "react-icons/bi";
 import { MdDiscount } from "react-icons/md";
 import { IoLogOutSharp } from "react-icons/io5";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../../context/AuthContext";
 import "./SideBar.scss";
 
 function Sidebar({navItems}) {
@@ -36,7 +36,7 @@ function Sidebar({navItems}) {
             {navItems.map((item, index) => (
                 <Nav.Item
                 key={index}
-                className={`sidebar__item ${item.link && location.pathname === item.link ? "active" : ""
+                className={`sidebar__item ${item.link && location.pathname.startsWith(item.link) ? "active" : ""
                 }`}
                 onClick={() => handleItemClick(item)}
                 data-title={item.label}

@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
 import { TourContext } from "../../context/TourContext";
-import TourCard from "../TourCard/TourCard";
+import TourCard from "../Common/TourCard/TourCard";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import ShowAllButton from "../Button/ShowAllButton";
+import ShowAllButton from "../Common/Button/ShowAllButton";
 import "./TourList.scss";
 
 function Tourlist(props) {

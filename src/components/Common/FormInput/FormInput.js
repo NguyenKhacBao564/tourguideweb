@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import styles from "./FormInput.module.scss"; // Import CSS Module
-import validator from "../../feature/validator";
-import pattern from '../../utils/pattern';
+import validator from "../../../feature/validator";
+import pattern from '../../../utils/pattern';
 
 function FormInput(props) {
     const { label, errorMessage, onChange, id, type, value, ...inputProps } = props;

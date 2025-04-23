@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import Navbar from '../../layouts/Navbar';
 import Footer from '../../layouts/Footer';
 import "../../styles/pages/InforUser.scss"
@@ -8,9 +8,13 @@ import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { Link } from 'react-router-dom';
-import UserAvatar from '../../components/UserAvatar/UserAvatar';
+import UserAvatar from '../../components/Common/UserAvatar/UserAvatar';
 import { FaArrowLeft } from "react-icons/fa6";
+import { AuthContext } from '../../context/AuthContext';
+
 function InforUser(props) {
+    const {logout} = useContext(AuthContext);
+
     return (
         <div className='inforUser_page'>
             <Navbar/>
@@ -67,7 +71,7 @@ function InforUser(props) {
                 </Container>
                 
                 <div className="text-end mt-5 mb-5">
-                    <Button variant="danger" className="logout-btn">
+                    <Button variant="danger" className="logout-btn" onClick={logout}>
                         Đăng xuất
                     </Button>
                 </div>
