@@ -39,7 +39,7 @@ const getRoleById = async (roleId) => {
     throw new Error(`Không tìm thấy vai trò cho role_id: ${roleId}`);
   }
   console.log("Lấy vai trò thành công:", role);
-  return role; 
+  return role;
 };
 
 //Hàm Hash password
@@ -55,9 +55,9 @@ const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         code: ERROR_MESSAGES.AUTH.LOGIN_FAILED.code,
-        message: "Email và mật khẩu là bắt buộc" 
+        message: "Email và mật khẩu là bắt buộc"
       });
     }
     ///Tạo kết nối đến database
@@ -72,18 +72,18 @@ const loginUser = async (req, res) => {
         .input("email", sql.VarChar, email)
         .query(`SELECT * FROM ${table} WHERE email = @email`);
       const user = result.recordset[0];
-      if(!user) return null;
+      if (!user) return null;
       const matchPassword = await verifyPassword(password, user.password);
       if (!matchPassword) {
         return { error: ERROR_MESSAGES.AUTH.LOGIN_FAILED };
       }
       const role = roleField ? await getRoleById(user[roleField]) : "customer";
-      return{
+      return {
         id: user[idField],
         name: user.fullname,
         email: user.email,
-        role: role,
         phone: user.phone,
+        role: role,
         address: user.address,
         branch_id: user.branch_id,
       }
@@ -92,14 +92,14 @@ const loginUser = async (req, res) => {
     // 1. Kiểm tra trong bảng Customer
     console.log("Đang kiểm tra trong bảng Customer...");
     let user = await checkUser("Customer", "cus_id", null);
-    if(user?.error){
-      return res.status(401).json({ 
+    if (user?.error) {
+      return res.status(401).json({
         code: user.error.code,
-        message: user.error.message 
+        message: user.error.message
       });
     }
     if (user) {
-      const token = generateToken({ userId: user.id, role: user.role , name: user.name, address: user.address, phone: user.phone});
+      const token = generateToken({ userId: user.id, role: user.role , name: user.name, email: user.email, address: user.address, phone: user.phone});
       return res.status(200).json({
         token,
         message: "Đăng nhập thành công",
@@ -109,14 +109,14 @@ const loginUser = async (req, res) => {
     // 2. Kiểm tra trong bảng Employee
     console.log("Đang kiểm tra trong bảng Employee...");
     user = await checkUser("Employee", "emp_id", "role_id");
-    if(user?.error){
-      return res.status(401).json({ 
+    if (user?.error) {
+      return res.status(401).json({
         code: user.error.code,
-        message: user.error.message 
+        message: user.error.message
       });
     }
     if (user){
-      const token = generateToken({userId: user.id, role: user.role , name: user.name, branch_id: user.branch_id});
+      const token = generateToken({userId: user.id, role: user.role , name: user.name, email: user.email, address: user.address, phone: user.phone, branch_id: user.branch_id});
       return res.status(200).json({
         token,
         message: "Đăng nhập thành công",
@@ -125,15 +125,15 @@ const loginUser = async (req, res) => {
     }
     console.log("Không tìm thấy user");
     // Nếu không tìm thấy user
-    return res.status(401).json({ 
+    return res.status(401).json({
       code: ERROR_MESSAGES.AUTH.LOGIN_FAILED.code,
-      message: ERROR_MESSAGES.AUTH.LOGIN_FAILED.message 
+      message: ERROR_MESSAGES.AUTH.LOGIN_FAILED.message
     });
   } catch (error) {
     console.error("Lỗi đăng nhập:", error.message);
-    return res.status(500).json({ 
+    return res.status(500).json({
       code: ERROR_MESSAGES.API.SERVER_ERROR.code,
-      message: ERROR_MESSAGES.API.SERVER_ERROR.message 
+      message: ERROR_MESSAGES.API.SERVER_ERROR.message
     });
   }
 };
@@ -143,9 +143,9 @@ const registerUser = async (req, res) => {
   try {
     const { fullname, email, password, phone } = req.body;
     if (!fullname || !email || !password || !phone) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         code: ERROR_MESSAGES.AUTH.REGISTRATION_FAILED.code,
-        message: "Vui lòng điền đầy đủ thông tin" 
+        message: "Vui lòng điền đầy đủ thông tin"
       });
     }
     const pool = await getPool();
@@ -156,9 +156,9 @@ const registerUser = async (req, res) => {
       .query("SELECT * FROM Customer WHERE email = @email");
 
     if (emailCheck.recordset.length > 0) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         code: ERROR_MESSAGES.AUTH.REGISTRATION_FAILED.code,
-        message: ERROR_MESSAGES.AUTH.REGISTRATION_FAILED.message 
+        message: ERROR_MESSAGES.AUTH.REGISTRATION_FAILED.message
       });
     }
     // Tạo emp_id mới bằng uuid
@@ -177,7 +177,7 @@ const registerUser = async (req, res) => {
         "INSERT INTO Customer (cus_id, fullname, email, password, phone) VALUES (@cusID, @fullname, @email, @password, @phone)"
       );
     // Tạo token cho người dùng
-    const token = generateToken({ userId: cusID, role: "customer" , name: fullname});
+    const token = generateToken({ userId: cusID, role: "customer", name: fullname });
     return res.status(201).json({
       token,
       message: "Đăng ký thành công",
@@ -185,45 +185,46 @@ const registerUser = async (req, res) => {
         id: cusID,
         name: fullname,
         email: email,
+        phone: phone,
         role: "customer",
       },
     });
   } catch (error) {
     console.error("Lỗi đăng ký:", error.message);
-    return res.status(500).json({ 
+    return res.status(500).json({
       code: ERROR_MESSAGES.API.SERVER_ERROR.code,
-      message: ERROR_MESSAGES.API.SERVER_ERROR.message 
+      message: ERROR_MESSAGES.API.SERVER_ERROR.message
     });
   }
   //Thêm employee mới
-    // await pool
-    // .request()
-    // .input("empId", sql.Int, 19) // Sử dụng VarChar vì UUID là chuỗi
-    // .input("fullname", sql.NVarChar, fullname)
-    // .input("email", sql.NVarChar, email)
-    // .input("password", sql.VarBinary, hashedPassword)
-    // .input("phone", sql.NVarChar, phone)
-    // .input("roleid", sql.Int, 3)
-    // .input("branchid", sql.Int, 1)
-    // .query(
-    //   "INSERT INTO Employee (emp_id, fullname, email, password, phone, role_id, branch_id) VALUES (@empId, @fullname, @email, @password, @phone, @roleid, @branchid )"
-    // );
-    // // Tạo token cho người dùng
-    // const token = generateToken({ userId: cusID, role: "Sales" , name: fullname});
-    // return res.status(201).json({
-    //   token,
-    //   message: "Đăng ký thành công",
-    //   user: {
-    //     id: cusID,
-    //     name: fullname,
-    //     email: email,
-    //     role: "Sales",
-    //   },
-    // });
-    // } catch (error) {
-    // console.error("Lỗi đăng ký:", error.message);
-    // return res.status(500).json({ message: error.message || "Lỗi server" });
-    // }
+  // await pool
+  // .request()
+  // .input("empId", sql.Int, 19) // Sử dụng VarChar vì UUID là chuỗi
+  // .input("fullname", sql.NVarChar, fullname)
+  // .input("email", sql.NVarChar, email)
+  // .input("password", sql.VarBinary, hashedPassword)
+  // .input("phone", sql.NVarChar, phone)
+  // .input("roleid", sql.Int, 3)
+  // .input("branchid", sql.Int, 1)
+  // .query(
+  //   "INSERT INTO Employee (emp_id, fullname, email, password, phone, role_id, branch_id) VALUES (@empId, @fullname, @email, @password, @phone, @roleid, @branchid )"
+  // );
+  // // Tạo token cho người dùng
+  // const token = generateToken({ userId: cusID, role: "Sales" , name: fullname});
+  // return res.status(201).json({
+  //   token,
+  //   message: "Đăng ký thành công",
+  //   user: {
+  //     id: cusID,
+  //     name: fullname,
+  //     email: email,
+  //     role: "Sales",
+  //   },
+  // });
+  // } catch (error) {
+  // console.error("Lỗi đăng ký:", error.message);
+  // return res.status(500).json({ message: error.message || "Lỗi server" });
+  // }
 };
 
 module.exports = { loginUser, registerUser };

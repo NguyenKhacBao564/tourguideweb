@@ -29,7 +29,17 @@ const getAllTourPrice = async (req, res) => {
     }
 }
 
-
+const updateTourPrice = async (transaction, tour_id, prices) =>{
+    try{
+       const caseSQL = prices.map(({age_group, price}) => `WHEN '${age_group}' THEN ${price}`).join("\n");
+       await transaction.request()
+       .input("tour_id", sql.NVarChar, tour_id)
+       .input("case_sql", sql.NVarChar, caseSQL)
+       .query(`UPDATE Tour_price SET price = CASE age_group ${caseSQL}  END WHERE tour_id = @tour_id`);
+    }catch(error){
+        throw new Error("Lỗi khi cập nhật giá tour");
+    }
+}
 const addTourPrice = async (transaction, tour_id, listPrice) => {
     for (const item of listPrice) {
         const {age_group, price} = item;
@@ -37,7 +47,7 @@ const addTourPrice = async (transaction, tour_id, listPrice) => {
         if (!age_group || !price) {
             throw new Error('Thiếu dữ liệu!');
         }
-
+        // const formatPrice = price.replace(/\./g, '')
         const tourPriceRequest = transaction.request();
         await tourPriceRequest
         .input("tour_id", sql.NVarChar, tour_id)
@@ -47,4 +57,4 @@ const addTourPrice = async (transaction, tour_id, listPrice) => {
     }
 }
 
-module.exports = {getTourPrice, getAllTourPrice, addTourPrice};
+module.exports = {getTourPrice, getAllTourPrice, addTourPrice, updateTourPrice};

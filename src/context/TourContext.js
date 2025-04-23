@@ -1,5 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
-import { getTour, deleteTour, addTour, blockTour} from "../api/tourAPI";
+import { getTour, deleteTour, addTour, updateTour, blockTour} from "../api/tourAPI";
+import { getItinerary } from "../api/scheduleAPI";
+
 
 // Tạo Context
 export const TourContext = createContext();
@@ -74,12 +76,42 @@ export const TourProvider = ({ children }) => {
       return result;
     } catch (err) {
       setError(err.message);
+      throw err;
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleUpdateTour = async (tourData) => {
+    try {
+      setIsLoading(true);
+      const result = await updateTour(tourData);
+      
+      // Update the tour in the state
+      setTours((prevTours) => 
+        prevTours.map(tour => 
+          tour.tour_id === tourData.tour_id ? { ...tour, ...tourData } : tour
+        )
+      );
+      
+      setError(null);
+      return result;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  const handleGetItinerary = async (tour_id) => {
+    try {
+      const result = await getItinerary(tour_id);
+      return result;
+    } catch (error) {
+      setError(error.message);
+    }
+  }
   // Giá trị cung cấp cho Context
   const value = {
     tours,
@@ -87,6 +119,8 @@ export const TourProvider = ({ children }) => {
     error,
     deleteTour: handleDeleteTour,
     addTour: handleAddTour,
+    updateTour: handleUpdateTour,
+    getItinerary: handleGetItinerary,
     blockTour: handleBlockTour,
   };
 

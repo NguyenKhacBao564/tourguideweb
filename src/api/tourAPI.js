@@ -31,6 +31,16 @@ export const addTour = async (tourData) => {
   }
 };
 
+// Cập nhật tour
+export const updateTour = async (tourData) => {
+  try {
+    const response = await axios.put(`${API_URL}/tours/update/${tourData.tour_id}`, tourData);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Lỗi khi cập nhật tour");
+  }
+};
+
 // Xóa tour
 export const deleteTour = async (id) => {
   try {

@@ -11,6 +11,25 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   
+
+  const checkRole = (role) => {
+    switch (role) {
+      case "customer":
+        navigate("/", {replace: true});
+        break;    
+      case "Support":
+        navigate("/support", {replace: true});
+        break;
+      case "Sales":
+        navigate("/businessemployee/customer", {replace: true});
+        break;
+      case "Admin":
+        navigate("/admin/dashboard", {replace: true});
+        break;
+      default:
+        console.error("Unknown role:");
+    }
+  }
   useEffect(() => {
     // Kiểm tra nếu có token trong localStorage khi tải trang
     const token = localStorage.getItem("token");
@@ -18,9 +37,9 @@ export const AuthProvider = ({ children }) => {
       try {
         const decoded = jwtDecode(token);
         console.log("Decoded token:", decoded);
-        
         // Đảm bảo đối tượng user có đủ thông tin cần thiết
         setUser(decoded);
+        checkRole(decoded.role);
       } catch (error) {
         console.error("Token không hợp lệ:", error);
         localStorage.removeItem("token");

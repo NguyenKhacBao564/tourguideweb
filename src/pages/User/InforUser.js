@@ -57,7 +57,7 @@ function InforUser(props) {
                                 
                                 <Form.Group className="mb-4" controlId="email">
                                     <Form.Label>Địa chỉ email</Form.Label>
-                                    <Form.Control type="email" defaultValue={user.email || ''} />
+                                    <Form.Control type="email" defaultValue={user.email || ''} disabled/>
                                 </Form.Group>
                                 
                                 <Form.Group className="mb-4" controlId="address">

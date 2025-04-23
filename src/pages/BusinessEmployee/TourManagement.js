@@ -5,6 +5,8 @@ import TourFilterEmployee from "../../components/Employee/Filter/TourFilterEmplo
 import DataTable from "../../components/Common/DataTable/DataTable";
 import { TourContext } from "../../context/TourContext";
 import StatusFilterEmployee from "../../components/Employee/StatusFilter_Employee/StatusFilterEmployee";
+import { useNavigate } from "react-router-dom";
+
 import { 
   filterToursByStatus, 
   filterToursBySearchTerm, 
@@ -14,8 +16,9 @@ import {
 } from "../../utils/tourFilterHelpers";
 
 const TourManagementEmp = () => {
+  const navigate = useNavigate();
   const { tours, isLoading, error, deleteTour, blockTour } = useContext(TourContext);
-  
+  console.log('tours', tours);
   // Các trạng thái lọc và sắp xếp
   const [statusFilter, setStatusFilter] = useState(FILTER_KEYS.ALL);
   const [searchTerm, setSearchTerm] = useState("");
@@ -31,7 +34,7 @@ const TourManagementEmp = () => {
     { key: 'end_date', label: 'Ngày trở về' },
   ];
 
-  // Định nghĩa các hành động cho mỗi cột trong bảng
+  // Định nghĩa các hành động (button) cho mỗi cột trong bảng
   const actions = [
     {
       label: 'Khóa',
@@ -50,8 +53,15 @@ const TourManagementEmp = () => {
     {
       label: 'Chi tiết',
       variant: 'success',
-      onClick: (id) => {
-        console.log(`Xem chi tiết tour ${id}`);
+      onClick: (id, tourDetail) => {
+        // Ensure price fields are properly formatted as strings
+        const formattedTour = {
+          ...tourDetail,
+        };
+        
+        navigate("/businessemployee/managetour/addtour", {
+          state: { tourDetail: formattedTour }
+        });
       },
     },
   ];
