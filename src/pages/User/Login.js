@@ -49,7 +49,7 @@ function Login() {
               navigate("/", { replace: true });
               break;
             case "Support":
-              navigate("/support", { replace: true });
+              navigate("/consultantemployee/chatbot", { replace: true });
               break;
             case "Sales":
               navigate("/businessemployee/customer", { replace: true });

@@ -15,6 +15,10 @@ import BusinessEmployee from "./pages/BusinessEmployee/BusinessEmployee";
 import AddTourArea from "./components/AddTourArea/AddTourArea";
 import InforUser from "./pages/User/InforUser";
 import { AuthProvider } from "./context/AuthContext";
+import ConsultantEmployee from "./pages/ConsultantEmployee/ConsultantEmployee";
+import Chatbot from "./pages/ConsultantEmployee/ChatBot";
+import ResponeSupport from "./pages/ConsultantEmployee/ResponeSupport";
+// import { ConsultantSupportProvider } from "./context/ConsultantSupportContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./components/Unauthorized";
 import NotFound from "./pages/NotFound";
@@ -24,6 +28,7 @@ function App() {
     <div className="App">
       <ScrollToTop />
       <AuthProvider>
+        {/* <ConsultantSupportProvider> */}
         <Routes>
           <Route path="/" element={<Page />} />
           <Route path="/contact" element={<Contact />} />
@@ -33,6 +38,7 @@ function App() {
           <Route path="/customer" element={<p>customer</p>} />
           <Route path="/sale" element={<p>sale</p>} />
           <Route path="/support" element={<p>support</p>} />
+
           <Route path="/businessemployee" element={
             <ProtectedRoute allowedRoles={["Sales"]}>
               <BusinessEmployee />
@@ -60,7 +66,18 @@ function App() {
             <Route path="quan-ly-tour" element={<TourManagement />} />
             <Route path="quan-ly-chi-nhanh" element={<BranchManagement />} />
           </Route>
+
+          {/* </ConsultantSupportProvider> */}
+          <Route path="/consultantemployee" element={
+            <ProtectedRoute allowedRoles={["Support"]}>
+              <ConsultantEmployee />
+            </ProtectedRoute>
+          }>
+            <Route path="chatbot" element={<Chatbot />} />
+            <Route path="request-support" element={<ResponeSupport />} />
+          </Route>
         </Routes>
+
       </AuthProvider>
     </div>
   );

@@ -6,7 +6,8 @@ const PORT = 5000;
 
 const tourRoutes = require("./routes/tourRoutes");
 const authRoutes = require("./routes/authRoutes");
-const supportRoutes = require("./routes/supportRoutes");
+const customerSupportRoutes = require("./routes/customerSupportRoutes");
+const consultantSupportRoutes = require("./routes/consultantSupportRoutes");
 
 app.use(cors());
 app.use(express.json());
@@ -14,8 +15,8 @@ app.use(express.json());
 //Sử dụng các Route
 app.use("/tours", tourRoutes);
 app.use("/auth", authRoutes);
-app.use("/api", supportRoutes); // Thêm route cho support
-
+app.use("/api", customerSupportRoutes); // Thêm route cho support
+app.use("/api", consultantSupportRoutes);
 app.listen(PORT, () => {
   console.log(`🚀 Server chạy tại http://localhost:${PORT}`);
 });
