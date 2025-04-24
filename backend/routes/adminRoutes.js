@@ -7,6 +7,7 @@ const {
   getTourChartData,
   getRecentTransactions,
   getEmployeesByPageAndStatus,
+  getToursByStatusAndPage,
   getBranch
 } = require('../services/adminServices');
 const router = express.Router();
@@ -53,8 +54,9 @@ router.get('/transactions', async (req, res) => {
 
 // 5. Liệt kê nhân viên theo điều kiện 
 router.get('/employeeFilter', async (req, res) => {
+  const { status, page, pageSize } = req.query;
   try {
-    const data = await getEmployeesByPageAndStatus();
+    const data = await getEmployeesByPageAndStatus(status, Number(page), Number(pageSize));
     res.json(data);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -70,5 +72,18 @@ router.get('/getBranch', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+// 7. Lấy danh sách tour theo trạng thái và phân trang
+router.get('/tours', async (req, res) => {
+  try {
+    // page và pageSize truyền vào query string
+    const page     = parseInt(req.query.page, 10)     || 1;
+    const pageSize = parseInt(req.query.pageSize, 10) || 10;
+    //const status   = req.query.status || 'active';
 
+    const { tours, total } = await getToursByStatusAndPage( page, pageSize);
+    res.json({ tours, total });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 module.exports = router;

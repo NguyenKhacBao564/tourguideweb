@@ -1,159 +1,83 @@
-import React, { useState } from 'react';
-import { Search, Plus, Edit, Trash2, MoreVertical } from 'lucide-react';
+// src/pages/Admin/StaffManagement.js
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AdminDataTable from '../../components/Admin/adminDataTable';
+import { getEmployees } from '../../api/adminAPI';
 
 const StaffManagement = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const navigate = useNavigate();
-  const handleAdd = () => {
-    // Navigate to add new employee page
-    navigate('addNewEmployee');
-  };
-  // Sample staff data
-  const staffData = [
+  const [employees, setEmployees] = useState([]);
+  const [total, setTotal]       = useState(0);
+  const [loading, setLoading]   = useState(true);
+  const [page, setPage]         = useState(1);
+  const navigate                = useNavigate();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const { employees, total } = await getEmployees('active', page, 10);
+        setEmployees(employees);
+        setTotal(total);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [page]);
+
+  const columns = [
+    { header: 'ID nhân viên', accessor: 'emp_id' },
+    { header: 'Tên nhân viên', accessor: 'fullname' },
+    { header: 'Vai trò', accessor: 'role_id' },
+    { header: 'Chi nhánh', accessor: 'branch_id' },
+    { header: 'Trạng thái', accessor: 'em_status' },
     {
-      id: 1,
-      name: "Nguyễn Văn A",
-      email: "nguyenvana@example.com",
-      phone: "0123456789",
-      position: "Nhân viên bán hàng",
-      branch: "Hà Nội",
-      status: "active"
-    },
-    {
-      id: 2,
-      name: "Trần Thị B",
-      email: "tranthib@example.com",
-      phone: "0987654321",
-      position: "Quản lý chi nhánh",
-      branch: "TP HCM",
-      status: "active"
-    },
-    {
-      id: 3,
-      name: "Lê Văn C",
-      email: "levanc@example.com",
-      phone: "0369852147",
-      position: "Nhân viên bán hàng",
-      branch: "Hải Phòng",
-      status: "inactive"
-    },
-    {
-      id: 4,
-      name: "Phạm Thị D",
-      email: "phamthid@example.com",
-      phone: "0741852963",
-      position: "Nhân viên bán hàng",
-      branch: "Hà Nội",
-      status: "active"
-    },
-    {
-      id: 5,
-      name: "Hoàng Văn E",
-      email: "hoangvane@example.com",
-      phone: "0159753468",
-      position: "Quản lý chi nhánh",
-      branch: "TP HCM",
-      status: "active"
+      header: 'Thao tác',
+      accessor: 'actions',
+      render: (emp) => (
+        <>
+          <button
+            className="btn btn-sm btn-primary me-2"
+            onClick={() => navigate(`${emp.emp_id}`)}
+          >
+            Sửa
+          </button>
+          <button
+            className="btn btn-sm btn-danger"
+            onClick={() => console.log('Khoá tài khoản', emp)}
+          >
+            Khoá
+          </button>
+        </>
+      )
     }
   ];
 
-  // Filter staff based on search term
-  const filteredStaff = staffData.filter(staff => 
-    staff.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    staff.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    staff.phone.includes(searchTerm)
-  );
-
-  const handleViewDetails = (staffId) => {
-    // Navigate to employee details page with the staff ID
-    navigate(`/admin/nhan-vien/${staffId}`);
-  };
-
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="admin-title">Quản lý nhân viên</h2>
-        <button className="btn btn-primary" onClick={handleAdd}>
-          <Plus size={16} />
-          <span>Thêm nhân viên</span>
+    <div className="p-4">
+      <h2>Quản lý nhân viên</h2>
+      <div className="d-flex mb-3">
+        <button
+          className="btn btn-success me-2"
+          onClick={() => navigate('addNewEmployee')}
+        >
+          Thêm nhân viên
         </button>
       </div>
 
-      <div className="table-container">
-        <div className="table-header">
-          <div className="input-group">
-            <input 
-              type="text" 
-              placeholder="Tìm kiếm nhân viên..." 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <div className="input-group-icon">
-              <Search size={16} />
-            </div>
-          </div>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Tên nhân viên</th>
-                <th>Email</th>
-                <th>Số điện thoại</th>
-                <th>Vị trí</th>
-                <th>Chi nhánh</th>
-                <th>Trạng thái</th>
-                <th>Thao tác</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredStaff.map((staff) => (
-                <tr key={staff.id}>
-                  <td className="font-medium">{staff.name}</td>
-                  <td>{staff.email}</td>
-                  <td>{staff.phone}</td>
-                  <td>{staff.position}</td>
-                  <td>{staff.branch}</td>
-                  <td>
-                    <span className={`status-badge ${staff.status === 'active' ? 'status-active' : 'status-inactive'}`}>
-                      {staff.status === 'active' ? 'Đang làm việc' : 'Đã nghỉ việc'}
-                    </span>
-                  </td>
-                  <td>
-                    <div className="flex items-center gap-2">
-                      <button className="btn btn-light p-1">
-                        <Edit size={16} />
-                      </button>
-                      <button className="btn btn-light p-1">
-                        <Trash2 size={16} />
-                      </button>
-                      <button 
-                        className="btn btn-light p-1"
-                        onClick={() => handleViewDetails(staff.id)}
-                      >
-                        <MoreVertical size={16} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="p-4 flex justify-between items-center">
-          <div className="text-sm text-gray-500">
-            Hiển thị {filteredStaff.length} nhân viên
-          </div>
-          <div className="pagination">
-            <div className="page-item active">1</div>
-            <div className="page-item">2</div>
-            <div className="page-item">3</div>
-          </div>
-        </div>
-      </div>
+      <AdminDataTable
+        columns={columns}
+        data={employees}
+        loading={loading}
+        totalItems={total}
+        currentPage={page}
+        itemsPerPage={10}
+        onPageChange={setPage}
+      />
     </div>
   );
 };
 
-export default StaffManagement; 
+export default StaffManagement;

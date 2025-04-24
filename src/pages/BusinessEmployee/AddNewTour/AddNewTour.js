@@ -15,6 +15,7 @@ import CouterInput from '../../../components/Common/Button/CounterInput/CouterIn
 import DropDownIconBtn from '../../../components/Common/DropDownIcon/DropDownIconBtn';
 import { FaCar } from "react-icons/fa";
 import { v4 as uuidv4 } from 'uuid';
+import { Alert } from 'react-bootstrap';
 import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, arrayMove, verticalListSortingStrategy, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import "./AddNewTour.scss"
@@ -23,16 +24,24 @@ import { TourContext } from '../../../context/TourContext';
 
 function AddTourPage(props) {
   const navigate = useNavigate();
-  const { addTour } = useContext(TourContext);
+  const { addTour, error} = useContext(TourContext);
   const [activeField, setActiveField] = useState(false);
+
+  const [alert, setAlert] = useState({
+    show: false,
+    message: '',
+    variant: 'success'
+  });
+  const[showAlert, setShowAlert] = useState(false);
   const [values, setValues] = useState({
-    tourName: '',
+    tour_id: '',
+    name: '',
     departureLocation: '',
     destination: '',
     duration: 0,
-    departureDate: '',
-    returnDate: '',
-    seats: 0,
+    start_date: '',
+    end_date: '',
+    max_guests: 0,
     transportation: '',
     adultPrice: '0',
     childPrice: '0',
@@ -42,9 +51,9 @@ function AddTourPage(props) {
     itinerary: [],
   });
   
-
   const [scheduleList, setScheduleList] = useState([]);
 
+  //Xóa lịch trình
   const deleteSchedule = (id) => {
     console.log('id bi xoa', id);
     const updatedList = scheduleList
@@ -54,8 +63,8 @@ function AddTourPage(props) {
     setValues({...values, itinerary: updatedList});
   };
   
+  //Hiển thị form thêm lịch trình
   const handleActiveField = () => {
-    console.log('activeField', activeField);
     setActiveField(!activeField);
   }
 
@@ -114,10 +123,10 @@ function AddTourPage(props) {
   const onChange = (e) => {
     const { name, value } = e.target;
     let newValues = { ...values, [name]: value };
-    if (name === 'departureDate' || name === 'returnDate') {
-      const departureDate = name === 'departureDate' ? value : values.departureDate;
-      const returnDate = name === 'returnDate' ? value : values.returnDate;
-      newValues.duration = calculateDuration(departureDate, returnDate);
+    if (name === 'start_date' || name === 'end_date') {
+      const start_date = name === 'start_date' ? value : values.start_date;
+      const end_date = name === 'end_date' ? value : values.end_date;
+      newValues.duration = calculateDuration(start_date, end_date);
       newValues.itinerary = []; // Reset itinerary when departure or return date changes
       setScheduleList([]); // Reset schedule list when departure or return date changes
     }
@@ -125,10 +134,10 @@ function AddTourPage(props) {
   };
 
 
-  const calculateDuration = (departureDate, returnDate) => {
-    if (departureDate && returnDate) {
-      const departureD = new Date(departureDate);
-      const returnD = new Date(returnDate);
+  const calculateDuration = (start_date, end_date) => {
+    if (start_date && end_date) {
+      const departureD = new Date(start_date);
+      const returnD = new Date(end_date);
 
       // Kiểm tra định dạng ngày hợp lệ
       if (isNaN(departureD.getTime()) || isNaN(returnD.getTime())) {
@@ -222,23 +231,63 @@ function AddTourPage(props) {
 
   const handelAddTour = async (e) => {
     e.preventDefault();
-    const result = await addTour(values);
-    console.log('result', result);
-   
+    
+    // Only check the itinerary requirement - the rest will be handled by HTML5 validation
+    if (values.duration > 0 && scheduleList.length !== values.duration) {
+      setAlert({
+        show: true,
+        message: 'Vui lòng thêm đủ lịch trình cho tour',
+        variant: 'danger'
+      });
+      setTimeout(() => {
+        setAlert({
+          show: false,
+          message: '',
+          variant: 'success'
+        });
+      }, 3000);
+      return;
+    }
+    
+    try{
+      await addTour({...values, tour_id: uuidv4().replace(/-/g, '').slice(0, 10)});
+      setAlert({
+        show: true,
+        message: 'Thêm tour thành công',
+        variant: 'success'
+      });
+      navigate('/businessemployee/managetour');
+    } catch (error) {
+      setAlert({
+        show: true,
+        message: error.message,
+        variant: 'danger'
+      });
+    }
+    setTimeout(() => {
+      setAlert({
+        show: false,
+        message: '',
+        variant: 'success'
+      });
+    }, 3000);
   }
 
   return (
     <>
+    {alert.show && <Alert variant={alert.variant} style={{position: 'fixed', top: '10%', left: '50%', transform: 'translateX(-50%)', zIndex: '1000'}}>{alert.message}</Alert>}
     <h2 style={{color: '#339688', fontWeight: 'bold', marginLeft: '20px'}}>Thêm Tour Mới</h2>
     <Container className="tour-booking-form py-4">
+      <Form onSubmit={handelAddTour}>
       <Row className="mb-3 mt-3 d-flex justify-content-between align-items-center">
         <Col md={3}>
           <InputFiledIcon
             label="Tên tour"
-            value={values.tourName}
+            value={values.name}
             placeholder="Nhập tên tour"
             onChange={onChange}
-            name="tourName"
+            name="name"
+            required={true}
           />
         </Col>
         <Col md={3} className="d-flex justify-content-end">
@@ -257,6 +306,7 @@ function AddTourPage(props) {
             onChange={onChange}
             name="departureLocation"
             icon={FaLocationDot}
+            required={true}
           />
         </Col>
         <Col md={4}>
@@ -267,6 +317,7 @@ function AddTourPage(props) {
             placeholder="Nhập điểm đến"
             onChange={onChange}
             name="destination"
+            required={true}
           />
         </Col>
         <Col md={4}>
@@ -277,6 +328,7 @@ function AddTourPage(props) {
             onChange={onChange}
             name="duration"
             readOnly={true}
+            required={true}
           />
         </Col>
       </Row>
@@ -285,25 +337,27 @@ function AddTourPage(props) {
         <Col md={3}>
           <DatePicker
             label="Ngày khởi hành"
-            value={values.departureDate}
-            name="departureDate"
+            value={values.start_date}
+            name="start_date"
             onChange={onChange}
+            required={true}
           />
         </Col>
         <Col md={3}>
         <DatePicker
             label="Ngày trở về"
-            value={values.returnDate}
-            name="returnDate"
+            value={values.end_date}
+            name="end_date"
             onChange={onChange}
+            required={true}
           />
         </Col>
         <Col md={2}>
           <CouterInput
             label="Số lượng chỗ"
-            value={values.seats}
+            value={values.max_guests}
             onChange={onChange}
-            name="seats"
+            name="max_guests"
           />
         </Col>
         <Col md={4}>
@@ -314,6 +368,7 @@ function AddTourPage(props) {
             placeholder="Nhập phương tiện"
             onChange={onChange}
             name="transportation"
+            required={true}
           />
         </Col>
       </Row>
@@ -327,6 +382,7 @@ function AddTourPage(props) {
             infantPrice={values.infantPrice}
             onChange={onChange}
             step={100000}
+            required={true}
           />
         </Row>
       </Container>
@@ -340,6 +396,7 @@ function AddTourPage(props) {
           onChange={onChange}
           name="description"
           className="description-box"
+          required={true}
         />
       </Form.Group>
 
@@ -426,12 +483,12 @@ function AddTourPage(props) {
           </DndContext>
         </Row>
       </Container>
-      <Button variant="success" className="mt-3 p-20-50" style={{display: "block",marginLeft: 'auto'} } onClick={handelAddTour}>Thêm Tour</Button> 
+      <Button variant="success" className="mt-3 p-20-50" style={{display: "block",marginLeft: 'auto'}} type="submit">Thêm Tour</Button> 
       
         {activeField && (
           <AddShedule setActiveField={setActiveField} addSchedule={addSchedule} scheduleLength={scheduleList.length}/>
         )}
-      
+      </Form>
     </Container>
     {activeField && (
             <div 

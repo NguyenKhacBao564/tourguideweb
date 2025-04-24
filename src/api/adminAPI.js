@@ -43,11 +43,33 @@ export const getTransactions = async () => {
 };
 
 // Lấy danh sách nhân viên
-export const getEmployees = async () => {
-  try {
-    const response = await axios.get(`${API_URL}/api/admin/employees`);
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || "Lỗi khi lấy danh sách nhân viên");
-  }
+// export const getEmployees = async () => {
+//   try {
+//     const response = await axios.get(`${API_URL}/api/admin/employeeFilter`);
+//     return response.data;
+//   } catch (error) {
+//     throw new Error(error.response?.data?.message || "Lỗi khi lấy danh sách nhân viên");
+//   }
+// };
+export const getEmployees = async ({ status = "active", page = 1, pageSize = 10 }) => {
+  const res = await axios.get(`${API_URL}/api/admin/employeeFilter`, {
+    params: { status, page, pageSize }
+  });
+  return res.data;
 };
+
+export const getTour = async ({ status = "active", page = 1, pageSize = 10 }) => {
+  const res = await axios.get(`${API_URL}/api/admin/tours`, {
+    params: { page, pageSize }
+  });
+  return res.data;
+};
+
+// export const getTour = async ({ page = 1, pageSize = 10 }) => {
+//   try {
+//     const response = await axios.get(`${API_URL}/api/admin/tours`);
+//     return response.data;
+//   } catch (error) {
+//     throw new Error(error.response?.data?.message || "Lỗi khi lấy số liệu ở tour");
+//   }
+// };

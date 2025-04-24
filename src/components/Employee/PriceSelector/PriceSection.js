@@ -7,6 +7,7 @@ function PriceSection({
   childPrice, 
   infantPrice, 
   onChange,
+  required = false,
   currency = 'VND',
   step = 100000,
   min = 0
@@ -23,6 +24,7 @@ function PriceSection({
             currency={currency}
             step={step}
             min={min}
+            required={required}
           />
         </Col>
         <Col md={4}>
@@ -34,6 +36,7 @@ function PriceSection({
             currency={currency}
             step={step}
             min={min}
+            required={required}
           />
         </Col>
         <Col md={4}>
@@ -45,6 +48,7 @@ function PriceSection({
             currency={currency}
             step={step}
             min={min}
+            required={required}
           />
         </Col>
       </Row>

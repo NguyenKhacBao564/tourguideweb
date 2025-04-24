@@ -1,3 +1,4 @@
+// src/components/Common/DataTable/DataTable.js
 import React, { useState, useEffect, useContext} from 'react';
 import { Table, Container, Button } from "react-bootstrap";
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
@@ -84,9 +85,9 @@ function DataTable(
   // Hàm render giá trị của cột
   const renderColumnValue = (item, column) => {
     const value = item[column.key];
-    if (column.format) {
-      return column.format(value, item);
-    }
+    // if (column.format) {
+    //   return column.format(value, item);
+    // }
     if (column.key.includes('date') || column.key.includes('created_at')) {
       return formatDate(value);
     }
@@ -153,7 +154,7 @@ function DataTable(
                 {actions.length > 0 && (
                    <td style={{display: 'flex', justifyContent: 'center'}}>
                   {actions.map((action, index) => (
-                   <ButtonGroup className="me-2" aria-label="Actions">
+                   <ButtonGroup key={item[idKey]} className="me-2" aria-label="Actions">
                        <Button
                          key={index}
                          variant={action.variant}

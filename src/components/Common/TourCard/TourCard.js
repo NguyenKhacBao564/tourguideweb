@@ -5,6 +5,10 @@ import { FaCalendarAlt } from "react-icons/fa";
 import "./TourCard.scss";
 
 function TourCard(props) {
+
+    const adultPrice = (props.prices.length > 0) ? props.prices.find(price => price.age_group === 'adultPrice').price : 0;
+    
+    // console.log(props.prices);
     return (
         <div className="tour-card">
             <div className="tour-card__image-container">
@@ -50,7 +54,7 @@ function TourCard(props) {
                 <div className="tour-card__footer">
                     <div className="tour-card__footer__price-container">
                         <p>Giá từ:</p>
-                        <p id="price">{props.price} đ</p>
+                        <p id="price">{adultPrice} đ</p>
                     </div>
                     <button className="book-btn">Đặt ngay</button>
                 </div>

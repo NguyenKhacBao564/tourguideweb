@@ -1,4 +1,4 @@
-// services/adminServices.js
+// backend/services/adminServices.js
 // @author: Nguyễn Khắc Bảo : N22DCCN006 : n22dccn006@student.ptithcm.edu.vn
 
 const { sql, getPool } = require("../config/db"); // Lấy kết nối DB và module mssql :contentReference[oaicite:0]{index=0}&#8203;:contentReference[oaicite:1]{index=1}
@@ -166,7 +166,7 @@ const getRecentTransactions = async () => {
 };
 
 // Lấy nhân viên phân trang + lọc status
-const getEmployeesByPageAndStatus = async (status, page = 1, pageSize = 10) => {
+const getEmployeesByPageAndStatus = async (status, page, pageSize) => {
   const pool = await getPool();
   const offset = (page - 1) * pageSize;
 
@@ -177,21 +177,54 @@ const getEmployeesByPageAndStatus = async (status, page = 1, pageSize = 10) => {
     .query(`
       SELECT * FROM Employee 
       WHERE em_status = @status
-      ORDER BY manv
+      ORDER BY emp_id
       OFFSET @offset ROWS FETCH NEXT @pageSize ROWS ONLY
     `);
 
   const countResult = await pool.request()
     .input("status", status)
-    .query(`SELECT COUNT(*) AS total FROM nhanvien WHERE emstatus = @status`);
-
+    .query(`SELECT COUNT(*) AS total FROM Employee WHERE em_status = @status`);
+  // console.log(result.recordset);
+  // console.log(countResult.recordset[0].total);
   return {
     employees: result.recordset,
     total: countResult.recordset[0].total
   };
 };
 
+const getToursByStatusAndPage = async ( page, pageSize) => {
+  const status = 'active'; // Trạng thái tour mặc định là 'active'
+  try {
+    const pool = await getPool();
+    const offset = (page - 1) * pageSize;
 
+    // 1) Lấy dữ liệu
+    const result = await pool.request()
+      .input('status', sql.NVarChar, status)
+      .input('offset', sql.Int, offset)
+      .input('pageSize', sql.Int, pageSize)
+      .query(`
+        SELECT *
+        FROM Tour
+        WHERE status = @status
+        ORDER BY created_at DESC
+        OFFSET @offset ROWS
+        FETCH NEXT @pageSize ROWS ONLY
+      `);
+
+    // 2) Lấy tổng
+    const countRes = await pool.request()
+      .input('status', sql.NVarChar, status)
+      .query(`SELECT COUNT(*) AS total FROM Tour WHERE status = @status`);
+
+    const total = countRes.recordset[0].total;
+    const tours = result.recordset;
+    return { tours, total };
+  } catch (err) {
+    console.error('Lỗi getToursByStatusAndPage:', err);
+    throw err;
+  }
+};
 
 module.exports = {
   getOverviewStats,
@@ -200,4 +233,5 @@ module.exports = {
   getRecentTransactions,
   getEmployeesByPageAndStatus,
   getBranch,
+  getToursByStatusAndPage,
 };

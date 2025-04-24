@@ -9,6 +9,7 @@ function InputFiledIcon({
     placeholder = '', 
     icon,
     name,
+    required = false,
     iconSize = 20,
     readOnly = false,
 }) {
@@ -46,6 +47,7 @@ function InputFiledIcon({
             className="border-0 rounded-0 shadow-none"
             readOnly={readOnly}
             name={name}
+            required={required}
             />
         </InputGroup>
     </Form.Group>

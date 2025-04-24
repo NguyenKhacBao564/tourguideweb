@@ -3,7 +3,7 @@ import { Form, InputGroup } from 'react-bootstrap';
 import { MdDateRange } from "react-icons/md";
 import './DatePicker.scss';
 
-function DatePicker({ label, value, onChange, name }) {
+function DatePicker({ label, value, onChange, name, required = false }) {
 
 const inputRef = useRef(null);
 
@@ -32,6 +32,7 @@ const inputRef = useRef(null);
             value={value}
             onChange={onChange}
             className="border-0 rounded-0 shadow-none no-native-icon"
+            required={required}
         />
       </InputGroup>
     </Form.Group>
