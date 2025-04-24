@@ -6,6 +6,8 @@ import TourFilterEmployee from "../../components/Employee/Filter/TourFilterEmplo
 import DataTable from "../../components/Common/DataTable/DataTable";
 import { TourContext } from "../../context/TourContext";
 import StatusFilterEmployee from "../../components/Employee/StatusFilter_Employee/StatusFilterEmployee";
+import { useNavigate } from "react-router-dom";
+
 import { 
   filterToursByStatus, 
   filterToursBySearchTerm, 
@@ -15,8 +17,9 @@ import {
 } from "../../utils/tourFilterHelpers";
 
 const TourManagementEmp = () => {
-  const { tours, isLoading, error, deleteTour } = useContext(TourContext);
-  
+  const navigate = useNavigate();
+  const { tours, isLoading, error, deleteTour, blockTour } = useContext(TourContext);
+  console.log('tours', tours);
   // Các trạng thái lọc và sắp xếp
   const [statusFilter, setStatusFilter] = useState(FILTER_KEYS.ALL);
   const [searchTerm, setSearchTerm] = useState("");
@@ -32,18 +35,18 @@ const TourManagementEmp = () => {
     { key: 'end_date', label: 'Ngày trở về' },
   ];
 
-  // Định nghĩa các hành động cho mỗi cột trong bảng
+  // Định nghĩa các hành động (button) cho mỗi cột trong bảng
   const actions = [
     {
       label: 'Khóa',
       variant: 'danger',
       onClick: async (id) => {
-        if (window.confirm('Bạn có chắc chắn muốn xóa tour này không?')) {
+        if (window.confirm('Bạn có chắc chắn muốn khóa tour này không?')) {
           try {
-            await deleteTour(id);
+            await blockTour(id);
             setSelectedTour((prev) => prev.filter((tourId) => tourId !== id));
           } catch (err) {
-            console.error('Lỗi khi xóa tour:', err);
+            console.error('Lỗi khi khóa tour:', err);
           }
         }
       },
@@ -51,8 +54,15 @@ const TourManagementEmp = () => {
     {
       label: 'Chi tiết',
       variant: 'success',
-      onClick: (id) => {
-        console.log(`Xem chi tiết tour ${id}`);
+      onClick: (id, tourDetail) => {
+        // Ensure price fields are properly formatted as strings
+        const formattedTour = {
+          ...tourDetail,
+        };
+        
+        navigate("/businessemployee/managetour/addtour", {
+          state: { tourDetail: formattedTour }
+        });
       },
     },
   ];
@@ -91,11 +101,11 @@ const TourManagementEmp = () => {
       try {
         // Xóa lần lượt các tour đã chọn
         for (const id of ids) {
-          await deleteTour(id);
+          await blockTour(id);
         }
         setSelectedTour([]);
       } catch (err) {
-        console.error('Lỗi khi xóa tour:', err);
+        console.error('Lỗi khi khóa tour:', err);
       }
     }
   };

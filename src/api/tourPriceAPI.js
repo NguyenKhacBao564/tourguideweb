@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_URL } from "./API_Port";
+import { API_URL } from "../utils/API_Port";
 
 export const getTourPrice = async (tour_id) => {
     try{

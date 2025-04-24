@@ -8,7 +8,8 @@ import { AuthContext } from '../context/AuthContext';
 import { useNavigate, useLocation } from "react-router-dom";
 
 function Navbar() {
-    const { user, logout } = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
+    console.log("navbar:" ,user);
     // State to manage the open/close state of the navbar (mobile view)
     const [isOpen, setIsOpen] = useState(false);
     
@@ -45,7 +46,7 @@ function Navbar() {
                     <li className="btn--close" onClick={() => setIsOpen(!isOpen)}><FaTimes /></li>
                     <li><a href="#">About us</a></li>
                     <li><a href="#">Popular Destination</a></li>
-                    <li><a href="/contact">Contact</a></li>
+                    <li><Link to="/contact">Contact Us</Link></li>
                     <li><a href="#">Help</a></li>
                     {!user && (
                         <>

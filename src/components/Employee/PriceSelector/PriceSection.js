@@ -12,6 +12,7 @@ function PriceSection({
   step = 100000,
   min = 0
 }) {
+  console.log(adultPrice, childPrice, infantPrice);
   return (
     <div className="price-section mb-3">
       <Row>

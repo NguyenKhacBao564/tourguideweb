@@ -76,7 +76,7 @@ function TourFilterEmployee({
                         <Button 
                             variant="success" 
                             className='flex-center gap-2' 
-                            onClick={() => navigate("addtour")}
+                            onClick={() => navigate("addtour", {state: {tourDetail: null}})}
                         >
                             Thêm tour <GoPlus />
                         </Button>

@@ -1,16 +1,18 @@
 const {sql, getPool} = require("../config/db");
-const { insertItinerary } = require("./scheduleController");
-const { addTourPrice } = require("./tourPriceController");
-const { v4: uuidv4 } = require("uuid");
+const { insertItinerary, updateItinerary } = require("./scheduleController");
+const { addTourPrice, updateTourPrice } = require("./tourPriceController");
+const { uploadImage } = require("./imageController");
+
+
 //Lấy danh sách tất cả các tour
 const getTour =  async (req, res) => {
   try{
     const pool = await getPool();
     const result = await pool.request()
-    .query(`SELECT t.tour_id,t.branch_id, t.name, t.destination,t.departure_location,t.start_date,t.end_date,t.max_guests,t.transport,t.created_at,tp.age_group,tp.price 
+    .query(`SELECT t.tour_id,t.branch_id, t.name, t.destination,t.departure_location,t.start_date,t.end_date,t.max_guests,t.transport,t.created_at,t.description, t.duration, tp.age_group,tp.price 
         FROM Tour AS t
         LEFT JOIN Tour_Price AS tp 
-        ON t.tour_id = tp.tour_id`);
+        ON t.tour_id = tp.tour_id WHERE t.status = 'active'`);
 
       // Nhóm dữ liệu theo tour_id
     const toursMap = {};
@@ -21,12 +23,14 @@ const getTour =  async (req, res) => {
           branch_id: row.branch_id,
           name: row.name,
           destination: row.destination,
-          departure_location: row.departure_location,
+          departureLocation: row.departure_location,
           start_date: row.start_date,
           end_date: row.end_date,
           max_guests: row.max_guests,
           transport: row.transport,
+          duration: row.duration,
           created_at: row.created_at,
+          description: row.description,
           prices: [],
         };
       }
@@ -54,20 +58,31 @@ const createTour =  async (req, res) => {
         departureLocation,
         destination,
         duration,
-        departureDate ,
-        returnDate,
+        start_date,
+        end_date,
         max_guests,
-        transportation,
-        adultPrice,
-        childPrice,
-        infantPrice,
+        transport,
+        prices,
         description,
         branch_id,
         itinerary,
       } = req.body;
+      
+      console.log("req body: ",req.body);
+      
+      // Parse JSON strings từ FormData
+      const parsedPrices = typeof prices === 'string' ? JSON.parse(prices) : prices;
+      const parsedItinerary = typeof itinerary === 'string' ? JSON.parse(itinerary) : itinerary;
+      
+      // Xử lý uploaded files
+      const imagePaths = req.files ? req.files.map(file => file.path) : [];
+      
+      // Xác thực dữ liệu
+      if (!tour_id || !name || !start_date || !end_date || !parsedPrices || parsedPrices.length === 0) {
+        return res.status(400).json({ error: "Thiếu các trường bắt buộc: tour_id, name, start_date, end_date, prices" });
+      }
       const createdAt = new Date(); // Lấy thời gian hiện tại
       const pool =  await getPool();
-      // const tour_id = uuidv4().replace(/-/g, '').slice(0, 10);
 
       transaction = pool.transaction();
 
@@ -81,27 +96,28 @@ const createTour =  async (req, res) => {
         .input("duration", sql.Int, duration)
         .input("destination", sql.NVarChar, destination)
         .input("departure_location", sql.NVarChar,  departureLocation)
-        .input("start_date", sql.Date, departureDate)
-        .input("end_date", sql.Date, returnDate)
+        .input("start_date", sql.Date, start_date)
+        .input("end_date", sql.Date, end_date)
         .input("description", sql.NVarChar, description)
         .input("max_guests", sql.Int, max_guests)
-        .input("transport", sql.NVarChar, transportation)
+        .input("transport", sql.NVarChar, transport)
         .input("created_at", sql.DateTime, createdAt)
         .input("status", sql.NVarChar, "active")
         .query(`
           INSERT INTO Tour (tour_id, branch_id, name, duration, destination, departure_location, start_date, end_date, description, max_guests, transport, created_at, status)
           VALUES (@tour_id, @branch_id, @name, @duration, @destination, @departure_location, @start_date, @end_date, @description, @max_guests, @transport, @created_at, @status)
         `);
+        
+        if (imagePaths.length > 0) {
+          await uploadImage(transaction, tour_id, imagePaths);
+        }
+        
+        if (parsedItinerary && parsedItinerary.length > 0) {
+          await insertItinerary(transaction, tour_id, parsedItinerary);
+        }
 
-         await insertItinerary(transaction, tour_id, itinerary);
-
-         const listPrice = [
-            {age_group: "adultPrice", price: adultPrice},
-            {age_group: "childPrice", price: childPrice},
-            {age_group: "infantPrice", price: infantPrice},
-         ]
-         await addTourPrice(transaction, tour_id, listPrice);
-         await transaction.commit();
+        await addTourPrice(transaction, tour_id, parsedPrices);
+        await transaction.commit();
 
         return res.status(201).json({ message: "Thêm tour thành công" });
     } catch (error) {
@@ -113,13 +129,98 @@ const createTour =  async (req, res) => {
     }
   }
   
+const updateTour = async (req, res ) => {
+  let transaction;
+  const tourId = req.params.id;
+  console.log("tourId: ", tourId);
+  try{
+    const {
+      name,
+      departureLocation,
+      destination,
+      duration,
+      start_date,
+      end_date,
+      max_guests,
+      transport,
+      prices,
+      description,
+      branch_id,
+      itinerary,
+      existingImages,
+    } = req.body;
+   
+    // Parse JSON strings từ FormData
+    const parsedPrices = typeof prices === 'string' ? JSON.parse(prices) : prices;
+    const parsedItinerary = typeof itinerary === 'string' ? JSON.parse(itinerary) : itinerary;
+    const parsedExistingImages = typeof existingImages === 'string' ? JSON.parse(existingImages) : existingImages;
+    console.log("parsedExistingImages ",parsedExistingImages);
+    // Xử lý uploaded files
+    const imagePaths = req.files ? req.files.map(file => file.path) : [];
+
+    const pool = await getPool();
+    transaction = pool.transaction();
+    await transaction.begin();
+
+    const updateTourRequest = transaction.request();
+    await updateTourRequest
+    .input("tour_id", sql.NVarChar, tourId)
+    .input("branch_id", sql.Int, branch_id)
+    .input("name", sql.NVarChar, name)
+    .input("duration", sql.Int, duration)
+    .input("destination", sql.NVarChar, destination)
+    .input("departure_location", sql.NVarChar,  departureLocation)
+    .input("start_date", sql.Date, start_date)
+    .input("end_date", sql.Date, end_date)
+    .input("description", sql.NVarChar, description)
+    .input("max_guests", sql.Int, max_guests)
+    .input("transport", sql.NVarChar, transport)
+    .query(`
+      UPDATE Tour
+      SET branch_id = @branch_id, name = @name, duration = @duration, destination = @destination, departure_location = @departure_location, start_date = @start_date, end_date = @end_date, description = @description, max_guests = @max_guests, transport = @transport
+      WHERE tour_id = @tour_id
+    `);
+    console.log("update tour request sucess")
+    
+    // Nếu có ảnh mới, xóa ảnh cũ và thêm ảnh mới
+    if (imagePaths.length > 0 
+      ||  parsedExistingImages.length !== (await transaction.request().input("tour_id", sql.NVarChar, tourId).query("SELECT COUNT(*) as count FROM Tour_image WHERE tour_id = @tour_id")).recordset[0].count) {
+      console.log("XÓA ẢNH ĐANG CHẠY ...")
+      // Xóa ảnh cũ
+      await transaction.request()
+        .input("tour_id", sql.NVarChar, tourId)
+        .query(`DELETE FROM Tour_image WHERE tour_id = @tour_id`);
+      
+        if (parsedExistingImages && parsedExistingImages.length > 0){
+          await uploadImage(transaction, tourId, parsedExistingImages);
+        }
+      // Thêm ảnh mới
+      if (imagePaths.length > 0) {
+        await uploadImage(transaction, tourId, imagePaths);
+      }
+    }
+    
+    await updateItinerary(transaction, tourId, parsedItinerary);
+    await updateTourPrice(transaction, tourId, parsedPrices);
+    await transaction.commit();
+
+    return res.status(200).json({ message: "Cập nhật tour thành công" });
+  }catch(error){
+    if (transaction) {
+      await transaction.rollback();
+    }
+    console.error("Lỗi khi cập nhật tour:", error);
+    return res.status(500).json({ error: "Lỗi server khi cập nhật tour", details: error });
+  }
+}
+
 // Lấy chi tiết một tour theo ID
 const getTourById = async (req, res) => {
     try {
-      const tourId = parseInt(req.params.id, 10);
+      const tourId = req.params.id;
       const pool = await getPool();
       const result = await pool.request()
-        .input("tour_id", sql.Int, tourId)
+        .input("tour_id", sql.NVarChar, tourId)
         .query("SELECT * FROM Tour WHERE tour_id = @tour_id");
   
       if (result.recordset.length > 0) {
@@ -134,7 +235,34 @@ const getTourById = async (req, res) => {
   
 
 // Xóa tour theo ID
-const deleteTour = async (req, res) => {
+// const deleteTour = async (req, res) => {
+//     try {
+//       console.log("Received delete request for tour_id:", req.params.id);
+//       // const tourId = parseInt(req.params.id, 10); // Chuyển về số nguyên
+//       // if (isNaN(tourId)) {
+//       //   return res.status(400).json({ error: "Invalid tour ID" });
+//       // }
+//       const tourId = req.params.id;
+//       const pool = await getPool();
+//       const result = await pool.request()
+//         .input("tour_id", sql.NVarChar, tourId)
+//         .query("DELETE FROM Tour WHERE tour_id = @tour_id");
+
+//       console.log("Rows affected:", result.rowsAffected);
+  
+//       if (result.rowsAffected[0] > 0) {
+//         res.json({ message: "Xóa thành công" });
+//       } else {
+//         res.status(404).json({ message: "Không tìm thấy tour" });
+//       }
+//     } catch (err) {
+//       console.error("Lỗi khi xóa tour:", err);
+//       res.status(500).send({ error: "Lỗi khi xóa tour", details: err });
+//     }
+//   }
+
+  // Cập nhật trạng thái tour
+  const blockTour = async (req, res) => {
     try {
       console.log("Received delete request for tour_id:", req.params.id);
       // const tourId = parseInt(req.params.id, 10); // Chuyển về số nguyên
@@ -145,19 +273,20 @@ const deleteTour = async (req, res) => {
       const pool = await getPool();
       const result = await pool.request()
         .input("tour_id", sql.NVarChar, tourId)
-        .query("DELETE FROM Tour WHERE tour_id = @tour_id");
+        .query("UPDATE Tour SET status = 'inactive' WHERE tour_id = @tour_id");
 
       console.log("Rows affected:", result.rowsAffected);
   
       if (result.rowsAffected[0] > 0) {
-        res.json({ message: "Xóa thành công" });
+        res.json({ message: "Khóa tour thành công" });
       } else {
         res.status(404).json({ message: "Không tìm thấy tour" });
       }
     } catch (err) {
-      console.error("Lỗi khi xóa tour:", err);
-      res.status(500).send({ error: "Lỗi khi xóa tour", details: err });
+      console.error("Lỗi khi khóa tour:", err);
+      res.status(500).send({ error: "Lỗi khi khóa tour", details: err });
     }
   }
 
-  module.exports = {getTour, createTour, getTourById, deleteTour};
+
+  module.exports = {getTour, createTour, getTourById, blockTour, updateTour};

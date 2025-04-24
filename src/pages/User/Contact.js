@@ -1,4 +1,7 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa6";
 import Navbar from "../../layouts/Navbar";
 import styles from "../../styles/pages/ContactUs.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -6,30 +9,139 @@ import {
   faPhoneVolume,
   faEnvelope,
   faLocationDot,
-  faFacebookF,
-  faInstagram,
-  faDiscord,
 } from "@fortawesome/free-solid-svg-icons";
 import { faFacebookF as fabFacebookF, faInstagram as fabInstagram, faDiscord as fabDiscord } from "@fortawesome/free-brands-svg-icons";
 import Footer from "../../layouts/Footer";
+import { createSupportRequest } from "../../api/supportAPI";
+import { AuthContext } from "../../context/AuthContext";
+
 function Contact() {
+  const { user, isLoading } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    subject: "",
+    message: "",
+  });
+
+  const [errors, setErrors] = useState({
+    subject: "",
+    message: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+
+  // Kiểm tra đăng nhập và chuyển hướng nếu chưa đăng nhập
+  useEffect(() => {
+    if (!user) {
+      navigate("/login", { state: { from: location.pathname } });
+    }
+  }, [navigate, location]);
+
+  // Cập nhật form data khi có thông tin user
+  useEffect(() => {
+    console.log("Current user data:", user); // Debug log
+    if (user) {
+      const nameParts = user.name ? user.name.trim().split(" ") : ["", ""];
+      const lastName = nameParts.pop() || "";
+      const firstName = nameParts.join(" ") || lastName;
+
+      setFormData(prev => ({
+        ...prev,
+        firstName,
+        lastName,
+        email: user.email || "",
+        phone: user.phone || ""
+      }));
+      console.log("Updated form data:", {
+        firstName,
+        lastName,
+        email: user.email,
+        phone: user.phone
+      }); // Debug log
+    }
+  }, [user]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    setErrors(prev => ({ ...prev, [name]: "" }));
+  };
+
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = {
+      subject: "",
+      message: "",
+    };
+
+    if (!formData.subject) {
+      newErrors.subject = "Vui lòng chọn một chủ đề";
+      isValid = false;
+    }
+
+    if (!formData.message.trim()) {
+      newErrors.message = "Vui lòng nhập tin nhắn";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+
+    if (!validateForm()) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await createSupportRequest(formData);
+      setSuccess("Yêu cầu hỗ trợ đã được gửi đi thành công!");
+      setFormData(prev => ({
+        ...prev,
+        subject: "",
+        message: "",
+      }));
+    } catch (err) {
+      setError("Có lỗi xảy ra khi gửi yêu cầu. Vui lòng thử lại sau.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return <div>Đang tải...</div>;
+  }
+
   return (
     <div>
+      <Navbar />
       <div className={styles.header}>
-        <h2>Contact Us</h2>
-        <p>Any question or remarks? Just write us a message!</p>
+        <h2>Liên Hệ Với Chúng Tôi</h2>
+        <p>Có câu hỏi hoặc ý kiến? Hãy gửi tin nhắn cho chúng tôi!</p>
       </div>
 
       <div className={styles.contactContainer}>
-        {/* Contact Info */}
         <div className={styles.contactInfo}>
-          <h4>Contact Information</h4>
-          <p>Say something to start a live chat!</p>
+          <h4>Thông Tin Liên Hệ</h4>
+          <p>Hãy nói gì đó để bắt đầu trò chuyện trực tiếp!</p>
           <p><FontAwesomeIcon icon={faPhoneVolume} /> +012 3456 789</p>
           <p><FontAwesomeIcon icon={faEnvelope} /> demo@gmail.com</p>
-          <p><FontAwesomeIcon icon={faLocationDot} /> 97 Man Thiện, Phường Hiệp Phú, TP.Thủ Đức, TPHCM</p>
+          <p><FontAwesomeIcon icon={faLocationDot} /> 97 Man Thiện, Phường Hiệp Phú, TP. Thủ Đức, TPHCM</p>
 
-          {/* Circle Decoration */}
           <div className={styles.circleContainer}>
             <svg className={styles.customCircle} width="300" height="300">
               <defs>
@@ -42,70 +154,103 @@ function Contact() {
             <div className={styles.smallCircle}></div>
           </div>
 
-          {/* Social Icons */}
           <div className={styles.socialIcons}>
-            <a href="http://facebook.com/phan.tuan.anh.917546" target="_blank" className={styles.iconCircle}>
+            <a href="http://facebook.com" target="_blank" rel="noreferrer" className={styles.iconCircle}>
               <FontAwesomeIcon icon={fabFacebookF} />
             </a>
-            <a href="https://www.instagram.com/bean.284/" target="_blank" className={styles.iconCircle}>
+            <a href="https://instagram.com" target="_blank" rel="noreferrer" className={styles.iconCircle}>
               <FontAwesomeIcon icon={fabInstagram} />
             </a>
-            <a href="https://discord.com/users/yourprofile" target="_blank" className={styles.iconCircle}>
+            <a href="https://discord.com" target="_blank" rel="noreferrer" className={styles.iconCircle}>
               <FontAwesomeIcon icon={fabDiscord} />
             </a>
           </div>
         </div>
 
-        {/* Contact Form */}
         <div className={styles.contactForm}>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className={styles.inputGroup}>
               <div>
-                <label>First Name</label>
-                <input type="text" placeholder="First Name" />
+                <label>Họ</label>
+                <input
+                  type="text"
+                  name="firstName"
+                  value={formData.firstName}
+                  disabled
+                />
               </div>
               <div>
-                <label>Last Name</label>
-                <input type="text" placeholder="Last Name" />
+                <label>Tên</label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName}
+                  disabled
+                />
               </div>
             </div>
             <div className={styles.inputGroup}>
               <div>
                 <label>Email</label>
-                <input type="email" placeholder="Email" />
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  disabled
+                />
               </div>
               <div>
-                <label>Phone Number</label>
-                <input type="text" placeholder="Phone Number" />
+                <label>Số Điện Thoại</label>
+                <input
+                  type="text"
+                  name="phone"
+                  value={formData.phone}
+                  disabled
+                />
               </div>
             </div>
-            <label>Select Subject:</label>
+            <label>Chọn Chủ Đề:</label>
             <div className={styles.radioGroup}>
-              {['General Inquiry', 'Booking Request', 'Support/Assistance', 'Feedback'].map((subject, index) => (
+              {[
+                "Yêu Cầu Chung",
+                "Yêu Cầu Đặt Lịch",
+                "Hỗ Trợ/Kỹ Thuật",
+                "Phản Hồi",
+              ].map((subject, index) => (
                 <label key={index} className={styles.customRadio}>
-                  <input type="radio" name="subject" value={subject.toLowerCase()} />
+                  <input
+                    type="radio"
+                    name="subject"
+                    value={subject.toLowerCase()}
+                    checked={formData.subject === subject.toLowerCase()}
+                    onChange={handleChange}
+                  />
                   <span>{subject}</span>
                 </label>
               ))}
             </div>
-            <label>Message</label>
-            <input type="text" placeholder="Write your message..." />
-            <button type="submit">Send Message</button>
+            {errors.subject && <p className={styles.validationError}>{errors.subject}</p>}
+            <label>Tin Nhắn</label>
+            <input
+              type="text"
+              name="message"
+              value={formData.message}
+              onChange={handleChange}
+              placeholder="Write your message..."
+            />
+            {errors.message && <p className={styles.validationError}>{errors.message}</p>}
+            
+            {error && <div className={styles.error}>{error}</div>}
+            {success && <div className={styles.success}>{success}</div>}
+            
+            <button type="submit" disabled={loading}>
+              {loading ? "Đang Gửi..." : "Gửi Tin Nhắn"}
+            </button>
           </form>
-
-          {/* Image */}
-          {/* <div className={styles.imageContainer}>
-            <img src="https://s3-alpha-sig.figma.com/img/5e52/eb20/ee9158ca0835b430d0b6ef56e2d7385e?Expires=1742169600&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=gqUbetUKXujAA7cq56fiM2N1TnXCdejPsMi28rh7h08pUzwM7ZbgJcwA4-Vyb-EWSvPEE~TPBP2CaLSta1B7oqjUlWTjkngYrbuf3closVW6IbAYZcN03aXDwnzP6-usdZXzf57lzjtJuATo6qLAmgQoQp~QN5GV62ilaDf7n9yziEy~-SoTSeDZJqnX03XFUb~KCvjkyGK3NyB1vCqXgpNpkhpmGGGaEZNT00NkfFXSh7kTue~2Oo68EXTwucRYvqkrvmLNSvfb0sfCvL~7cr3wEOuy-0pTqUXZUmcjD4HcT45kiVWD6fhH1e14oNmQwivApVglYw8Wpj2awN8~DQ__"
-              alt="send-letter" width="200" height="100" />
-          </div> */}
         </div>
       </div>
-      <div>
-        <Navbar />
-        <Footer />
-      </div>
+      <Footer />
     </div>
-
   );
 }
 

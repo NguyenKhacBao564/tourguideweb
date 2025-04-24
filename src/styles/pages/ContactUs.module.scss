@@ -4,10 +4,31 @@
 //     overflow-x: auto;
 //     overflow-y: auto;
 // }
+// .back-link {
+//     display: inline-flex;
+//     text-decoration: none;
+//     color: #ea0000;
+//     font-weight: 500;
+//     margin-top: 50px;
+// }
+
+:global {
+    input:invalid {
+        box-shadow: none;
+    }
+
+    input::-webkit-validation-bubble-message,
+    input::-o-validation-bubble-message,
+    input::-ms-validation-bubble-message {
+        display: none;
+    }
+}
 
 .header {
     text-align: center;
     margin-top: 150px;
+
+
 
     h2 {
         font-size: 45px;
@@ -238,6 +259,35 @@
             background: #239fd8;
         }
     }
+}
+
+.success {
+    color: #2da7ba;
+    margin: 15px 0;
+    font-weight: 500;
+    background-color: #e6f7f9;
+    padding: 15px 20px;
+    border-radius: 5px;
+    border: 1px solid #2da7ba;
+    text-align: center;
+}
+
+.error {
+    color: #842029;
+    margin: 15px 0;
+    font-weight: 500;
+    background-color: #f8d7da;
+    padding: 15px 20px;
+    border-radius: 5px;
+    border: 1px solid #f5c2c7;
+    text-align: center;
+}
+
+.validationError {
+    color: #dc3545;
+    font-size: 16px;
+    margin-top: 3px;
+    font-weight: normal;
 }
 
 /* Media Queries cho các kích thước màn hình khác nhau */

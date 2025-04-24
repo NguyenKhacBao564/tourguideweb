@@ -154,7 +154,7 @@ function DataTable(
                 {actions.length > 0 && (
                    <td style={{display: 'flex', justifyContent: 'center'}}>
                   {actions.map((action, index) => (
-                   <ButtonGroup key={item[idKey]} className="me-2" aria-label="Actions">
+                   <ButtonGroup key={index} className="me-2" aria-label="Actions">
                        <Button
                          key={index}
                          variant={action.variant}

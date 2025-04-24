@@ -13,6 +13,7 @@ function PriceSelector({
   step = 100000,
   min = 0
 }) {
+
   const handleIncrease = () => {
     const newValue = parseInt(value.replace(/\D/g, ''), 10) + step;
     handleChange(formatPrice(newValue));
@@ -27,6 +28,7 @@ function PriceSelector({
   };
 
   const handleChange = (newValue) => {
+    console.log("new values: ", newValue);
     if (onChange) {
       const syntheticEvent = {
         target: {

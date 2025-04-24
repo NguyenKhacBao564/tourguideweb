@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 
 function Page(props) {
-    
+ 
     return (
         <div>
           <Header/>

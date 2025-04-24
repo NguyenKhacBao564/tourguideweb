@@ -1,6 +1,6 @@
 // src/api/adminAPI.js
 import axios from "axios";
-import { API_URL } from "./API_Port"; // Có thể lưu vào .env
+import { API_URL } from "../utils/API_Port"; // Có thể lưu vào .env
 
 // Lấy số liệu tổng quan
 export const getOverviewStats = async () => {

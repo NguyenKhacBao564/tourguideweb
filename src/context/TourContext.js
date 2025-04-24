@@ -1,5 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
-import { getTour, deleteTour, addTour} from "../api/tourAPI";
+import { getTour, addTour, updateTour, blockTour} from "../api/tourAPI";
+import { getItinerary } from "../api/scheduleAPI";
+import { getImages } from "../api/imageAPI";
 
 // Tạo Context
 export const TourContext = createContext();
@@ -29,10 +31,23 @@ export const TourProvider = ({ children }) => {
   }, []);
 
   // Hàm xóa tour
-  const handleDeleteTour = async (id) => {
+  // const handleDeleteTour = async (id) => {
+  //   try {
+  //     setIsLoading(true);
+  //     await deleteTour(id);
+  //     setTours((prevTours) => prevTours.filter((tour) => tour.tour_id !== id));
+  //     setError(null);
+  //   } catch (err) {
+  //     setError(err.message);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  const handleBlockTour = async (id) => {
     try {
       setIsLoading(true);
-      await deleteTour(id);
+      await blockTour(id);
       setTours((prevTours) => prevTours.filter((tour) => tour.tour_id !== id));
       setError(null);
     } catch (err) {
@@ -47,33 +62,67 @@ export const TourProvider = ({ children }) => {
       setIsLoading(true);
       const result = await addTour(tourData);
       
-      // // Map fields to the format expected by the DataTable
-      // const formattedTourData = {
-      //   ...tourData,
-      //   name: tourData.tourName,
-      //   start_date: tourData.departureDate,
-      //   max_guests: tourData.seats,
-      //   created_at: new Date().toISOString()
-      // };
-      
       setTours((prevTours) => [...prevTours, tourData]);
       setError(null);
       return result;
     } catch (err) {
       setError(err.message);
+      throw err;
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleUpdateTour = async (tourData) => {
+    try {
+      setIsLoading(true);
+      const result = await updateTour(tourData, tourData.tour_id);
+      
+      // Update the tour in the state
+      setTours((prevTours) => 
+        prevTours.map(tour => 
+          tour.tour_id === tourData.tour_id ? { ...tour, ...tourData } : tour
+        )
+      );
+      
+      setError(null);
+      return result;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  const handleGetImages = async (tour_id) => {
+    try{
+      const result = await getImages(tour_id);
+      return result;
+    }catch(err){
+      setError(err.message);
+      throw err;
+    }
+  }
+  const handleGetItinerary = async (tour_id) => {
+    try {
+      const result = await getItinerary(tour_id);
+      return result;
+    } catch (error) {
+      setError(error.message);
+    }
+  }
   // Giá trị cung cấp cho Context
   const value = {
     tours,
     isLoading,
     error,
-    deleteTour: handleDeleteTour,
+    // deleteTour: handleDeleteTour,
     addTour: handleAddTour,
+    updateTour: handleUpdateTour,
+    getItinerary: handleGetItinerary,
+    blockTour: handleBlockTour,
+    getImages: handleGetImages,
   };
 
   return <TourContext.Provider value={value}>{children}</TourContext.Provider>;

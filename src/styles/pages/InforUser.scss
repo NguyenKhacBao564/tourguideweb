@@ -5,7 +5,7 @@
     flex-direction: column;
     min-height: 100vh;
     color: black !important;
-    
+
     .container-infor {
         flex-grow: 1;
         margin-top: $navbar-height;
@@ -13,7 +13,7 @@
         margin-left: auto;
         margin-right: auto;
         padding: 0 15px;
-        
+
         .back-link {
             display: inline-flex;
             align-items: center;
@@ -21,12 +21,12 @@
             color: #333;
             font-weight: 500;
             margin: 20px 0;
-            
+
             i {
                 margin-right: 8px;
             }
         }
-        
+
         .profile-title {
             text-align: center;
             font-size: 32px;
@@ -34,7 +34,7 @@
             color: #1e3a61;
             margin-bottom: 30px;
         }
-        
+
         .profile-container {
             background-color: #e4e4e4;
             border-radius: 10px;
@@ -42,48 +42,48 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             margin-bottom: 20px;
             width: 100%;
-            
+
             .user-form {
                 .form-group {
                     margin-bottom: 20px;
                 }
-                
+
                 .form-label {
                     font-weight: 500;
                     margin-bottom: 8px;
                 }
-                
+
                 .form-control {
                     padding: 10px 15px;
                     border-radius: 5px;
                     border: 1px solid #ddd;
                 }
-                
+
                 .update-btn {
                     background-color: #339688;
                     border-color: #339688;
                     color: #ffffff;
                     font-weight: 600;
                     padding: 8px 20px;
-                    
+
                     &:hover {
                         background-color: #2a8a7d;
                         border-color: #339688;
                     }
                 }
             }
-            
+
             .avatar-section {
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                
+
                 .avatar-container {
                     display: flex;
                     flex-direction: column;
                     gap: 30px;
                     text-align: center;
-                  
+
                     .avatar-update {
 
                         // h4 {
@@ -91,7 +91,7 @@
                         //     font-weight: 600;
                         //     margin-bottom: 10px;
                         // }
-                        
+
                         p {
                             margin-top: 10px;
                             color: #4e4e4e;
@@ -102,7 +102,7 @@
                 }
             }
         }
-        
+
         .logout-btn {
             padding: 8px 25px;
             font-weight: 600;
@@ -114,10 +114,10 @@
     .inforUser_page {
         .container-infor {
             padding: 0 10px;
-            
+
             .profile-container {
                 padding: 15px;
-                
+
                 .avatar-section {
                     margin-top: 30px;
                 }
