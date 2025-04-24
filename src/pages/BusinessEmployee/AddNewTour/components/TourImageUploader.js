@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Row, Col, Button, Form } from 'react-bootstrap';
 import { MdCancel } from "react-icons/md";
+import { API_URL } from "../../../../utils/API_Port";
 
 const TourImageUploader = ({
   selectedImages,
@@ -21,7 +22,7 @@ const TourImageUploader = ({
           {displayImages.map((image, index) => (
             <Col key={index} xs={6} md={2} className="mb-2">
               <div className="position-relative image-container">
-                <img src={image} alt={`Selected ${index + 1}`} className="img-thumbnail" />
+                <img src={image.startsWith('blob:') ? image : `${API_URL}/${image}`} alt={`Selected ${index + 1}`} className="img-thumbnail" />
                 <Button 
                   variant="light" 
                   size="sm" 

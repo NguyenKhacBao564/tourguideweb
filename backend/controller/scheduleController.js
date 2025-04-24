@@ -25,30 +25,45 @@ const insertItinerary = async (transaction, tour_id, itinerary) => {
   };
 
 const updateItinerary = async (transaction, tour_id, itinerary) => {
-  const deleteRequest = transaction.request();
-
-  //Xóa các lịch trình cũ
-  await deleteRequest
-    .input("tour_id", sql.NVarChar, tour_id)
-    .query("DELETE FROM Tour_Schedule WHERE tour_id = @tour_id");
+  try {
+    // Kiểm tra và log giá trị tour_id
+    console.log('Đang xóa lịch trình cho tour_id:', tour_id);
+    
+    //Xóa các lịch trình cũ
+    const deleteRequest = transaction.request();
+    const result = await deleteRequest
+      .input("tour_id", sql.NVarChar, tour_id)
+      .query("DELETE FROM Tour_Schedule WHERE tour_id = @tour_id");
+    console.log('result: ', result);
+    console.log('Đã xóa lịch trình cũ, đang thêm lịch trình mới...');
 
     // Thêm các lịch trình mới
     if (itinerary && Array.isArray(itinerary) && itinerary.length > 0) {
       for (const item of itinerary) {
+        // Tạo ID mới cho mỗi lịch trình để tránh xung đột
+        const newScheduleId = item.schedule_id;
+        
+        console.log('Thêm lịch trình mới với ID:', newScheduleId);
+        
         //Tạo mỗi request để thêm lịch trình mới
         const insertRequest = transaction.request();
         await insertRequest
           .input("tour_id", sql.NVarChar, tour_id)
-          .input("schedule_id", sql.NVarChar, item.schedule_id) // schedule_id hoặc id
+          .input("schedule_id", sql.NVarChar, newScheduleId) // schedule_id hoặc id
           .input("day_number", sql.Int, item.day_number)
           .input("tour_route", sql.NVarChar, item.tour_route)
-          .input("detail", sql.NVarChar, item.detail) // description hoặc detail
+          .input("detail", sql.NVarChar, item.detail)
           .query(`
             INSERT INTO Tour_Schedule (schedule_id, tour_id, day_number, tour_route, detail)
             VALUES (@schedule_id, @tour_id, @day_number, @tour_route, @detail)
           `);
       }
     }
+    console.log('Cập nhật lịch trình hoàn tất!');
+  } catch (error) {
+    console.error('Lỗi khi cập nhật lịch trình:', error);
+    throw error; // Đảm bảo lỗi được chuyển tiếp để transaction rollback
+  }
 }
  const getItinerary = async (req, res) => {
     try {

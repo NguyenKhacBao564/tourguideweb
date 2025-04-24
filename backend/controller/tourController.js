@@ -1,7 +1,9 @@
 const {sql, getPool} = require("../config/db");
 const { insertItinerary, updateItinerary } = require("./scheduleController");
 const { addTourPrice, updateTourPrice } = require("./tourPriceController");
-const { v4: uuidv4 } = require("uuid");
+const { uploadImage } = require("./imageController");
+
+
 //Lấy danh sách tất cả các tour
 const getTour =  async (req, res) => {
   try{
@@ -65,8 +67,18 @@ const createTour =  async (req, res) => {
         branch_id,
         itinerary,
       } = req.body;
+      
+      console.log("req body: ",req.body);
+      
+      // Parse JSON strings từ FormData
+      const parsedPrices = typeof prices === 'string' ? JSON.parse(prices) : prices;
+      const parsedItinerary = typeof itinerary === 'string' ? JSON.parse(itinerary) : itinerary;
+      
+      // Xử lý uploaded files
+      const imagePaths = req.files ? req.files.map(file => file.path) : [];
+      
       // Xác thực dữ liệu
-      if (!tour_id || !name || !start_date || !end_date || !prices || prices.length === 0) {
+      if (!tour_id || !name || !start_date || !end_date || !parsedPrices || parsedPrices.length === 0) {
         return res.status(400).json({ error: "Thiếu các trường bắt buộc: tour_id, name, start_date, end_date, prices" });
       }
       const createdAt = new Date(); // Lấy thời gian hiện tại
@@ -95,11 +107,17 @@ const createTour =  async (req, res) => {
           INSERT INTO Tour (tour_id, branch_id, name, duration, destination, departure_location, start_date, end_date, description, max_guests, transport, created_at, status)
           VALUES (@tour_id, @branch_id, @name, @duration, @destination, @departure_location, @start_date, @end_date, @description, @max_guests, @transport, @created_at, @status)
         `);
+        
+        if (imagePaths.length > 0) {
+          await uploadImage(transaction, tour_id, imagePaths);
+        }
+        
+        if (parsedItinerary && parsedItinerary.length > 0) {
+          await insertItinerary(transaction, tour_id, parsedItinerary);
+        }
 
-         await insertItinerary(transaction, tour_id, itinerary);
-
-         await addTourPrice(transaction, tour_id, prices);
-         await transaction.commit();
+        await addTourPrice(transaction, tour_id, parsedPrices);
+        await transaction.commit();
 
         return res.status(201).json({ message: "Thêm tour thành công" });
     } catch (error) {
@@ -114,6 +132,7 @@ const createTour =  async (req, res) => {
 const updateTour = async (req, res ) => {
   let transaction;
   const tourId = req.params.id;
+  console.log("tourId: ", tourId);
   try{
     const {
       name,
@@ -130,6 +149,13 @@ const updateTour = async (req, res ) => {
       itinerary,
     } = req.body;
    
+    // Parse JSON strings từ FormData
+    const parsedPrices = typeof prices === 'string' ? JSON.parse(prices) : prices;
+    const parsedItinerary = typeof itinerary === 'string' ? JSON.parse(itinerary) : itinerary;
+    console.log("parsedItinerary: ", parsedItinerary);
+    // Xử lý uploaded files
+    const imagePaths = req.files ? req.files.map(file => file.path) : [];
+
     const pool = await getPool();
     transaction = pool.transaction();
     await transaction.begin();
@@ -153,8 +179,20 @@ const updateTour = async (req, res ) => {
       WHERE tour_id = @tour_id
     `);
     console.log("update tour request sucess")
-    await updateItinerary(transaction, tourId, itinerary);
-    await updateTourPrice(transaction, tourId, prices);
+    
+    // Nếu có ảnh mới, xóa ảnh cũ và thêm ảnh mới
+    if (imagePaths.length > 0) {
+      // Xóa ảnh cũ
+      await transaction.request()
+        .input("tour_id", sql.NVarChar, tourId)
+        .query(`DELETE FROM Tour_image WHERE tour_id = @tour_id`);
+      
+      // Thêm ảnh mới
+      await uploadImage(transaction, tourId, imagePaths);
+    }
+    
+    await updateItinerary(transaction, tourId, parsedItinerary);
+    await updateTourPrice(transaction, tourId, parsedPrices);
     await transaction.commit();
 
     return res.status(200).json({ message: "Cập nhật tour thành công" });

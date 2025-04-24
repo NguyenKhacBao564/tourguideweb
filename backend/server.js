@@ -13,6 +13,8 @@ const scheduleRoutes = require("./routes/scheduleRoutes");
 
 app.use(cors());
 app.use(express.json());
+// Phục vụ file tĩnh từ thư mục uploads
+app.use('/uploads', express.static('uploads'));
 
 //Sử dụng các Route
 app.use("/tours", tourRoutes);

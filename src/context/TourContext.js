@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
 import { getTour, deleteTour, addTour, updateTour, blockTour} from "../api/tourAPI";
 import { getItinerary } from "../api/scheduleAPI";
-
+import { getImages } from "../api/imageAPI";
 
 // Tạo Context
 export const TourContext = createContext();
@@ -62,15 +62,6 @@ export const TourProvider = ({ children }) => {
       setIsLoading(true);
       const result = await addTour(tourData);
       
-      // // Map fields to the format expected by the DataTable
-      // const formattedTourData = {
-      //   ...tourData,
-      //   name: tourData.tourName,
-      //   start_date: tourData.departureDate,
-      //   max_guests: tourData.seats,
-      //   created_at: new Date().toISOString()
-      // };
-      
       setTours((prevTours) => [...prevTours, tourData]);
       setError(null);
       return result;
@@ -85,7 +76,7 @@ export const TourProvider = ({ children }) => {
   const handleUpdateTour = async (tourData) => {
     try {
       setIsLoading(true);
-      const result = await updateTour(tourData);
+      const result = await updateTour(tourData, tourData.tour_id);
       
       // Update the tour in the state
       setTours((prevTours) => 
@@ -104,6 +95,15 @@ export const TourProvider = ({ children }) => {
     }
   };
 
+  const handleGetImages = async (tour_id) => {
+    try{
+      const result = await getImages(tour_id);
+      return result;
+    }catch(err){
+      setError(err.message);
+      throw err;
+    }
+  }
   const handleGetItinerary = async (tour_id) => {
     try {
       const result = await getItinerary(tour_id);
@@ -122,6 +122,7 @@ export const TourProvider = ({ children }) => {
     updateTour: handleUpdateTour,
     getItinerary: handleGetItinerary,
     blockTour: handleBlockTour,
+    getImages: handleGetImages,
   };
 
   return <TourContext.Provider value={value}>{children}</TourContext.Provider>;

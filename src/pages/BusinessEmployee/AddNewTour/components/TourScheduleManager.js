@@ -20,7 +20,7 @@ const TourScheduleManager = ({
   editingSchedule
 }) => {
 
-  values.itinerary.map(schedule => console.log("shedule day number: ", schedule.day_number));
+  // values.itinerary.map(schedule => console.log("shedule day number: ", schedule.day_number));
   return (
     <Container className="schedule-section">
       <Row>

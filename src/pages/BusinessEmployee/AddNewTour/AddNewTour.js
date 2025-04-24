@@ -25,7 +25,7 @@ import { useAlert } from './hooks/useAlert';
 function AddTourPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { addTour, updateTour, getItinerary } = useContext(TourContext);
+  const { addTour, updateTour, getItinerary, getImages } = useContext(TourContext);
   const { user } = useContext(AuthContext);
   
   // Extract tour details for edit mode
@@ -44,6 +44,8 @@ function AddTourPage() {
   const {
     selectedImages,
     displayImages,
+    setDisplayImages,
+    setSelectedImages,
     handleImageUpload,
     processFiles,
     removeImage,
@@ -69,8 +71,10 @@ function AddTourPage() {
   useEffect(() => {
     const initializeEditMode = async () => {
       if (!isEditMode || !tourDetail) return;
+      //If edit mode, get itinerary and images
       try {
         const itinerary = await getItinerary(tourDetail.tour_id);
+      
         // Format prices
         const formattedPrices = Array.isArray(tourDetail.prices) 
           ? tourDetail.prices.map(price => ({
@@ -84,13 +88,16 @@ function AddTourPage() {
           ...prev,
           ...tourDetail,
           prices: formattedPrices,
-          itinerary: Array.isArray(itinerary) ? itinerary : []
+          itinerary: Array.isArray(itinerary) ? itinerary : [],
         }));
         
+        //Get images from server
+        const images = await getImages(tourDetail.tour_id);
         // Load images if any
-        // if (tourDetail.images && tourDetail.images.length > 0) {
-        //   setDisplayImages(tourDetail.images.map(img => img.url || img));
-        // }
+        if (images && images.length > 0) {
+          setDisplayImages(images.map(img => img.image_url));
+          setSelectedImages(images.map(img => img.image_url));
+        }
       } catch (error) {
         console.error("Error loading tour data:", error);
         showAlert('Không thể tải dữ liệu tour. Vui lòng thử lại sau.', 'danger');
@@ -101,10 +108,12 @@ function AddTourPage() {
   }, []);
 
   console.log("values: ", values);
+
+
   // Submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    console.log("selectedImages: ", selectedImages);
     // Validate form
     const validation = validateForm();
     if (!validation.isValid) {
@@ -116,21 +125,23 @@ function AddTourPage() {
       age_group: price.age_group,
       price: parseInt(price.price.replace(/\./g, '')) || 0 // Chuyển thành số, mặc định 0 nếu không hợp lệ
     }));
-  
-    const updatedValues = {
+      
+    // Chuẩn bị dữ liệu để gửi đến API
+    const tourData = {
       ...values,
-      prices: formattedPrices
+      //Nếu đang chỉnh sửa tour thì tour_id là tourDetail.tour_id, ngược lại là mới tạo tour_id mới
+      tour_id: isEditMode ? tourDetail.tour_id : uuidv4().replace(/-/g, '').slice(0, 10),
+      prices: formattedPrices,
+      images: selectedImages, // Quan trọng: Gửi selectedImages để uploadAPI.js có thể xử lý
     };
 
+    console.log("tourData: ", tourData);
     try {
       if (isEditMode) {
-        await updateTour(updatedValues);
+        await updateTour(tourData, tourData.tour_id);
         showAlert('Cập nhật tour thành công', 'success');
       } else {
-        await addTour({ 
-          ...values, 
-          tour_id: uuidv4().replace(/-/g, '').slice(0, 10) 
-        });
+        await addTour(tourData);
         showAlert('Thêm tour thành công', 'success');
       }
       

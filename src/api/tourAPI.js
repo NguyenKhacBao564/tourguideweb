@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_URL } from "./API_Port";
+import { API_URL } from "../utils/API_Port";
 
 // Lấy danh sách tour
 export const getTour = async () => {
@@ -24,7 +24,38 @@ export const getTourById = async (id) => {
 // Thêm tour mới
 export const addTour = async (tourData) => {
   try {
-    const response = await axios.post(`${API_URL}/tours`, tourData);
+   // Tạo FormData để gửi dữ liệu kèm file
+   const formData = new FormData();
+      
+   // Thêm các file ảnh vào FormData
+   if (tourData.images && tourData.images.length > 0) {
+     tourData.images.forEach((file, index) => {
+       formData.append('image', file);
+     });
+   }
+   
+   // Thêm các thông tin khác của tour
+   formData.append('tour_id', tourData.tour_id);
+   formData.append('name', tourData.name);
+   formData.append('departureLocation', tourData.departureLocation);
+   formData.append('destination', tourData.destination);
+   formData.append('duration', tourData.duration);
+   formData.append('start_date', tourData.start_date);
+   formData.append('end_date', tourData.end_date);
+   formData.append('max_guests', tourData.max_guests);
+   formData.append('transport', tourData.transport);
+   formData.append('description', tourData.description);
+   formData.append('branch_id', tourData.branch_id);
+   
+   // Thêm prices và itinerary dưới dạng JSON string do form data chỉ hổ trợ string,số,...
+   formData.append('prices', JSON.stringify(tourData.prices));
+   formData.append('itinerary', JSON.stringify(tourData.itinerary));
+   
+    const response = await axios.post(`${API_URL}/tours`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || "Lỗi khi thêm tour");
@@ -32,9 +63,40 @@ export const addTour = async (tourData) => {
 };
 
 // Cập nhật tour
-export const updateTour = async (tourData) => {
+export const updateTour = async (tourData, tourId) => {
   try {
-    const response = await axios.put(`${API_URL}/tours/update/${tourData.tour_id}`, tourData);
+    // Tạo FormData để gửi dữ liệu kèm file
+    const formData = new FormData();
+      
+    // Thêm các file ảnh vào FormData
+    if (tourData.images && tourData.images.length > 0) {
+      tourData.images.forEach((file, index) => {
+        formData.append('image', file);
+      });
+    }
+    
+    // Thêm các thông tin khác của tour
+    formData.append('tour_id', tourId);
+    formData.append('name', tourData.name);
+    formData.append('departureLocation', tourData.departureLocation);
+    formData.append('destination', tourData.destination);
+    formData.append('duration', tourData.duration);
+    formData.append('start_date', tourData.start_date);
+    formData.append('end_date', tourData.end_date);
+    formData.append('max_guests', tourData.max_guests);
+    formData.append('transport', tourData.transport);
+    formData.append('description', tourData.description);
+    formData.append('branch_id', tourData.branch_id);
+    
+    // Thêm prices và itinerary dưới dạng JSON string do form data chỉ hổ trợ string,số,...
+    formData.append('prices', JSON.stringify(tourData.prices));
+    formData.append('itinerary', JSON.stringify(tourData.itinerary));
+    
+    const response = await axios.put(`${API_URL}/tours/update/${tourId}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || "Lỗi khi cập nhật tour");

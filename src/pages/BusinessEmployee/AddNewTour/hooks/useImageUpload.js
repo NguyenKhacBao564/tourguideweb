@@ -1,10 +1,11 @@
 import { useState } from 'react';
-
+import { MAX_IMAGES } from "../../../../utils/maxImageUpload";
 export const useImageUpload = () => {
   const [selectedImages, setSelectedImages] = useState([]);
   const [displayImages, setDisplayImages] = useState([]);
-  const MAX_IMAGES = 5;
   
+  console.log("selectedImages: ", selectedImages);
+  console.log("displayImages: ", displayImages);
   // Handle file input change
   const handleImageUpload = (e) => {
     const files = e.target.files;
@@ -81,6 +82,8 @@ export const useImageUpload = () => {
   return {
     selectedImages,
     displayImages,
+    setSelectedImages,
+    setDisplayImages,
     handleImageUpload,
     processFiles,
     removeImage,
