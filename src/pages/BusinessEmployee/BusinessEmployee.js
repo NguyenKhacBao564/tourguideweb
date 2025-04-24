@@ -4,12 +4,8 @@ import ManagerLayout from '../../layouts/SystemManager/ManagerLayout';
  import { TourProvider } from '../../context/TourContext';
  import { CustomerProvider } from '../../context/CustomerContext';
 function Employee_Business(props) {
-  const   { user } = useContext(AuthContext);
-  console.log("User in Employee_Business: ", user);
-  useEffect(() => {
-    console.log("reload ", user);
-  }
-  , [user]);
+
+  
   return (
     <TourProvider> 
       <CustomerProvider>

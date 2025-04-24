@@ -1,9 +1,8 @@
-import React, { useState, useContext, useCallback, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Container, Row, Col, Button, Form, Alert } from 'react-bootstrap';
 import InputFiledIcon from '../../../components/Common/InputFieldIcon/InputFieldIcon';
 import { v4 as uuidv4 } from 'uuid';
-import { PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { arrayMove } from '@dnd-kit/sortable';
+
 import "./AddNewTour.scss"
 import { useNavigate, useLocation } from 'react-router-dom';
 import { TourContext } from '../../../context/TourContext';
@@ -135,6 +134,7 @@ function AddTourPage() {
       images: selectedImages, // Quan trọng: Gửi selectedImages để uploadAPI.js có thể xử lý
     };
 
+    
     console.log("tourData: ", tourData);
     try {
       if (isEditMode) {
