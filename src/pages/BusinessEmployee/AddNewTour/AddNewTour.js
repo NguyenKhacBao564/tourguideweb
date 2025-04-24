@@ -45,6 +45,8 @@ function AddTourPage() {
     displayImages,
     setDisplayImages,
     setSelectedImages,
+    existingImages,
+    setExistingImages,
     handleImageUpload,
     processFiles,
     removeImage,
@@ -94,8 +96,9 @@ function AddTourPage() {
         const images = await getImages(tourDetail.tour_id);
         // Load images if any
         if (images && images.length > 0) {
-          setDisplayImages(images.map(img => img.image_url));
-          setSelectedImages(images.map(img => img.image_url));
+          const imageUrls = images.map(img => img.image_url);
+          setDisplayImages(imageUrls);
+          setExistingImages(imageUrls);
         }
       } catch (error) {
         console.error("Error loading tour data:", error);
@@ -132,6 +135,7 @@ function AddTourPage() {
       tour_id: isEditMode ? tourDetail.tour_id : uuidv4().replace(/-/g, '').slice(0, 10),
       prices: formattedPrices,
       images: selectedImages, // Quan trọng: Gửi selectedImages để uploadAPI.js có thể xử lý
+      existingImages: existingImages, // Chứa URL ảnh cũ
     };
 
     

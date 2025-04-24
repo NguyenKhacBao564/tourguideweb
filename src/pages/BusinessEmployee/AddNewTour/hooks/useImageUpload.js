@@ -3,7 +3,9 @@ import { MAX_IMAGES } from "../../../../utils/maxImageUpload";
 export const useImageUpload = () => {
   const [selectedImages, setSelectedImages] = useState([]);
   const [displayImages, setDisplayImages] = useState([]);
-  
+  const [existingImages, setExistingImages] = useState([]); // Chứa URL ảnh cũ từ server
+
+
   console.log("selectedImages: ", selectedImages);
   console.log("displayImages: ", displayImages);
   // Handle file input change
@@ -11,6 +13,9 @@ export const useImageUpload = () => {
     const files = e.target.files;
     if (files) {
       processFiles(files);
+      // Reset the file input value so the same file can be selected again
+      //Reset để có thể chọn lại file vẫn hiện lại file đã chọn
+      e.target.value = '';
     }
   };
 
@@ -29,7 +34,7 @@ export const useImageUpload = () => {
     });
     
     // Check maximum image count
-    if (selectedImages.length + newImages.length > MAX_IMAGES) {
+    if (selectedImages.length + newImages.length + existingImages.length > MAX_IMAGES) {
       alert(`Chỉ được phép tải lên tối đa ${MAX_IMAGES} ảnh.`);
       return;
     }
@@ -66,24 +71,41 @@ export const useImageUpload = () => {
 
   // Remove image at specific index
   const removeImage = (index) => {
-    const updatedImages = [...selectedImages];
+    // const updatedImages = [...selectedImages];
     const updatedDisplayImages = [...displayImages];
-    
-    // Release object URL to prevent memory leaks
-    URL.revokeObjectURL(updatedDisplayImages[index]);
-    
-    updatedImages.splice(index, 1);
-    updatedDisplayImages.splice(index, 1);
-    
-    setSelectedImages(updatedImages);
+    if (index < existingImages.length) {
+      // Xóa ảnh cũ
+      const updatedExistingImages = [...existingImages];
+      updatedExistingImages.splice(index, 1);
+      setExistingImages(updatedExistingImages);
+      updatedDisplayImages.splice(index, 1);
+    } else {
+      // Xóa ảnh mới
+      const updatedSelectedImages = [...selectedImages];
+      URL.revokeObjectURL(updatedDisplayImages[index]);
+      updatedSelectedImages.splice(index - existingImages.length, 1);
+      updatedDisplayImages.splice(index, 1);
+      setSelectedImages(updatedSelectedImages);
+    }
+
     setDisplayImages(updatedDisplayImages);
+    // // Release object URL to prevent memory leaks
+    // URL.revokeObjectURL(updatedDisplayImages[index]);
+    
+    // updatedImages.splice(index, 1);
+    // updatedDisplayImages.splice(index, 1);
+    
+    // setSelectedImages(updatedImages);
+    // setDisplayImages(updatedDisplayImages);
   };
 
   return {
     selectedImages,
     displayImages,
+    existingImages,
     setSelectedImages,
     setDisplayImages,
+    setExistingImages,
     handleImageUpload,
     processFiles,
     removeImage,

@@ -46,7 +46,8 @@ export const addTour = async (tourData) => {
    formData.append('transport', tourData.transport);
    formData.append('description', tourData.description);
    formData.append('branch_id', tourData.branch_id);
-   
+
+
    // Thêm prices và itinerary dưới dạng JSON string do form data chỉ hổ trợ string,số,...
    formData.append('prices', JSON.stringify(tourData.prices));
    formData.append('itinerary', JSON.stringify(tourData.itinerary));
@@ -87,7 +88,7 @@ export const updateTour = async (tourData, tourId) => {
     formData.append('transport', tourData.transport);
     formData.append('description', tourData.description);
     formData.append('branch_id', tourData.branch_id);
-    
+    formData.append('existingImages', JSON.stringify(tourData.existingImages));
     // Thêm prices và itinerary dưới dạng JSON string do form data chỉ hổ trợ string,số,...
     formData.append('prices', JSON.stringify(tourData.prices));
     formData.append('itinerary', JSON.stringify(tourData.itinerary));
@@ -104,14 +105,14 @@ export const updateTour = async (tourData, tourId) => {
 };
 
 // Xóa tour
-export const deleteTour = async (id) => {
-  try {
-    const response = await axios.delete(`${API_URL}/tours/${id}`);
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || "Lỗi khi xóa tour");
-  }
-};
+// export const deleteTour = async (id) => {
+//   try {
+//     const response = await axios.delete(`${API_URL}/tours/${id}`);
+//     return response.data;
+//   } catch (error) {
+//     throw new Error(error.response?.data?.message || "Lỗi khi xóa tour");
+//   }
+// };
 
 // Khóa tour
 export const blockTour = async (id) => {

@@ -147,12 +147,14 @@ const updateTour = async (req, res ) => {
       description,
       branch_id,
       itinerary,
+      existingImages,
     } = req.body;
    
     // Parse JSON strings từ FormData
     const parsedPrices = typeof prices === 'string' ? JSON.parse(prices) : prices;
     const parsedItinerary = typeof itinerary === 'string' ? JSON.parse(itinerary) : itinerary;
-    console.log("parsedItinerary: ", parsedItinerary);
+    const parsedExistingImages = typeof existingImages === 'string' ? JSON.parse(existingImages) : existingImages;
+    console.log("parsedExistingImages ",parsedExistingImages);
     // Xử lý uploaded files
     const imagePaths = req.files ? req.files.map(file => file.path) : [];
 
@@ -181,14 +183,21 @@ const updateTour = async (req, res ) => {
     console.log("update tour request sucess")
     
     // Nếu có ảnh mới, xóa ảnh cũ và thêm ảnh mới
-    if (imagePaths.length > 0) {
+    if (imagePaths.length > 0 
+      ||  parsedExistingImages.length !== (await transaction.request().input("tour_id", sql.NVarChar, tourId).query("SELECT COUNT(*) as count FROM Tour_image WHERE tour_id = @tour_id")).recordset[0].count) {
+      console.log("XÓA ẢNH ĐANG CHẠY ...")
       // Xóa ảnh cũ
       await transaction.request()
         .input("tour_id", sql.NVarChar, tourId)
         .query(`DELETE FROM Tour_image WHERE tour_id = @tour_id`);
       
+        if (parsedExistingImages && parsedExistingImages.length > 0){
+          await uploadImage(transaction, tourId, parsedExistingImages);
+        }
       // Thêm ảnh mới
-      await uploadImage(transaction, tourId, imagePaths);
+      if (imagePaths.length > 0) {
+        await uploadImage(transaction, tourId, imagePaths);
+      }
     }
     
     await updateItinerary(transaction, tourId, parsedItinerary);
@@ -226,31 +235,31 @@ const getTourById = async (req, res) => {
   
 
 // Xóa tour theo ID
-const deleteTour = async (req, res) => {
-    try {
-      console.log("Received delete request for tour_id:", req.params.id);
-      // const tourId = parseInt(req.params.id, 10); // Chuyển về số nguyên
-      // if (isNaN(tourId)) {
-      //   return res.status(400).json({ error: "Invalid tour ID" });
-      // }
-      const tourId = req.params.id;
-      const pool = await getPool();
-      const result = await pool.request()
-        .input("tour_id", sql.NVarChar, tourId)
-        .query("DELETE FROM Tour WHERE tour_id = @tour_id");
+// const deleteTour = async (req, res) => {
+//     try {
+//       console.log("Received delete request for tour_id:", req.params.id);
+//       // const tourId = parseInt(req.params.id, 10); // Chuyển về số nguyên
+//       // if (isNaN(tourId)) {
+//       //   return res.status(400).json({ error: "Invalid tour ID" });
+//       // }
+//       const tourId = req.params.id;
+//       const pool = await getPool();
+//       const result = await pool.request()
+//         .input("tour_id", sql.NVarChar, tourId)
+//         .query("DELETE FROM Tour WHERE tour_id = @tour_id");
 
-      console.log("Rows affected:", result.rowsAffected);
+//       console.log("Rows affected:", result.rowsAffected);
   
-      if (result.rowsAffected[0] > 0) {
-        res.json({ message: "Xóa thành công" });
-      } else {
-        res.status(404).json({ message: "Không tìm thấy tour" });
-      }
-    } catch (err) {
-      console.error("Lỗi khi xóa tour:", err);
-      res.status(500).send({ error: "Lỗi khi xóa tour", details: err });
-    }
-  }
+//       if (result.rowsAffected[0] > 0) {
+//         res.json({ message: "Xóa thành công" });
+//       } else {
+//         res.status(404).json({ message: "Không tìm thấy tour" });
+//       }
+//     } catch (err) {
+//       console.error("Lỗi khi xóa tour:", err);
+//       res.status(500).send({ error: "Lỗi khi xóa tour", details: err });
+//     }
+//   }
 
   // Cập nhật trạng thái tour
   const blockTour = async (req, res) => {
@@ -280,4 +289,4 @@ const deleteTour = async (req, res) => {
   }
 
 
-  module.exports = {getTour, createTour, getTourById, deleteTour, blockTour, updateTour};
+  module.exports = {getTour, createTour, getTourById, blockTour, updateTour};

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import { getTour, deleteTour, addTour, updateTour, blockTour} from "../api/tourAPI";
+import { getTour, addTour, updateTour, blockTour} from "../api/tourAPI";
 import { getItinerary } from "../api/scheduleAPI";
 import { getImages } from "../api/imageAPI";
 
@@ -31,18 +31,18 @@ export const TourProvider = ({ children }) => {
   }, []);
 
   // Hàm xóa tour
-  const handleDeleteTour = async (id) => {
-    try {
-      setIsLoading(true);
-      await deleteTour(id);
-      setTours((prevTours) => prevTours.filter((tour) => tour.tour_id !== id));
-      setError(null);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // const handleDeleteTour = async (id) => {
+  //   try {
+  //     setIsLoading(true);
+  //     await deleteTour(id);
+  //     setTours((prevTours) => prevTours.filter((tour) => tour.tour_id !== id));
+  //     setError(null);
+  //   } catch (err) {
+  //     setError(err.message);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   const handleBlockTour = async (id) => {
     try {
@@ -117,7 +117,7 @@ export const TourProvider = ({ children }) => {
     tours,
     isLoading,
     error,
-    deleteTour: handleDeleteTour,
+    // deleteTour: handleDeleteTour,
     addTour: handleAddTour,
     updateTour: handleUpdateTour,
     getItinerary: handleGetItinerary,
