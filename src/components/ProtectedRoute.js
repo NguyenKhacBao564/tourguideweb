@@ -8,7 +8,7 @@ function ProtectedRoute({ children, allowedRoles }) {
   console.log("User in ProtectedRoute: ", user);
   if (!user) {
     // Nếu chưa đăng nhập, chuyển hướng về trang đăng nhập
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
 
   if (!allowedRoles.includes(user.role)) {

@@ -1,17 +1,13 @@
-import React, {use, useContext, useEffect} from 'react';
+import React from 'react';
 import ManagerLayout from '../../layouts/SystemManager/ManagerLayout'; 
- import { AuthContext } from '../../context/AuthContext';
- import { TourProvider } from '../../context/TourContext';
- import { CustomerProvider } from '../../context/CustomerContext';
+import { CustomerProvider } from '../../context/CustomerContext';
 function Employee_Business(props) {
 
   
   return (
-    <TourProvider> 
       <CustomerProvider>
-      <ManagerLayout/>
+        <ManagerLayout/>
       </CustomerProvider>
-    </TourProvider>
   );
 }
 

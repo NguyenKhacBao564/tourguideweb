@@ -104,16 +104,6 @@ export const updateTour = async (tourData, tourId) => {
   }
 };
 
-// Xóa tour
-// export const deleteTour = async (id) => {
-//   try {
-//     const response = await axios.delete(`${API_URL}/tours/${id}`);
-//     return response.data;
-//   } catch (error) {
-//     throw new Error(error.response?.data?.message || "Lỗi khi xóa tour");
-//   }
-// };
-
 // Khóa tour
 export const blockTour = async (id) => {
   try {

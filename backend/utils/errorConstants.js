@@ -19,6 +19,10 @@ const ERROR_MESSAGES = {
       code: "AUTH_004",
       message: "Token đã hết hạn. Vui lòng đăng nhập lại.",
     },
+    USER_NOT_FOUND: {
+      code: "AUTH_005",
+      message: "Không tìm thấy user trong bảng Customer",
+    },
   },
   API: {
     NETWORK_ERROR: {

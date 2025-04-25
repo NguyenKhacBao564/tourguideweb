@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
 import { getTour, addTour, updateTour, blockTour} from "../api/tourAPI";
 import { getItinerary } from "../api/scheduleAPI";
-import { getImages } from "../api/imageAPI";
+import { getTourImages } from "../api/imageAPI";
 
 // Tạo Context
 export const TourContext = createContext();
@@ -30,19 +30,6 @@ export const TourProvider = ({ children }) => {
     fetchTours();
   }, []);
 
-  // Hàm xóa tour
-  // const handleDeleteTour = async (id) => {
-  //   try {
-  //     setIsLoading(true);
-  //     await deleteTour(id);
-  //     setTours((prevTours) => prevTours.filter((tour) => tour.tour_id !== id));
-  //     setError(null);
-  //   } catch (err) {
-  //     setError(err.message);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
 
   const handleBlockTour = async (id) => {
     try {
@@ -97,7 +84,7 @@ export const TourProvider = ({ children }) => {
 
   const handleGetImages = async (tour_id) => {
     try{
-      const result = await getImages(tour_id);
+      const result = await getTourImages(tour_id);
       return result;
     }catch(err){
       setError(err.message);

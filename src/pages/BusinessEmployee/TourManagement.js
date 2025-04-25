@@ -17,7 +17,7 @@ import {
 
 const TourManagementEmp = () => {
   const navigate = useNavigate();
-  const { tours, isLoading, error, deleteTour, blockTour } = useContext(TourContext);
+  const { tours, isLoading, error, blockTour } = useContext(TourContext);
   console.log('tours', tours);
   // Các trạng thái lọc và sắp xếp
   const [statusFilter, setStatusFilter] = useState(FILTER_KEYS.ALL);

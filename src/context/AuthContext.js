@@ -1,8 +1,9 @@
 // src/context/AuthContext.js
-import React, { createContext, useState, useEffect } from "react";
-import {jwtDecode} from "jwt-decode";
+import React, { createContext, useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser, registerUser } from "../api/authAPI";
+import { loginUser, registerUser, getUserData } from "../api/authAPI";
+
+
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -11,83 +12,103 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   
-
-  const checkRole = (role) => {
-    switch (role) {
-      case "customer":
-        navigate("/", {replace: true});
-        break;    
-      case "Support":
-        navigate("/support", {replace: true});
-        break;
-      case "Sales":
-        navigate("/businessemployee/customer", {replace: true});
-        break;
-      case "Admin":
-        navigate("/admin/dashboard", {replace: true});
-        break;
-      default:
-        console.error("Unknown role:");
-    }
-  }
-  useEffect(() => {
-    // Kiểm tra nếu có token trong localStorage khi tải trang
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        console.log("Decoded token:", decoded);
-        // Đảm bảo đối tượng user có đủ thông tin cần thiết
-        setUser(decoded);
-        checkRole(decoded.role);
-      } catch (error) {
-        console.error("Token không hợp lệ:", error);
-        localStorage.removeItem("token");
-      }
-    }
-    setLoading(false);
-  }, []);
-
-  const login = async (email, password) => {
-    try {
-      console.log("Reach to Context...")
-      const data = await loginUser(email, password);
-      console.log("Data response: ", data)
-      localStorage.setItem("token", data.token);
-      setUser(data.user)
-      return data.user;
-    } catch (error) {
-      // Chuyển tiếp lỗi
-      throw error;
+  // Hàm kiểm tra và điều hướng theo role
+  const checkRole = (role, currentPath) => {
+    // Tránh redirect loop: Không điều hướng nếu đã ở đúng trang
+    const roleRoutes = {
+      customer: "/",
+      Support: "/support",
+      Sales: "/businessemployee/customer",
+      Admin: "/admin/dashboard",
+    };
+    const targetRoute = roleRoutes[role];
+    if (targetRoute && currentPath !== targetRoute) {
+      setTimeout(() => {
+        navigate(targetRoute, { replace: true });
+      }, 500);
     }
   };
+
+  // Trong AuthContext.js
+const fetchUser = async (token) => {
+  try {
+    const response = await getUserData(token);
+    const userData = response.user;   
+    console.log("userData: ", userData)
+    return userData;
+  } catch (error) {
+    throw error;
+  }
+};
+
+  //Kiểm tra token và gửi request đến server để lấy thông tin user  
+  // Kiểm tra token khi khởi động
+  useEffect(() => {
+    const initializeAuth = async () => {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          // const decoded = jwtDecode(token);
+          const userData = await fetchUser(token);
+          setUser(userData);
+          checkRole(userData.role, window.location.pathname);
+        } catch (error) {
+          console.error("Token không hợp lệ:", error);
+          localStorage.removeItem("token");
+          setUser(null);
+        }
+      }
+      setLoading(false);
+    };
+    initializeAuth();
+  }, []);
+
+
+  // Hàm xử lý đăng nhập/đăng ký (tái sử dụng logic)
+  const authenticateUser = async (apiCall, ...args) => {
+    setLoading(true);
+    try {
+      const data = await apiCall(...args);
+      localStorage.setItem("token", data.token);
+      const userData = await fetchUser(data.token);
+      setUser(userData);
+      checkRole(userData.role, window.location.pathname);
+      return userData;
+    } catch (error) {
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const login = async (email, password) => {
+    return authenticateUser(loginUser, email, password);
+  };
+
+  const regist = async (fullname, email, password, phone) => {
+    return authenticateUser(registerUser, fullname, email, password, phone);
+  };
+
 
   const logout = () => {
     localStorage.removeItem("token");
     setUser(null);
     console.log("Logout success")
-    navigate("/login")
+    navigate("/")
   };
 
-  const regist = async (fullname, email, password, phone) => {
-    try {
-      const data = await registerUser(fullname, email, password, phone);
-      localStorage.setItem("token", data.token);
-      setUser(data.user)
-      return data.user;
-    } catch (error) {
-       // Chuyển tiếp lỗi
-      throw error;
-    }
-  }
-
-  if (loading) {
-    // Có thể thêm một loader nếu cần
-    return <div>Loading...</div>;
-  }
+  // Sử dụng useMemo để tránh tạo object mới
+  const contextValue = useMemo(() => ({
+    user,
+    loading,
+    login,
+    regist,
+    logout,
+  }), [user, loading]);
 
   return (
-    <AuthContext.Provider value={{ user, login, regist, logout }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

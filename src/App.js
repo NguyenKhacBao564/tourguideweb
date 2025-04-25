@@ -14,7 +14,11 @@ import BranchManagement from "./pages/Admin/BranchManagement";
 import BusinessEmployee from "./pages/BusinessEmployee/BusinessEmployee";
 import AddNewTour from "./pages/BusinessEmployee/AddNewTour/AddNewTour";
 import InforUser from "./pages/User/InforUser";
-import { AuthProvider } from "./context/AuthContext";
+import ConsultantEmployee from "./pages/ConsultantEmployee/ConsultantEmployee";
+import Chatbot from "./pages/ConsultantEmployee/ChatBot";
+import ResponeSupport from "./pages/ConsultantEmployee/ResponeSupport";
+import { TourProvider } from "./context/TourContext";
+// import { ConsultantSupportProvider } from "./context/ConsultantSupportContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./components/Unauthorized";
 import NotFound from "./pages/NotFound";
@@ -24,7 +28,7 @@ function App() {
   return (
     <div className="App">
       <ScrollToTop />
-      <AuthProvider>
+        {/* <ConsultantSupportProvider> */}
         <Routes>
           <Route path="/" element={<Page />} />
           <Route path="/contact" element={<Contact />} />
@@ -34,19 +38,28 @@ function App() {
           <Route path="/customer" element={<p>customer</p>} />
           <Route path="/sale" element={<p>sale</p>} />
           <Route path="/support" element={<p>support</p>} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
+          <Route path="*" element={<NotFound/>} />
+
+          {/* Business Employee Routes */}
           <Route path="/businessemployee" element={
             <ProtectedRoute allowedRoles={["Sales"]}>
               <BusinessEmployee />
             </ProtectedRoute>
-        }
-        >
-          <Route path="customer" element={<UserManagement />} />
-          <Route path="managetour" element={<TourManagementEmp />} />
-          <Route path="managetour/addtour" element={<AddNewTour />} />
-          <Route path="promotion" element={<p>Khuyến mãi</p>} />
+            }>
+            <Route path="customer" element={<UserManagement />} />
+            <Route path="managetour" element={
+              <TourProvider> 
+                <TourManagementEmp />
+              </TourProvider>
+            }/>
+            <Route path="managetour/addtour" element={
+              <TourProvider> 
+                <AddNewTour />
+              </TourProvider>
+            }/>
+            <Route path="promotion" element={<p>Khuyến mãi</p>} />
         </Route>
-        <Route path="/unauthorized" element={<Unauthorized />} />
-        <Route path="*" element={<NotFound/>} />
 
          {/* Admin Routes */}
          <Route path="/admin" element={
@@ -64,22 +77,17 @@ function App() {
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="*" element={<NotFound />} />
 
-          {/* Admin Routes */}
-          <Route path="/admin" element={
-            <ProtectedRoute allowedRoles={["Admin"]}>
-              <MainLayout />
+          {/* Consultant Employee Routes */}
+          <Route path="/consultantemployee" element={
+            <ProtectedRoute allowedRoles={["Support"]}>
+              <ConsultantEmployee />
             </ProtectedRoute>
           }>
-            {/* <Route index element={<Dashboard />} /> */}
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="nhan-vien" element={<StaffManagement />} />
-            <Route path="nhan-vien/:id" element={<EmployeeProfile />} />
-            <Route path="quan-ly-tour" element={<TourManagement />} />
-            <Route path="quan-ly-chi-nhanh" element={<BranchManagement />} />
+            <Route path="chatbot" element={<Chatbot />} />
+            <Route path="request-support" element={<ResponeSupport />} />
           </Route>
         </Routes>
-      </AuthProvider>
-    </div>
+    </div >
   );
 }
 

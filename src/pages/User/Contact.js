@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Link } from "react-router-dom";
-import { FaArrowLeft } from "react-icons/fa6";
+// import { Link } from "react-router-dom";
+// import { FaArrowLeft } from "react-icons/fa6";
 import Navbar from "../../layouts/Navbar";
 import styles from "../../styles/pages/ContactUs.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,7 +12,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { faFacebookF as fabFacebookF, faInstagram as fabInstagram, faDiscord as fabDiscord } from "@fortawesome/free-brands-svg-icons";
 import Footer from "../../layouts/Footer";
-import { createSupportRequest } from "../../api/supportAPI";
+import { createSupportRequest } from "../../api/customerSupportAPI";
 import { AuthContext } from "../../context/AuthContext";
 
 function Contact() {
@@ -239,10 +239,10 @@ function Contact() {
               placeholder="Write your message..."
             />
             {errors.message && <p className={styles.validationError}>{errors.message}</p>}
-            
+
             {error && <div className={styles.error}>{error}</div>}
             {success && <div className={styles.success}>{success}</div>}
-            
+
             <button type="submit" disabled={loading}>
               {loading ? "Đang Gửi..." : "Gửi Tin Nhắn"}
             </button>

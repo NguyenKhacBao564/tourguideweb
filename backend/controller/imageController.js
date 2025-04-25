@@ -1,22 +1,9 @@
 const {sql, getPool} = require("../config/db");
-const multer = require("multer");
-const path = require("path");
 const {v4: uuidv4} = require("uuid");
 
-// // Cấu hình multer để lưu file vào thư mục 'uploads'
-// const storage = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//       cb(null, 'uploads/'); // Thư mục lưu file
-//     },
-//     filename: (req, file, cb) => {
-//       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-//       cb(null, uniqueSuffix + path.extname(file.originalname)); // Tên file duy nhất
-//     }
-//   });
-  
-//   const upload = multer({ storage: storage });
 
-  const uploadImage = async (transaction, tourId, imagePaths) => {
+
+  const uploadTourImage = async (transaction, tourId, imagePaths) => {
     for(const imagePath of imagePaths){
         const imageId = uuidv4().replace(/-/g, '').slice(0, 10);
         await transaction.request()
@@ -30,7 +17,7 @@ const {v4: uuidv4} = require("uuid");
         }
   }
 
-  const getImages = async (req, res) => {
+  const getTourImages = async (req, res) => {
     try{
         const tourId = req.params.id;
         const pool = await getPool();
@@ -43,4 +30,7 @@ const {v4: uuidv4} = require("uuid");
     }
   }
 
-  module.exports = { uploadImage, getImages};
+
+
+
+  module.exports = { uploadTourImage, getTourImages};
