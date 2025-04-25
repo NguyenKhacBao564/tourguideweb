@@ -416,7 +416,7 @@
   display: flex;
   flex-direction: row;  // sắp xếp theo hàng ngang
   gap: 1.5rem;          // khoảng cách giữa các phần tử
-  
+  padding: 0 1.5rem;
   @media (max-width: 1300px) {
     flex-direction: column;
   }

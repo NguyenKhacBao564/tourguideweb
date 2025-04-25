@@ -34,7 +34,10 @@ const Dashboard = () => {
         const tx = await getTransactions();
 
         setOverview(ov);
-        setBranches(br);
+        const top5 = br
+          .sort((a, b) => b.revenue - a.revenue)
+          .slice(0, 5)
+        setBranches(top5)
         setChartData(ch);
         setTransactions(tx);
       } catch (err) {
