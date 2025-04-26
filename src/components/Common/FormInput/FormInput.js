@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import styles from "./FormInput.module.scss"; // Import CSS Module
 import validator from "../../../feature/validator";
-import pattern from '../../../utils/pattern';
+import  PATTERN  from '../../../utils/pattern';
 
 function FormInput(props) {
     const { label, errorMessage, onChange, id, type, value, ...inputProps } = props;
@@ -18,7 +18,7 @@ function FormInput(props) {
     const checkValid = (e) => {
         console.log(isValid)
         console.log(e.target.value)
-        console.log(inputProps.valueconfirm)
+        console.log("value confirm", inputProps.valueconfirm)
         if (inputProps.name === "confirmPassword" ) {
             if (inputProps.valueconfirm !== e.target.value || e.target.value === "") {
                 setIsValid(false);
@@ -47,7 +47,8 @@ function FormInput(props) {
                 <input
                     {...inputProps}
                     id={id}
-                    pattern={inputProps.usepattern? pattern[inputProps.name]:null}
+                    value={value}
+                    pattern={inputProps.usepattern? PATTERN[inputProps.name]:null}
                     type={type === "password" ? (showPassword ? "text" : "password") : type}
                     onChange={(e) => {
                         checkValid(e);

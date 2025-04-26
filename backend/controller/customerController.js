@@ -11,6 +11,20 @@ const getCustomer = async (req, res) => {
     }
 }
 
+const getAvatar = async (req, res) => {
+    const cusId = req.params.id;
+    try{
+        const pool = await getPool();
+        const result = await pool.request()
+            .input("cusId", sql.NVarChar, cusId)
+            .query("SELECT pi_url FROM Customer WHERE cus_id = @cusId");
+        res.json(result.recordset);
+    }
+    catch(error){
+        res.status(500).json({message: "Lỗi server", error});
+    }
+}
+
 const deleteCustomer = async (req, res) => {
     try{
         const cusId = req.params.id;
@@ -75,8 +89,10 @@ const deleteBatchCustomer = async (req, res) => {
     }
 }
 
+
 module.exports = {
     getCustomer,
     deleteBatchCustomer,
-    deleteCustomer
+    deleteCustomer,
+    getAvatar
 }

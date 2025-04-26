@@ -8,6 +8,8 @@ const {
   getRecentTransactions,
   getEmployeesByPageAndStatus,
   getToursByStatusAndPage,
+  approveTourById,
+  rejectTourById,
   getBranch
 } = require('../services/adminServices');
 const router = express.Router();
@@ -82,6 +84,28 @@ router.get('/tours', async (req, res) => {
 
     const { tours, total } = await getToursByStatusAndPage( page, pageSize);
     res.json({ tours, total });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Duyệt tour
+router.put('/tours/:id/approve', async (req, res) => {
+  const tourId = req.params.id;
+  try {
+    await approveTourById(tourId);
+    res.json({ message: 'Duyệt tour thành công' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Từ chối tour
+router.put('/tours/:id/reject', async (req, res) => {
+  const tourId = req.params.id;
+  try {
+    await rejectTourById(tourId);
+    res.json({ message: 'Từ chối tour thành công' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

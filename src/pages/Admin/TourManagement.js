@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AdminDataTable from '../../components/Admin/adminDataTable';
-import { getTour } from '../../api/adminAPI';
+import { getTour, approveTour, rejectTour } from '../../api/adminAPI';
 
 const TourManagement = () => {
   const [tours, setTours]       = useState([]);
@@ -8,6 +8,7 @@ const TourManagement = () => {
   const [loading, setLoading]   = useState(false);
   const [page, setPage]         = useState(1);
   const pageSize                = 10;
+  const fetchTours = async () => ({ link: "/admin/staffManagement" });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,14 +27,31 @@ const TourManagement = () => {
 
     fetchData();
   }, [page]);
-
+  // Duyệt tour
   const handleApprove = row => {
     console.log('Duyệt tour', row.tour_id);
-    // TODO: gọi API duyệt
+    approveTour(row.tour_id)
+      .then(() => {
+        setTours(prevTours => prevTours.filter(tour => tour.tour_id !== row.tour_id));
+        //alert('Duyệt tour thành công');
+      })
+      .catch(err => {
+        console.error('Lỗi khi duyệt tour:', err);
+        alert('Lỗi khi duyệt tour');
+      });
   };
+  // Từ chối duyệt tour
   const handleReject = row => {
     console.log('Từ chối tour', row.tour_id);
-    // TODO: gọi API từ chối
+    rejectTour(row.tour_id)
+      .then(() => {
+        setTours(prevTours => prevTours.filter(tour => tour.tour_id !== row.tour_id));
+        //alert('Từ chối tour thành công');
+      })
+      .catch(err => {
+        console.error('Lỗi khi từ chối tour:', err);
+        alert('Lỗi khi từ chối tour');
+      });
   };
 
   const columns = [

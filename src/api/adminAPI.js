@@ -51,25 +51,25 @@ export const getTransactions = async () => {
 //     throw new Error(error.response?.data?.message || "Lỗi khi lấy danh sách nhân viên");
 //   }
 // };
+// Lấy danh sách nhân viên theo điều kiện
 export const getEmployees = async ({ status = "active", page = 1, pageSize = 10 }) => {
   const res = await axios.get(`${API_URL}/api/admin/employeeFilter`, {
     params: { status, page, pageSize }
   });
   return res.data;
 };
-
+//// Lấy danh sách tour theo điều kiện
 export const getTour = async ({ status = "active", page = 1, pageSize = 10 }) => {
   const res = await axios.get(`${API_URL}/api/admin/tours`, {
     params: { page, pageSize }
   });
   return res.data;
 };
-
-// export const getTour = async ({ page = 1, pageSize = 10 }) => {
-//   try {
-//     const response = await axios.get(`${API_URL}/api/admin/tours`);
-//     return response.data;
-//   } catch (error) {
-//     throw new Error(error.response?.data?.message || "Lỗi khi lấy số liệu ở tour");
-//   }
-// };
+// Duyệt tour
+export const approveTour = async (tourId) => {
+  return axios.put(`${API_URL}/api/admin/tours/${tourId}/approve`);
+};
+// Từ chối duyệt tour
+export const rejectTour = async (tourId) => {
+  return axios.put(`${API_URL}/api/admin/tours/${tourId}/reject`);
+};

@@ -10,6 +10,7 @@ const AuthInputs = {
                 Constraint: "Họ và tên không chứa kí tự đặc biệt hoặc số"},
             label: "Nhập họ và tên",
             required: true,
+            usepattern: true,
         },
         {
             id: 2,
@@ -21,6 +22,7 @@ const AuthInputs = {
                 Constraint: "Vui lòng nhập đúng định dạng số điện thoại"},
             label: "Nhập số điện thoại",
             required: true,
+            usepattern: true,
         },
         {
             id: 3,
@@ -32,6 +34,7 @@ const AuthInputs = {
                 Constraint: "Email không hợp lệ"},
             label: "Email", 
             required: true,
+            usepattern: true,
            
         },
         {
@@ -44,6 +47,7 @@ const AuthInputs = {
                 Constraint: "Mật khẩu chứa ít nhất 8 kí từ và ít nhất một chữ cái, một số và một kí tự đặc biệt "},
             label: "Nhập mật khẩu",
             required: true,
+            usepattern: true,
         },
         {
             id: 5,
@@ -55,6 +59,7 @@ const AuthInputs = {
                 Constraint: "Mật khẩu không khớp"},
             label: "Nhập lại mật khẩu",
             required: true,
+            usepattern: true,
         },
     ],
     login: [

@@ -13,7 +13,6 @@ export const useImageUpload = () => {
     const files = e.target.files;
     if (files) {
       processFiles(files);
-      // Reset the file input value so the same file can be selected again
       //Reset để có thể chọn lại file vẫn hiện lại file đã chọn
       e.target.value = '';
     }
@@ -89,14 +88,7 @@ export const useImageUpload = () => {
     }
 
     setDisplayImages(updatedDisplayImages);
-    // // Release object URL to prevent memory leaks
-    // URL.revokeObjectURL(updatedDisplayImages[index]);
-    
-    // updatedImages.splice(index, 1);
-    // updatedDisplayImages.splice(index, 1);
-    
-    // setSelectedImages(updatedImages);
-    // setDisplayImages(updatedDisplayImages);
+
   };
 
   return {

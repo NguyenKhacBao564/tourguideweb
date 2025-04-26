@@ -44,7 +44,6 @@ function AddTourPage() {
     selectedImages,
     displayImages,
     setDisplayImages,
-    setSelectedImages,
     existingImages,
     setExistingImages,
     handleImageUpload,

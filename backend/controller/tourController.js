@@ -1,7 +1,7 @@
 const {sql, getPool} = require("../config/db");
 const { insertItinerary, updateItinerary } = require("./scheduleController");
 const { addTourPrice, updateTourPrice } = require("./tourPriceController");
-const { uploadImage } = require("./imageController");
+const { uploadTourImage } = require("./imageController");
 
 
 //Lấy danh sách tất cả các tour
@@ -109,7 +109,7 @@ const createTour =  async (req, res) => {
         `);
         
         if (imagePaths.length > 0) {
-          await uploadImage(transaction, tour_id, imagePaths);
+          await uploadTourImage(transaction, tour_id, imagePaths);
         }
         
         if (parsedItinerary && parsedItinerary.length > 0) {
@@ -192,11 +192,11 @@ const updateTour = async (req, res ) => {
         .query(`DELETE FROM Tour_image WHERE tour_id = @tour_id`);
       
         if (parsedExistingImages && parsedExistingImages.length > 0){
-          await uploadImage(transaction, tourId, parsedExistingImages);
+          await uploadTourImage(transaction, tourId, parsedExistingImages);
         }
       // Thêm ảnh mới
       if (imagePaths.length > 0) {
-        await uploadImage(transaction, tourId, imagePaths);
+        await uploadTourImage(transaction, tourId, imagePaths);
       }
     }
     
@@ -233,33 +233,6 @@ const getTourById = async (req, res) => {
     }
   }
   
-
-// Xóa tour theo ID
-// const deleteTour = async (req, res) => {
-//     try {
-//       console.log("Received delete request for tour_id:", req.params.id);
-//       // const tourId = parseInt(req.params.id, 10); // Chuyển về số nguyên
-//       // if (isNaN(tourId)) {
-//       //   return res.status(400).json({ error: "Invalid tour ID" });
-//       // }
-//       const tourId = req.params.id;
-//       const pool = await getPool();
-//       const result = await pool.request()
-//         .input("tour_id", sql.NVarChar, tourId)
-//         .query("DELETE FROM Tour WHERE tour_id = @tour_id");
-
-//       console.log("Rows affected:", result.rowsAffected);
-  
-//       if (result.rowsAffected[0] > 0) {
-//         res.json({ message: "Xóa thành công" });
-//       } else {
-//         res.status(404).json({ message: "Không tìm thấy tour" });
-//       }
-//     } catch (err) {
-//       console.error("Lỗi khi xóa tour:", err);
-//       res.status(500).send({ error: "Lỗi khi xóa tour", details: err });
-//     }
-//   }
 
   // Cập nhật trạng thái tour
   const blockTour = async (req, res) => {

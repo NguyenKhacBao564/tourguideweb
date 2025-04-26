@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import Navbar from '../../layouts/Navbar';
 import Footer from '../../layouts/Footer';
 import "../../styles/pages/InforUser.scss"
@@ -11,11 +11,27 @@ import { Link } from 'react-router-dom';
 import UserAvatar from '../../components/Common/UserAvatar/UserAvatar';
 import { FaArrowLeft } from "react-icons/fa6";
 import { AuthContext } from '../../context/AuthContext';
+import Image from 'react-bootstrap/Image';
 
 function InforUser(props) {
     const { user, logout } = useContext(AuthContext);
+    const [image, setImage] = useState(null);
+    const [displayImage, setDisplayImage] = useState(null);
     console.log("user infor:", user);
     
+    const handleImageUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setImage(file);
+            // Revoke previous URL to prevent memory leaks
+            if (displayImage) {
+                URL.revokeObjectURL(displayImage);
+            }
+            setDisplayImage(URL.createObjectURL(file));
+        }
+    }
+
+
     // If user is null or undefined, show a loading state
     if (!user) {
         return (
@@ -72,10 +88,21 @@ function InforUser(props) {
                         </Col>
                         <Col md={4} className="avatar-section">
                             <div className="avatar-container">
-                                <UserAvatar image="avatar.jpg" size="180px"/>
+                                <div className="avatar-display">
+                                    <Image src={displayImage || user.avatar || "default-avatar.jpg"} alt="avatar" className="avatar-image"/>
+                                </div>
                                 <div className="avatar-update">
-                                    <Button variant="light">Chọn ảnh</Button>
-                                    <p>Drag photo here</p>
+                                    <Form.Control
+                                        type="file"
+                                        multiple = {false}
+                                        className="d-none"
+                                        id="imageUpload"
+                                        accept="image/*"
+                                        onChange={handleImageUpload}
+                                    />
+                                    <label htmlFor="imageUpload" className="btn-changeAvatar mt-2 p-2">
+                                    Thay đổi ảnh
+                                    </label>
                                 </div>
                             </div>
                         </Col>

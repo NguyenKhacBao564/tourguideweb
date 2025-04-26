@@ -13,8 +13,9 @@ require("dotenv").config();
 const PORT = process.env.PORT || 3001;
 
 const tourPriceRoutes = require("./routes/tourPriceRoutes");
-const supportRoutes = require("./routes/supportRoutes");
 const scheduleRoutes = require("./routes/scheduleRoutes");
+const customerSupportRoutes = require("./routes/customerSupportRoutes");
+const consultantSupportRoutes = require("./routes/consultantSupportRoutes");
 
 app.use(cors());
 app.use(express.json());
@@ -29,9 +30,10 @@ app.use("/api/admin", adminRoutes); // NKBao đã thêm
 app.use("/tourPrice", tourPriceRoutes);
 
 app.use("/tour-price", tourPriceRoutes);
-app.use("/api", supportRoutes); // Thêm route cho support
 app.use("/schedule", scheduleRoutes);
 
+app.use("/api", customerSupportRoutes); // Thêm route cho support
+app.use("/api", consultantSupportRoutes);
 app.listen(PORT, () => {
   console.log(`🚀 Server chạy tại http://localhost:${PORT}`);
 });

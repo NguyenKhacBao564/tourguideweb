@@ -226,7 +226,51 @@ const getToursByStatusAndPage = async ( page, pageSize) => {
   }
 };
 
+// Duyệt tour theo ID
+const approveTourById = async (tourId) => {
+  try {
+    const pool = await getPool();
+    const result = await pool.request()
+      .input('tourId', sql.NVarChar, tourId)
+      .query(`
+        UPDATE Tour
+        SET status = 'approved'
+        WHERE tour_id = @tourId
+      `);
+    if (result.rowsAffected[0] === 0) {
+      throw new Error('Không tìm thấy tour để duyệt');
+    }
+    return;
+  } catch (err) {
+    console.error('Lỗi khi duyệt tour:', err);
+    throw err;
+  }
+};
+
+// Từ chối tour theo ID
+const rejectTourById = async (tourId) => {
+  try {
+    const pool = await getPool();
+    const result = await pool.request()
+      .input('tourId', sql.NVarChar, tourId)
+      .query(`
+        UPDATE Tour
+        SET status = 'rejected'
+        WHERE tour_id = @tourId
+      `);
+    if (result.rowsAffected[0] === 0) {
+      throw new Error('Không tìm thấy tour để từ chối');
+    }
+    return;
+  } catch (err) {
+    console.error('Lỗi khi từ chối tour:', err);
+    throw err;
+  }
+};
+
 module.exports = {
+  approveTourById,
+  rejectTourById,
   getOverviewStats,
   getBranchStats,
   getTourChartData,

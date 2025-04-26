@@ -1,15 +1,17 @@
-import React, { useState, useEffect, use } from 'react';
+import React, { useState, useEffect} from 'react';
 import { Link } from "react-router-dom";
 import "../styles/layouts/Navbar.scss";
 import { FaBars, FaTimes} from "react-icons/fa";
 import UserAvatar from '../components/Common/UserAvatar/UserAvatar';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+
 
 function Navbar() {
     const { user } = useContext(AuthContext);
-    console.log("navbar:" ,user);
+
+    // console.log("avatar:", user.avatar);
     // State to manage the open/close state of the navbar (mobile view)
     const [isOpen, setIsOpen] = useState(false);
     
@@ -56,7 +58,11 @@ function Navbar() {
                     )}
                     {user && (
                         <>
-                            <li><Link to="/thongtin"><UserAvatar name={user.name} image="avatar.jpg" size="50px"/></Link></li>
+                            <li>
+                                <Link to="/thongtin">
+                                <UserAvatar name={user.name} image={user.avatar || "default-avatar.jpg"} size="50px"/>
+                                </Link>
+                            </li>
                             {/* <li><button className="btn btn--login" onClick={logout}>Đăng xuất</button></li> */}
                         </>
                     )}

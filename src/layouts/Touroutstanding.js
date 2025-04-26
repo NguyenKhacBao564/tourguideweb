@@ -113,7 +113,7 @@ function Touroutstanding(props) {
       <Slider {...settings}>
         {tours.map((tour) => (
           <div key={tour.id} style={{ padding: '0 10px' }}>
-            <TourCard {...tour} className='Tourout' />
+            <TourCard  {...tour} className='Tourout' />
           </div>
         ))}
       </Slider>
