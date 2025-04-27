@@ -8,8 +8,8 @@ import ShowAllButton from "../Common/Button/ShowAllButton";
 import "./TourList.scss";
 
 function Tourlist(props) {
-  const { tours, isLoading, error } = useContext(TourContext);
-
+  const { tours, isLoading, error } = props;
+  console.log(tours);
   if (isLoading) return <div className="loading">Đang tải...</div>;
   if (error) return <div className="error">Lỗi: {error.message}</div>;
 

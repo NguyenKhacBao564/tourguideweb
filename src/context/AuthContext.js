@@ -14,18 +14,25 @@ export const AuthProvider = ({ children }) => {
   
   // Hàm kiểm tra và điều hướng theo role
   const checkRole = (role, currentPath) => {
-    // Tránh redirect loop: Không điều hướng nếu đã ở đúng trang
+    // Tránh redirect loop: Không điều hướng nếu đã ở đúng trang hoặc ở trang InforUser
     const roleRoutes = {
       customer: "/",
       Support: "/support",
       Sales: "/businessemployee/customer",
       Admin: "/admin/dashboard",
     };
+    
+    // Các trang không cần chuyển hướng về trang chính của role
+    const exemptPages = ["/thongtin"];
+    
+    // Nếu đang ở trang được miễn trừ (như trang thông tin cá nhân), không chuyển hướng
+    if (exemptPages.some(page => currentPath.includes(page))) {
+      return;
+    }
+    
     const targetRoute = roleRoutes[role];
     if (targetRoute && currentPath !== targetRoute) {
-      setTimeout(() => {
         navigate(targetRoute, { replace: true });
-      }, 500);
     }
   };
 
@@ -52,6 +59,7 @@ const fetchUser = async (token) => {
           // const decoded = jwtDecode(token);
           const userData = await fetchUser(token);
           setUser(userData);
+          console.log("navigate")
           checkRole(userData.role, window.location.pathname);
         } catch (error) {
           console.error("Token không hợp lệ:", error);
@@ -64,6 +72,24 @@ const fetchUser = async (token) => {
     initializeAuth();
   }, []);
 
+  // Hàm làm mới thông tin người dùng từ server
+  const refreshUserData = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      if (token) {
+        const userData = await fetchUser(token);
+        setUser(userData);
+        return userData;
+      }
+      return null;
+    } catch (error) {
+      console.error("Lỗi khi làm mới thông tin người dùng:", error);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Hàm xử lý đăng nhập/đăng ký (tái sử dụng logic)
   const authenticateUser = async (apiCall, ...args) => {
@@ -92,10 +118,12 @@ const fetchUser = async (token) => {
 
 
   const logout = () => {
+    setLoading(true);
     localStorage.removeItem("token");
     setUser(null);
     console.log("Logout success")
-    navigate("/")
+    navigate("/login")
+    setLoading(false);
   };
 
   // Sử dụng useMemo để tránh tạo object mới
@@ -105,6 +133,7 @@ const fetchUser = async (token) => {
     login,
     regist,
     logout,
+    refreshUserData
   }), [user, loading]);
 
   return (

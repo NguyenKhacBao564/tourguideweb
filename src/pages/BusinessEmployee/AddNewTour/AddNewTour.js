@@ -149,7 +149,7 @@ function AddTourPage() {
       }
       
       // Redirect after successful operation
-      setTimeout(() => navigate('/businessemployee/managetour'), 2000);
+      setTimeout(() => navigate('/businessemployee/managetour'), 500);
     } catch (error) {
       showAlert(error.message, 'danger');
     }

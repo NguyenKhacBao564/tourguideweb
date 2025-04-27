@@ -23,18 +23,30 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./components/Unauthorized";
 import NotFound from "./pages/NotFound";
 import UserManagement from "./pages/BusinessEmployee/UserManagement";
-
+import { CustomerProvider } from "./context/CustomerContext";
 function App() {
   return (
     <div className="App">
       <ScrollToTop />
         {/* <ConsultantSupportProvider> */}
         <Routes>
-          <Route path="/" element={<Page />} />
-          <Route path="/contact" element={<Contact />} />
+          <Route path="/" element={
+            
+              <Page />
+          
+          } />
+          <Route path="/contact" element={
+            <ProtectedRoute allowedRoles={["customer"]}>
+              <Contact />
+            </ProtectedRoute>
+          } />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/thongtin" element={<InforUser />} />
+          <Route path="/thongtin" element={
+            <ProtectedRoute allowedRoles={["customer"]}>
+              <InforUser />
+            </ProtectedRoute>
+          } />
           <Route path="/customer" element={<p>customer</p>} />
           <Route path="/sale" element={<p>sale</p>} />
           <Route path="/support" element={<p>support</p>} />
@@ -47,11 +59,15 @@ function App() {
               <BusinessEmployee />
             </ProtectedRoute>
             }>
-            <Route path="customer" element={<UserManagement />} />
+            <Route path="customer" element={
+              <CustomerProvider>
+                <UserManagement />
+              </CustomerProvider>
+              } />
             <Route path="managetour" element={
-              <TourProvider> 
-                <TourManagementEmp />
-              </TourProvider>
+                <TourProvider>
+                  <TourManagementEmp />
+                </TourProvider>
             }/>
             <Route path="managetour/addtour" element={
               <TourProvider> 

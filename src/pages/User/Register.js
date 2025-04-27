@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import FormInput from '../../components/Common/FormInput/FormInput';
-import AuthBase from '../../components/Auth/AuthBase';
+import AuthBase from '../../components/Common/Auth/AuthBase';
 import authInputs from '../../utils/AuthInput';
 import { AuthContext } from '../../context/AuthContext';
 
@@ -37,7 +37,7 @@ function Register() {
       setErrorCode(null);
       await regist(values.username, values.email, values.password, values.phone);
       setSuccess("Đăng ký thành công! Chuyển hướng về trang chủ.");
-      setValues({ username: '', phone: '', email: '', password: '', confirmPassword: '' });
+      // setValues({ username: '', phone: '', email: '', password: '', confirmPassword: '' });
     } catch (error) {
       setSuccess(null);
       setErrorCode(error.code);

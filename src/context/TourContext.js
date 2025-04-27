@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import { getTour, addTour, updateTour, blockTour} from "../api/tourAPI";
+import { getTour, addTour, updateTour, blockTour, getTourByProvince} from "../api/tourAPI";
 import { getItinerary } from "../api/scheduleAPI";
 import { getTourImages } from "../api/imageAPI";
 
@@ -82,6 +82,20 @@ export const TourProvider = ({ children }) => {
     }
   };
 
+  const handleGetTourByProvince = async (province) => {
+    try {
+      setIsLoading(true);
+      const result = await getTourByProvince(province);
+      setError(null);
+      return result;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleGetImages = async (tour_id) => {
     try{
       const result = await getTourImages(tour_id);
@@ -110,6 +124,7 @@ export const TourProvider = ({ children }) => {
     getItinerary: handleGetItinerary,
     blockTour: handleBlockTour,
     getImages: handleGetImages,
+    getTourByProvince: handleGetTourByProvince,
   };
 
   return <TourContext.Provider value={value}>{children}</TourContext.Provider>;

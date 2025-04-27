@@ -9,7 +9,7 @@ function Unauthorized() {
       <Alert variant="danger">
         <h4>Không có quyền truy cập</h4>
         <p>Bạn không có quyền truy cập vào trang này.</p>
-        <Link to="/">Quay lại trang chủ</Link>
+        {/* <Link to="/">Quay lại trang chủ</Link> */}
       </Alert>
     </Container>
   );
