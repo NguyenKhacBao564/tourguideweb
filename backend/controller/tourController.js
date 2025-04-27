@@ -83,34 +83,6 @@ const getTourByProvince = async (req, res) => {
         FROM TOUR_SUBSET ts
         LEFT JOIN Tour_Price AS tp ON ts.tour_id = tp.tour_id
       `);
-
-    // // Nhóm dữ liệu theo tour_id
-    // const toursMap = result.recordset.reduce((map, row) => {
-    //   if (!map[row.tour_id]) {
-    //     map[row.tour_id] = {
-    //       tour_id: row.tour_id,
-    //       branch_id: row.branch_id,
-    //       name: row.name,
-    //       destination: row.destination,
-    //       departureLocation: row.departure_location,
-    //       start_date: row.start_date,
-    //       end_date: row.end_date,
-    //       max_guests: row.max_guests,
-    //       transport: row.transport,
-    //       duration: row.duration,
-    //       created_at: row.created_at,
-    //       description: row.description,
-    //       prices: [],
-    //     };
-    //   }
-    //   if (row.age_group && row.price !== null) {
-    //     map[row.tour_id].prices.push({
-    //       age_group: row.age_group,
-    //       price: row.price,
-    //     });
-    //   }
-    //   return map;
-    // }, {});
     const toursMap = {};
     result.recordset.forEach((row) => {
       if (!toursMap[row.tour_id]) {
@@ -144,53 +116,45 @@ const getTourByProvince = async (req, res) => {
     return res.status(500).json({ error: "Lỗi server khi lấy danh sách tour", details: error.message });
   }
 };
-// const getTourByProvince = async (req, res) => {
-//   const province = req.params.province;
-//   try{
-//     const pool = await getPool();
-//     //Lấy 10 tour theo tỉnh được tạo gần đây
-//     const result = await pool.request()
-//     .query(`SELECT t.tour_id,t.branch_id, t.name, t.destination,t.departure_location,t.start_date,t.end_date,t.max_guests,t.transport,t.created_at,t.description, t.duration, tp.age_group,tp.price 
-//         FROM Tour AS t
-//         LEFT JOIN Tour_Price AS tp 
-//         ON t.tour_id = tp.tour_id
-//         WHERE t.destination LIKE '%${province}%' AND t.status = 'active'
-//         ORDER BY t.created_at DESC
-//         OFFSET 0 ROWS
-//         FETCH NEXT 10 ROWS ONLY`);
-//     const toursMap = {};
-//     result.recordset.forEach((row) => {
-//       if (!toursMap[row.tour_id]) {
-//         toursMap[row.tour_id] = {
-//           tour_id: row.tour_id,
-//           branch_id: row.branch_id,
-//           name: row.name,
-//           destination: row.destination,
-//           departureLocation: row.departure_location,
-//           start_date: row.start_date,
-//           end_date: row.end_date,
-//           max_guests: row.max_guests,
-//           transport: row.transport,
-//           duration: row.duration,
-//           created_at: row.created_at,
-//           description: row.description,
-//           prices: [],
-//         };
-//       }
-//       if (row.age_group && row.price !== null) {
-//         toursMap[row.tour_id].prices.push({
-//           age_group: row.age_group,
-//           price: row.price,
-//         });
-//       }
-//     });
-//     const tours = Object.values(toursMap);
-//     return res.status(200).json(tours);
-//   }catch(error){
-//     return res.status(500).json({error: error.message});
-//   }
-// }
 
+const getTourOutstanding = async (req, res) => {
+  try {
+    const pool = await getPool();
+    const result = await pool.request()
+    .query(`SELECT t.tour_id,t.branch_id, t.name, t.destination,t.departure_location,t.start_date,t.end_date,t.max_guests,t.transport,t.created_at,t.description, t.duration, tp.age_group,tp.price 
+        FROM Tour AS t
+        LEFT JOIN Tour_Price AS tp 
+        ON t.tour_id = tp.tour_id WHERE t.status = 'active' AND tp.age_group = 'adultPrice'
+        ORDER BY tp.price ASC
+        OFFSET 0 ROWS
+        FETCH NEXT 10 ROWS ONLY
+        `);
+        const toursMap = {};
+        result.recordset.forEach((row) => {
+          if (!toursMap[row.tour_id]) {
+            toursMap[row.tour_id] = {
+              tour_id: row.tour_id,
+              branch_id: row.branch_id,
+              name: row.name,
+              destination: row.destination,
+              departureLocation: row.departure_location,
+              start_date: row.start_date,
+              end_date: row.end_date,
+              max_guests: row.max_guests,
+              transport: row.transport,
+              duration: row.duration,
+              created_at: row.created_at,
+              description: row.description,
+              prices: row.price,
+            };
+          }
+        }
+      );
+    return res.status(200).json(result.recordset);
+  }catch(error){
+    return res.status(500).json({error: error.message });
+  }
+}
 // Thêm tour mới
 const createTour =  async (req, res) => {
     let transaction;
@@ -406,4 +370,4 @@ const getTourById = async (req, res) => {
 
 
 
-  module.exports = {getTour, createTour, getTourById, blockTour, updateTour, getTourByProvince};
+  module.exports = {getTour, createTour, getTourById, blockTour, updateTour, getTourByProvince, getTourOutstanding};

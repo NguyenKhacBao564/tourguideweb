@@ -21,6 +21,16 @@ export const getTourById = async (id) => {
   }
 };
 
+// Lấy danh sách tour nổi bật giá thấp nhất
+export const getTourOutstanding = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/tours/outstanding`);
+    return response.data;
+  }catch(error){
+    throw new Error(error.response?.data?.message || "Lỗi khi lấy danh sách tour");
+  }
+}
+
 // Lấy danh sách tour theo tỉnh
 export const getTourByProvince = async (province) => {
   try {

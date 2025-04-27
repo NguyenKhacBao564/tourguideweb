@@ -11,17 +11,20 @@ import { TourContext } from '../context/TourContext';
 
 
 function Maincontent() {
-  const { getTourByProvince } = useContext(TourContext);
+  const { getTourByProvince, getTourOutstanding } = useContext(TourContext);
   const [index, setIndex] = useState(0);
-  const [tours, setTours] = useState([]);
+  const [toursByProvince, setToursByProvince] = useState([]);
+  const [toursOutstanding, setToursOutstanding] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchTours = async () => {
       try {
-        const result = await getTourByProvince(provinceFilter[index].name);
-        setTours(result);
+        const toursByProvince = await getTourByProvince(provinceFilter[index].name);
+        setToursByProvince(toursByProvince);
+        const toursOutstanding = await getTourOutstanding();
+        setToursOutstanding(toursOutstanding);
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -71,11 +74,8 @@ function Maincontent() {
       </Carousel>
 
       <h1 className="tourlist_Label">Các tour nổi bật</h1>
-      
-      
-        <Tourlist tours={tours} loading={loading} error={error} />
-        <Touroutstanding />
-      
+        <Tourlist tours={toursByProvince} loading={loading} error={error} />
+        <Touroutstanding tours={toursOutstanding} loading={loading} error={error} />
       <StatsOverview />
     </div>
   );
