@@ -69,7 +69,17 @@ export const getTour = async ({ status = "active", page = 1, pageSize = 10 }) =>
 export const approveTour = async (tourId) => {
   return axios.put(`${API_URL}/api/admin/tours/${tourId}/approve`);
 };
+
 // Từ chối duyệt tour
 export const rejectTour = async (tourId) => {
   return axios.put(`${API_URL}/api/admin/tours/${tourId}/reject`);
+};
+
+// Khóa nhân viên
+export const lockEmployees = async (ids) => {
+  const res = await axios.put(
+    `${API_URL}/api/admin/employees/lock`,
+    { ids }
+  );
+  return res.data;
 };

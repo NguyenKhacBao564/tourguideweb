@@ -175,9 +175,24 @@ const getEmployeesByPageAndStatus = async (status, page, pageSize) => {
     .input("offset", offset)
     .input("pageSize", pageSize)
     .query(`
-      SELECT * FROM Employee 
-      WHERE em_status = @status
-      ORDER BY emp_id
+      SELECT 
+      e.emp_id,
+      e.fullname,
+      e.role_id,
+      e.email,
+      e.phone,
+      e.address,
+      e.em_status,
+      e.branch_id,
+      r.role_name,
+      b.branch_name
+      FROM Employee e
+      LEFT JOIN Branch b
+        ON e.branch_id = b.branch_id
+      LEFT JOIN Employee_Role r
+         ON e.role_id = r.role_id  
+      WHERE e.em_status = @status
+      ORDER BY e.emp_id
       OFFSET @offset ROWS FETCH NEXT @pageSize ROWS ONLY
     `);
 
@@ -192,6 +207,7 @@ const getEmployeesByPageAndStatus = async (status, page, pageSize) => {
   };
 };
 
+// Lấy danh sách tour theo trạng thái và phân trang
 const getToursByStatusAndPage = async ( page, pageSize) => {
   const status = 'active'; // Trạng thái tour mặc định là 'active'
   try {
@@ -266,6 +282,27 @@ const rejectTourById = async (tourId) => {
     console.error('Lỗi khi từ chối tour:', err);
     throw err;
   }
+};
+
+// Khóa nhân viên theo danh sách ID
+const lockEmployeesByIds = async (ids) => {
+  if (!Array.isArray(ids) || ids.length === 0) {
+    throw new Error("Danh sách IDs không hợp lệ");
+  }
+  const pool = await getPool();
+  const request = pool.request();
+  // Tạo tham số động: @id0,@id1,...
+  const placeholders = ids.map((_, i) => `@id${i}`).join(",");
+  ids.forEach((id, i) => {
+    request.input(`id${i}`, sql.VarChar, id);
+  });
+  const result = await request.query(`
+    UPDATE Employee
+    SET em_status = 'inactive'
+    WHERE emp_id IN (${placeholders})
+  `);
+  // rowsAffected[0] = số dòng bị update
+  return result.rowsAffected[0];
 };
 
 module.exports = {

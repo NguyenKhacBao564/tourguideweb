@@ -10,6 +10,7 @@ const {
   getToursByStatusAndPage,
   approveTourById,
   rejectTourById,
+  lockEmployeesByIds,
   getBranch
 } = require('../services/adminServices');
 const router = express.Router();
@@ -107,6 +108,18 @@ router.put('/tours/:id/reject', async (req, res) => {
     await rejectTourById(tourId);
     res.json({ message: 'Từ chối tour thành công' });
   } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Khóa nhân viên
+router.put('/employees/lock', async (req, res) => {
+  const { ids } = req.body;
+  try {
+    const count = await lockEmployeesByIds(ids);
+    res.json({ message: `Đã khóa ${count} nhân viên thành công` });
+  } catch (err) {
+    console.error("Lỗi khi khóa nhân viên:", err);
     res.status(500).json({ error: err.message });
   }
 });
