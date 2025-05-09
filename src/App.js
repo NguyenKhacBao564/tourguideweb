@@ -24,6 +24,8 @@ import Unauthorized from "./components/Unauthorized";
 import NotFound from "./pages/NotFound";
 import UserManagement from "./pages/BusinessEmployee/UserManagement";
 import { CustomerProvider } from "./context/CustomerContext";
+import PromotionManager from "./pages/BusinessEmployee/PromotionManager";
+
 function App() {
   return (
     <div className="App">
@@ -74,7 +76,7 @@ function App() {
                 <AddNewTour />
               </TourProvider>
             }/>
-            <Route path="promotion" element={<p>Khuyến mãi</p>} />
+            <Route path="promotion" element={<PromotionManager />} />
         </Route>
 
          {/* Admin Routes */}

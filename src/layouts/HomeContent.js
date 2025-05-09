@@ -8,7 +8,7 @@ import { TourProvider } from "../context/TourContext";
 import StatsOverview from './StatOverview';
 import provinceFilter from '../utils/provinceFilter'; // Nhập categories từ file utility
 import { TourContext } from '../context/TourContext';
-
+import FloatingChatButton from './ChatBot/FloatingChat';
 
 function Maincontent() {
   const { getTourByProvince, getTourOutstanding } = useContext(TourContext);
@@ -72,7 +72,7 @@ function Maincontent() {
           </Carousel.Item>
         ))}
       </Carousel>
-
+      <FloatingChatButton/>
       <h1 className="tourlist_Label">Các tour nổi bật</h1>
         <Tourlist tours={toursByProvince} loading={loading} error={error} />
         <Touroutstanding tours={toursOutstanding} loading={loading} error={error} />

@@ -339,34 +339,39 @@ const getTourById = async (req, res) => {
       res.status(500).json({ error: "Lỗi server", details: err });
     }
   }
+
+// Lấy danh sách tour theo tỉnh thành phố
+const getTourByProvince_Price = async (req, res) => {
+  const province = req.province;
   
+}  
+
   // Cập nhật trạng thái tour
-  const blockTour = async (req, res) => {
-    try {
-      console.log("Received delete request for tour_id:", req.params.id);
-      // const tourId = parseInt(req.params.id, 10); // Chuyển về số nguyên
-      // if (isNaN(tourId)) {
-      //   return res.status(400).json({ error: "Invalid tour ID" });
-      // }
-      const tourId = req.params.id;
-      const pool = await getPool();
-      const result = await pool.request()
-        .input("tour_id", sql.NVarChar, tourId)
-        .query("UPDATE Tour SET status = 'inactive' WHERE tour_id = @tour_id");
+const blockTour = async (req, res) => {
+  try {
+    console.log("Received delete request for tour_id:", req.params.id);
+    // const tourId = parseInt(req.params.id, 10); // Chuyển về số nguyên
+    // if (isNaN(tourId)) {
+    //   return res.status(400).json({ error: "Invalid tour ID" });
+    // }
+    const tourId = req.params.id;
+    const pool = await getPool();
+    const result = await pool.request()
+      .input("tour_id", sql.NVarChar, tourId)
+      .query("UPDATE Tour SET status = 'inactive' WHERE tour_id = @tour_id");
 
-      console.log("Rows affected:", result.rowsAffected);
-  
-      if (result.rowsAffected[0] > 0) {
-        res.json({ message: "Khóa tour thành công" });
-      } else {
-        res.status(404).json({ message: "Không tìm thấy tour" });
-      }
-    } catch (err) {
-      console.error("Lỗi khi khóa tour:", err);
-      res.status(500).send({ error: "Lỗi khi khóa tour", details: err });
+    console.log("Rows affected:", result.rowsAffected);
+
+    if (result.rowsAffected[0] > 0) {
+      res.json({ message: "Khóa tour thành công" });
+    } else {
+      res.status(404).json({ message: "Không tìm thấy tour" });
     }
+  } catch (err) {
+    console.error("Lỗi khi khóa tour:", err);
+    res.status(500).send({ error: "Lỗi khi khóa tour", details: err });
   }
-
+}
 
 
 
