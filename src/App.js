@@ -18,6 +18,7 @@ import { AuthProvider } from "./context/AuthContext";
 import ConsultantEmployee from "./pages/ConsultantEmployee/ConsultantEmployee";
 import Chatbot from "./pages/ConsultantEmployee/ChatBot";
 import ResponeSupport from "./pages/ConsultantEmployee/ResponeSupport";
+import ResponeDetail from "./pages/ConsultantEmployee/ResponeDetail";
 // import { ConsultantSupportProvider } from "./context/ConsultantSupportContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./components/Unauthorized";
@@ -81,6 +82,7 @@ function App() {
           }>
             <Route path="chatbot" element={<Chatbot />} />
             <Route path="request-support" element={<ResponeSupport />} />
+            <Route path="request-support/:id" element={<ResponeDetail />} />
           </Route>
         </Routes>
 

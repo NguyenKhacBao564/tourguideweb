@@ -3,5 +3,5 @@ import ResponeSupport from "./ResponeSupport";
 
 export {
     Chatbot,
-    ResponeSupport
+    ResponeSupport,
 };

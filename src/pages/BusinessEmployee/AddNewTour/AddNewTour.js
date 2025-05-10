@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Container, Row, Col, Button, InputGroup} from 'react-bootstrap';
+import { Container, Row, Col, Button, InputGroup } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import InputFiledIcon from '../../../components/Common/InputFieldIcon/InputFieldIcon';
 import InputFieldIcon2 from '../../../components/Common/InputFieldIcon/InputFieldIcon2';
@@ -47,7 +47,7 @@ function AddTourPage(props) {
   const [adultPrice, setAdultPrice] = useState('1.000.000');
   const [childPrice, setChildPrice] = useState('1.000.000');
   const [infantPrice, setInfantPrice] = useState('1.000.000');
-  
+
   const [formData, setFormData] = useState({
     // other form fields...
     adultPrice: '1.000.000',
@@ -63,13 +63,13 @@ function AddTourPage(props) {
       .map((schedule, index) => ({ ...schedule, day_number: index + 1 }));
     setScheduleList(updatedList);
   };
-  
+
   const handleActiveField = () => {
     console.log('activeField', activeField);
     setActiveField(!activeField);
   }
 
-  
+
 
   const [scheduleList, setScheduleList] = useState([
   ]);
@@ -82,7 +82,7 @@ function AddTourPage(props) {
       description: schedule.description
     }])
   }
- 
+
   const [description, setDescription] = useState(
     'Đà Lạt – thành phố ngàn hoa, điểm đến lý tưởng cho những ai yêu thích không khí se lạnh, cảnh quan thơ mộng và những trải nghiệm đầy thú vị. Đến với Đà Lạt bạn sẽ được đắm chìm trong vẻ đẹp lãng mạn của hồ Xuân Hương, khám phá những đồi chè xanh bát ngát, thác nước hùng vĩ và những cảnh đồng hoa rực rỡ sắc màu. Không chỉ vậy, Đà Lạt còn hấp dẫn du khách với nền ẩm thực độc đáo, từ bánh tráng nướng giòn rụm đến ly sữa đậu nành nóng hổi giữa trời đêm se lạnh. Hãy cùng chúng tôi tận hưởng hành trình khám phá Đà Lạt đầy ấn tượng và đáng nhớ!'
   );
@@ -91,14 +91,14 @@ function AddTourPage(props) {
   const imageCount = displayImages.length;
 
   const optionList = [
-    {value: 'TP HCM'},
-    {value: 'Hà Nội'},
-    {value: 'Đà Nẵng'},
+    { value: 'TP HCM' },
+    { value: 'Hà Nội' },
+    { value: 'Đà Nẵng' },
   ];
- 
+
   // Thiết lập sensors cho desktop và mobile
-   // Thiết lập sensors cho desktop và mobile
-   const sensors = useSensors(
+  // Thiết lập sensors cho desktop và mobile
+  const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(TouchSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
@@ -109,7 +109,7 @@ function AddTourPage(props) {
   const handleDragEnd = (event) => {
     const { active, over } = event;
     if (active.id === over.id) return;
-    
+
     if (active.id !== over.id) {
       setScheduleList((items) => {
         const oldIndex = items.findIndex((item) => item.id === active.id);
@@ -142,7 +142,7 @@ function AddTourPage(props) {
   const processFiles = (files) => {
     const newImages = [];
     const newUrls = [];
-    
+
     // Check if each file is an image
     Array.from(files).forEach(file => {
       if (file.type.match('image.*')) {
@@ -152,13 +152,13 @@ function AddTourPage(props) {
         alert('Chỉ chấp nhận file ảnh. File "' + file.name + '" không phải là ảnh.');
       }
     });
-    
+
     // Check if we would exceed the maximum of 5 images
     if (selectedImages.length + newImages.length > 5) {
       alert('Chỉ được phép tải lên tối đa 5 ảnh.');
       return;
     }
-    
+
     setSelectedImages([...selectedImages, ...newImages]);
     setDisplayImages([...displayImages, ...newUrls]);
   };
@@ -169,18 +169,18 @@ function AddTourPage(props) {
     e.stopPropagation();
     e.currentTarget.classList.add('drag-over');
   };
-  
+
   const handleDragLeave = (e) => {
     e.preventDefault();
     e.stopPropagation();
     e.currentTarget.classList.remove('drag-over');
   };
-  
+
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
     e.currentTarget.classList.remove('drag-over');
-    
+
     const files = e.dataTransfer.files;
     if (files.length > 0) {
       processFiles(files);
@@ -190,189 +190,189 @@ function AddTourPage(props) {
   const removeImage = (index) => {
     const updatedImages = [...selectedImages];
     const updatedDisplayImages = [...displayImages];
-    
+
     URL.revokeObjectURL(updatedDisplayImages[index]);
-    
+
     updatedImages.splice(index, 1);
     updatedDisplayImages.splice(index, 1);
-    
+
     setSelectedImages(updatedImages);
     setDisplayImages(updatedDisplayImages);
   };
 
-  
+
 
   return (
     <>
-    <h2 style={{color: '#339688', fontWeight: 'bold', marginLeft: '20px'}}>Thêm Tour Mới</h2>
-    <Container className="tour-booking-form py-4">
-     
-      <Row className="mb-3 mt-3 d-flex justify-content-between align-items-center">
-        <Col md={3}>
-          <InputFiledIcon
-            label="Tên tour"
-            value={tourName}
-            placeholder="Nhập tên tour"
-            onChange={(e) => setTourName(e.target.value)}
-          />
-        </Col>
-        <Col md={3} className="d-flex justify-content-end">
-          <Button variant="danger" className="px-4 exit-button" onClick={() => navigate('/businessemployee/managetour')}>
-            Thoát
-          </Button>
-        </Col>
-      </Row>
+      <h2 style={{ color: '#339688', fontWeight: 'bold', marginLeft: '20px' }}>Thêm Tour Mới</h2>
+      <Container className="tour-booking-form py-4">
 
-      <Row className="mb-3">
-        <Col md={4}>
-          <DropDownIconBtn
-            optionList={optionList}
-            label="Điểm xuất phát"
-            value={departureLocation}
-            onChange={(e) => setDepartureLocation(e.target.value)}
-            icon={FaLocationDot}
-          />
-        </Col>
-        <Col md={4}>
-          <InputFieldIcon2
-            label="Điểm đến"
-            value={destination}
-            icon={FaLocationDot}
-            placeholder="Nhập điểm đến"
-            onChange={(e) => setDestination(e.target.value)}
-          />
-        </Col>
-        <Col md={4}>
-        <InputFieldIcon2
-            label="Thời gian"
-            value={duration}
-            icon={FaClock}
-            placeholder="Nhập thời gian"
-            onChange={(e) => setDuration(e.target.value)}
-          />
-        </Col>
-      </Row>
-
-      <Row className="mb-3">
-        <Col md={3}>
-          <DatePicker
-            label="Ngày khởi hành"
-            value={departureDate}
-            name="departureDate"
-            onChange={(e) => setDepartureDate(e.target.value)}
-          />
-        </Col>
-        <Col md={3}>
-        <DatePicker
-            label="Ngày trở về"
-            value={returnDate}
-            name="returnDate"
-            onChange={(e) => setReturnDate(e.target.value)}
-          />
-        </Col>
-        <Col md={2}>
-          <CouterInput
-            label="Số lượng chỗ"
-            value={seats}
-            onChange={(e) => setSeats(e.target.value)}
-          />
-        </Col>
-        <Col md={4}>
-        <InputFieldIcon2
-            label="Phương tiện"
-            value={transportation}
-            icon={FaCar}
-            placeholder="Nhập phương tiện"
-            onChange={(e) => setTransportation(e.target.value)}
-          />
-        </Col>
-      </Row>
-
-      <Container className="price-section mt-4 mb-3">
-        <h5>Chọn Giá:</h5>
-        <Row>
-            <PriceSection
-            adultPrice={formData.adultPrice}
-            childPrice={formData.childPrice}
-            infantPrice={formData.infantPrice}
-            onChange={handleChange}
-            step={100000}
-          />
+        <Row className="mb-3 mt-3 d-flex justify-content-between align-items-center">
+          <Col md={3}>
+            <InputFiledIcon
+              label="Tên tour"
+              value={tourName}
+              placeholder="Nhập tên tour"
+              onChange={(e) => setTourName(e.target.value)}
+            />
+          </Col>
+          <Col md={3} className="d-flex justify-content-end">
+            <Button variant="danger" className="px-4 exit-button" onClick={() => navigate('/businessemployee/managetour')}>
+              Thoát
+            </Button>
+          </Col>
         </Row>
-      </Container>
 
-      <Form.Group className="mb-3">
-        <Form.Label className="text-secondary">Mô tả</Form.Label>
-        <Form.Control
-          as="textarea"
-          rows={5}
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="description-box"
-        />
-      </Form.Group>
+        <Row className="mb-3">
+          <Col md={4}>
+            <DropDownIconBtn
+              optionList={optionList}
+              label="Điểm xuất phát"
+              value={departureLocation}
+              onChange={(e) => setDepartureLocation(e.target.value)}
+              icon={FaLocationDot}
+            />
+          </Col>
+          <Col md={4}>
+            <InputFieldIcon2
+              label="Điểm đến"
+              value={destination}
+              icon={FaLocationDot}
+              placeholder="Nhập điểm đến"
+              onChange={(e) => setDestination(e.target.value)}
+            />
+          </Col>
+          <Col md={4}>
+            <InputFieldIcon2
+              label="Thời gian"
+              value={duration}
+              icon={FaClock}
+              placeholder="Nhập thời gian"
+              onChange={(e) => setDuration(e.target.value)}
+            />
+          </Col>
+        </Row>
 
-      <div className="image-section mb-3">
-        <Form.Label className="text-secondary">Ảnh đã chọn ({imageCount}/5)</Form.Label>
-        <Container className="selected-images">
+        <Row className="mb-3">
+          <Col md={3}>
+            <DatePicker
+              label="Ngày khởi hành"
+              value={departureDate}
+              name="departureDate"
+              onChange={(e) => setDepartureDate(e.target.value)}
+            />
+          </Col>
+          <Col md={3}>
+            <DatePicker
+              label="Ngày trở về"
+              value={returnDate}
+              name="returnDate"
+              onChange={(e) => setReturnDate(e.target.value)}
+            />
+          </Col>
+          <Col md={2}>
+            <CouterInput
+              label="Số lượng chỗ"
+              value={seats}
+              onChange={(e) => setSeats(e.target.value)}
+            />
+          </Col>
+          <Col md={4}>
+            <InputFieldIcon2
+              label="Phương tiện"
+              value={transportation}
+              icon={FaCar}
+              placeholder="Nhập phương tiện"
+              onChange={(e) => setTransportation(e.target.value)}
+            />
+          </Col>
+        </Row>
+
+        <Container className="price-section mt-4 mb-3">
+          <h5>Chọn Giá:</h5>
           <Row>
-            {displayImages.map((image, index) => (
-              <Col key={index} xs={6} md={2} className="mb-2">
-                <div className="position-relative image-container">
-                  <img src={image} alt={`Selected ${index + 1}`} className="img-thumbnail" />
-                  <Button 
-                    variant="light" 
-                    size="sm" 
-                    className="position-absolute top-0 end-0 rounded-circle delete-btn"
-                    onClick={() => removeImage(index)}
-                  >
-                    <MdCancel size={25}/>
-                  </Button>
-                </div>
-              </Col>
-            ))}
+            <PriceSection
+              adultPrice={formData.adultPrice}
+              childPrice={formData.childPrice}
+              infantPrice={formData.infantPrice}
+              onChange={handleChange}
+              step={100000}
+            />
           </Row>
         </Container>
-        
-        <div className="add-images mt-3">
-          <Form.Label className="mb-0">Thêm ảnh</Form.Label>
-          <div 
-            className="upload-area p-3 mt-2"
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-          >
-            <div className="text-center">
-              <p className="text-muted mb-0">Chọn ảnh từ máy hoặc kéo thả</p>
-              <Form.Control
-                type="file"
-                multiple
-                onChange={handleImageUpload}
-                className="d-none"
-                id="imageUpload"
-                accept="image/*"
-              />
-              <label htmlFor="imageUpload" className="btn btn-outline-secondary mt-2">
-                Chọn ảnh
-              </label>
+
+        <Form.Group className="mb-3">
+          <Form.Label className="text-secondary">Mô tả</Form.Label>
+          <Form.Control
+            as="textarea"
+            rows={5}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="description-box"
+          />
+        </Form.Group>
+
+        <div className="image-section mb-3">
+          <Form.Label className="text-secondary">Ảnh đã chọn ({imageCount}/5)</Form.Label>
+          <Container className="selected-images">
+            <Row>
+              {displayImages.map((image, index) => (
+                <Col key={index} xs={6} md={2} className="mb-2">
+                  <div className="position-relative image-container">
+                    <img src={image} alt={`Selected ${index + 1}`} className="img-thumbnail" />
+                    <Button
+                      variant="light"
+                      size="sm"
+                      className="position-absolute top-0 end-0 rounded-circle delete-btn"
+                      onClick={() => removeImage(index)}
+                    >
+                      <MdCancel size={25} />
+                    </Button>
+                  </div>
+                </Col>
+              ))}
+            </Row>
+          </Container>
+
+          <div className="add-images mt-3">
+            <Form.Label className="mb-0">Thêm ảnh</Form.Label>
+            <div
+              className="upload-area p-3 mt-2"
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
+              <div className="text-center">
+                <p className="text-muted mb-0">Chọn ảnh từ máy hoặc kéo thả</p>
+                <Form.Control
+                  type="file"
+                  multiple
+                  onChange={handleImageUpload}
+                  className="d-none"
+                  id="imageUpload"
+                  accept="image/*"
+                />
+                <label htmlFor="imageUpload" className="btn btn-outline-secondary mt-2">
+                  Chọn ảnh
+                </label>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
 
 
-      <Container className="schedule-section">
-        <Row >
-          <Col md={9}>
-            <h3>Lịch trình</h3>
-          </Col>
-          <Col md={3} className="d-flex justify-content-end">
-            <Button variant="dark" className="d-flex align-items-center gap-2" onClick={handleActiveField}><CiCirclePlus size={24}/> Thêm lịch trình</Button>
-          </Col>
-        </Row>
-        <Row className="mt-3">
-          <DndContext
+        <Container className="schedule-section">
+          <Row >
+            <Col md={9}>
+              <h3>Lịch trình</h3>
+            </Col>
+            <Col md={3} className="d-flex justify-content-end">
+              <Button variant="dark" className="d-flex align-items-center gap-2" onClick={handleActiveField}><CiCirclePlus size={24} /> Thêm lịch trình</Button>
+            </Col>
+          </Row>
+          <Row className="mt-3">
+            <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
               onDragEnd={handleDragEnd}
@@ -384,22 +384,22 @@ function AddTourPage(props) {
                 {scheduleList.map((schedule) => (
                   <Schedule key={schedule.id} schedule={schedule} onDeleteSchedule={deleteSchedule} />
                 ))}
-            </SortableContext>
-          </DndContext>
-        </Row>
-      </Container>
-      <Button variant="success" className="mt-3 p-20-50" style={{display: "block",marginLeft: 'auto'}}>Thêm Tour</Button> 
-      
+              </SortableContext>
+            </DndContext>
+          </Row>
+        </Container>
+        <Button variant="success" className="mt-3 p-20-50" style={{ display: "block", marginLeft: 'auto' }}>Thêm Tour</Button>
+
         {activeField && (
-          <AddShedule setActiveField={setActiveField} addSchedule={addSchedule} scheduleLength={scheduleList.length}/>
+          <AddShedule setActiveField={setActiveField} addSchedule={addSchedule} scheduleLength={scheduleList.length} />
         )}
-      
-    </Container>
-    {activeField && (
-            <div 
-                className="overlay"
-            />
-        )}
+
+      </Container>
+      {activeField && (
+        <div
+          className="overlay"
+        />
+      )}
     </>
   );
 }
