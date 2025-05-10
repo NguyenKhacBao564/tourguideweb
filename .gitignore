@@ -20,7 +20,8 @@ pids/
 .cache/
 backend/.cache/
 *.cache
-
+# Bỏ qua thư mục ảnh AdminDesign
+AdminDesign/
 # Bỏ qua thư mục build (React, Next.js, hoặc các dự án frontend/backend)
 frontend/build/
 frontend/.next/

@@ -1,9 +1,8 @@
-
 // src/pages/Admin/StaffManagement.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AdminDataTable from '../../components/Admin/adminDataTable';
-import { getEmployees, lockEmployees } from '../../api/adminAPI';
+import AdminDataTable from '../../../components/Admin/adminDataTable';
+import { getEmployees, lockEmployees } from '../../../api/adminAPI';
 
 const roleMap = {
   1: 'Quản lý',
@@ -142,18 +141,21 @@ const StaffManagement = () => {
             <option key={b} value={b}>{b}</option>
           ))}
         </select>  
-        <div style={{ marginBottom: 16 }}>
-          <button
-            onClick={handleLockSelected}
-            disabled={!selectedRowKeys.length}
-          >
-            Khóa đã chọn ({selectedRowKeys.length})
-          </button>
-          <button
-            onClick={() => setSelectedRowKeys([])}
-            style={{ marginLeft: 8 }}
-          >Bỏ chọn</button>
-        </div>
+        {/* Nút hành động chọn */}
+        {selectedRowKeys.length > 0 && (
+          <>
+            <button
+              onClick={handleLockSelected}
+              className="btn btn-danger me-2"
+            >
+              Khóa đã chọn ({selectedRowKeys.length})
+            </button>
+            <button
+              onClick={() => setSelectedRowKeys([])}
+              className="btn btn-outline-secondary"
+            >Bỏ chọn</button>
+          </>
+        )}
         <button className="btn btn-success me-2"
           onClick={() => navigate('addNewEmployee')}>
           Thêm nhân viên

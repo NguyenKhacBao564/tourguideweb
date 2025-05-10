@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import AdminDataTable from '../../components/Admin/adminDataTable';
-import { getTour, approveTour, rejectTour } from '../../api/adminAPI';
+import AdminDataTable from '../../../components/Admin/adminDataTable';
+import { getTour, approveTour, rejectTour } from '../../../api/adminAPI';
 
 const TourManagement = () => {
   const [tours, setTours]       = useState([]);

@@ -6,11 +6,11 @@ import ScrollToTop from "./feature/scrollToTop";
 import Contact from "./pages/User/Contact";
 import TourManagementEmp from "./pages/BusinessEmployee/TourManagement";
 import MainLayout from "./pages/Admin/layout/MainLayout";
-import Dashboard from "./pages/Admin/Dashboard";
-import StaffManagement from "./pages/Admin/StaffManagement";
-import EmployeeProfile from "./pages/Admin/EmployeeProfile";
-import TourManagement from "./pages/Admin/TourManagement";
-import BranchManagement from "./pages/Admin/BranchManagement";
+import Dashboard from "./pages/Admin/Dashboard/Dashboard";
+import StaffManagement from "./pages/Admin/Employees/EmployeeList";
+import EmployeeProfile from "./pages/Admin/Employees/EmployeeProfile";
+import TourManagement from "./pages/Admin/Tours/TourList";
+import BranchManagement from "./pages/Admin/Branches/BranchList";
 import BusinessEmployee from "./pages/BusinessEmployee/BusinessEmployee";
 import AddNewTour from "./pages/BusinessEmployee/AddNewTour/AddNewTour";
 import InforUser from "./pages/User/InforUser";
@@ -23,7 +23,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./components/Unauthorized";
 import NotFound from "./pages/NotFound";
 import UserManagement from "./pages/BusinessEmployee/UserManagement";
-import AddNewEmployee from "./pages/Admin/addNewEmployee";
+import AddNewEmployee from "./pages/Admin/Employees/AddEmployee";
 
 function App() {
   return (

@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import PaginationBar from '../Common/Pagination/PaginationBar';
-
+import "./Styles/adminDataTable.scss";
 const AdminDataTable = ({
   columns,
   data,
@@ -34,48 +34,54 @@ const AdminDataTable = ({
   };
 
   return (
-    <div>
-      <table className="table table-striped">
+    <div className="admin-table-container">
+      <table className="admin-data-table">
         <thead>
           <tr>
             {hasSelection && (
-              <th style={{ width: 50 }}>
+              <th className="admin-table-checkbox-header" style={{ width: 50 }}>
                 <input
                   type="checkbox"
                   checked={rowSelection.selectedRowKeys.length === data.length}
                   onChange={onSelectAll}
+                  className="admin-table-checkbox"
                 />
               </th>
             )}
             {columns.map(col => (
-              <th key={col.accessor}>{col.header}</th>
+              <th key={col.accessor} className="admin-table-header">{col.header}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {data.map(row => {
             const rowKey = row[columns[0].accessor];
+            const isSelected = hasSelection && rowSelection.selectedRowKeys.includes(rowKey);
             return (
-              <tr key={rowKey}>
+              <tr key={rowKey} className={isSelected ? "admin-table-row selected" : "admin-table-row"}>
                 {hasSelection && (
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={rowSelection.selectedRowKeys.includes(rowKey)}
-                      onChange={() => {
-                        const { selectedRowKeys, onChange } = rowSelection;
-                        const idx = selectedRowKeys.indexOf(rowKey);
-                        if (idx >= 0) {
-                          onChange(selectedRowKeys.filter(k => k !== rowKey));
-                        } else {
-                          onChange([...selectedRowKeys, rowKey]);
-                        }
-                      }}
-                    />
+                  <td className="admin-table-checkbox-cell">
+                    <div className="admin-table-checkbox-wrapper">
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => {
+                          const { selectedRowKeys, onChange } = rowSelection;
+                          const idx = selectedRowKeys.indexOf(rowKey);
+                          if (idx >= 0) {
+                            onChange(selectedRowKeys.filter(k => k !== rowKey));
+                          } else {
+                            onChange([...selectedRowKeys, rowKey]);
+                          }
+                        }}
+                        className="admin-table-checkbox"
+                      />
+                      {isSelected && <span className="admin-table-selected-dot" />}
+                    </div>
                   </td>
                 )}
                 {columns.map(col => (
-                  <td key={col.accessor}>
+                  <td key={col.accessor} className="admin-table-cell">
                     {col.render
                       ? col.render(row)
                       : row[col.accessor]}
@@ -88,11 +94,13 @@ const AdminDataTable = ({
       </table>
 
       {totalPages > 1 && (
-        <PaginationBar
-          currentPage={currentPage}
-          totalPages={totalPages}
-          handlePageChange={onPageChange}
-        />
+        <div className="admin-table-pagination-wrapper">
+          <PaginationBar
+            currentPage={currentPage}
+            totalPages={totalPages}
+            handlePageChange={onPageChange}
+          />
+        </div>
       )}
     </div>
   );

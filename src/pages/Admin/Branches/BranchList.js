@@ -2,8 +2,8 @@
 // src/pages/Admin/BranchManagement.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AdminDataTable from '../../components/Admin/adminDataTable';
-import { getBranchStats } from '../../api/adminAPI'; // bạn cần export hàm này từ adminAPI
+import AdminDataTable from '../../../components/Admin/adminDataTable';
+import { getBranchStats } from '../../../api/adminAPI'; // bạn cần export hàm này từ adminAPI
 
 const BranchManagement = () => {
   const [branches, setBranches]   = useState([]);

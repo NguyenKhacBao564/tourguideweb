@@ -6,11 +6,11 @@ import {
   getBranchStats,
   getChartData,
   getTransactions
-} from "../../api/adminAPI";
-import StatCard from "../../components/Admin/StatCard";
-import BranchTable from "../../components/Admin/BranchTable";
-import ChartDonut from "../../components/Admin/ChartDonut";
-import TransactionsTable from "../../components/Admin/TransacTable";
+} from "../../../api/adminAPI";
+import StatCard from "../../../components/Admin/StatCard";
+import BranchTable from "../../../components/Admin/BranchTable";
+import ChartDonut from "../../../components/Admin/ChartDonut";
+import TransactionsTable from "../../../components/Admin/TransacTable";
 
 const Dashboard = () => {
   // Bắt đầu ở trạng thái loading để tránh đọc giá trị undefined

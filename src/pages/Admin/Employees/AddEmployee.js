@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { Camera } from "lucide-react";
-import '../../styles/admin/addNewEmployee.scss';
+import '../../../styles/admin/addNewEmployee.scss';
 import axios from 'axios';
 const AddNewEmployee = () => {
   const [preview, setPreview] = useState(null);

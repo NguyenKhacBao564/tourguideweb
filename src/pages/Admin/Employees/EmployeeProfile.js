@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, Phone, MapPin, Users, Building } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
-import '../../styles/admin/_profile.scss';
+import '../../../styles/admin/_profile.scss';
 
 const EmployeeProfile = () => {
   const { id } = useParams();
