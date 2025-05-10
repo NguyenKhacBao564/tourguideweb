@@ -6,97 +6,102 @@ import './DataTable.scss';
 import { TourContext } from "../../../context/TourContext";
 import PaginationBar from '../Pagination/PaginationBar';
 
-function TourTable(props) {
-const { filterStatus } = props;
-const { tours, isLoading, error, deleteTour } = useContext(TourContext);
-const [selectedTour, setSelectedTour] = useState([]);
-const [selectedAll, setSelectedAll] = useState(false);
+function DataTable(
+  {
+    data = [],   // Dữ liệu để hiển thị (mặc định là mảng rỗng)
+    columns = [],   // Các cột cần hiển thị
+    actions = [], // Các hành động có thể thực hiện
+    onFilter = () => true, // Hàm lọc dữ liệu
+    itemsPerPage = 10, // Số lượng mục hiển thị trên mỗi trang
+    isLoading = false, // Trạng thái loading
+    error = null, // Trạng thái lỗi
+    formatDate = (dateString) => { // Hàm định dạng ngày tháng mặc định
+      const date = new Date(dateString);
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    },
+    selectedItems = [],
+    onSelectChange = () => {},
+    idKey = 'id',
+  }
+) {
 
- 
-  const filteredTours = tours.filter((tour) => {
-      const today = new Date();
-      const startDate = new Date(tour.start_date);
-  
-      switch (filterStatus) {
-        case "all":
-          return true; // Hiển thị tất cả tour
-        case "sapKhoiHanh":
-          // Sắp khởi hành: Ngày khởi hành trong tương lai gần (ví dụ: 7 ngày tới)
-          return startDate > today && startDate <= new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
-        case "dangKhoiHanh":
-          // Đang khởi hành: Ngày khởi hành là hôm nay
-          return startDate.toDateString() === today.toDateString();
-        case "daHoanThanh":
-          // Đã hoàn thành: Ngày khởi hành đã qua
-          return startDate < today;
-        case "chuaKhoiHanh":
-          // Chưa khởi hành: Ngày khởi hành còn xa (hơn 7 ngày)
-          return startDate > new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
-        default:
-          return true;
-      }
-    });
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const toursPerPage = 11;
+  const [selectedAll, setSelectedAll] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Dữ liệu đã lọc
+  const filteredData = data.filter(onFilter);
+
+  // Phân trang
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    setSelectedAll(false); // Reset trạng thái chọn tất cả khi chuyển trang
+  };
+
+  // Cập nhật trạng thái chọn tất cả cho trang hiện tại
+  useEffect(() => {
+    // Kiểm tra xem tất cả các mục trong trang hiện tại đã được chọn chưa
+    const currentItemIds = currentItems.map(item => item[idKey]);
+    const allCurrentSelected = currentItemIds.length > 0 && 
+      currentItemIds.every(id => selectedItems.includes(id));
     
-    const indexOfLastTour = currentPage * toursPerPage;
-    const indexOfFirstTour = indexOfLastTour - toursPerPage;
-    const currentTours = filteredTours.slice(indexOfFirstTour, indexOfLastTour);
-    
-    const totalPages = Math.ceil(filteredTours.length / toursPerPage);
-    
-    const handlePageChange = (page) => {
-      setCurrentPage(page);
-    };
-    
-    useEffect(() => {
-      setSelectedAll(tours.length > 0 && selectedTour.length === tours.length);
-    }, [tours, selectedTour]);
-    
+    setSelectedAll(allCurrentSelected);
+  }, [currentItems, selectedItems, idKey, onSelectChange]);
+
   const handleSelectAll = () => {
     if (!selectedAll) {
-      setSelectedTour(tours.map(tour => tour.tour_id));
+      // Chỉ chọn các item trong trang hiện tại
+      const currentItemIds = currentItems.map(item => item[idKey]);
+      // Thêm các ID của trang hiện tại vào danh sách đã chọn
+      const newSelected = [...new Set([...selectedItems, ...currentItemIds])]; // Tránh trùng lặp
+      onSelectChange(newSelected);
       setSelectedAll(true);
     } else {
-      setSelectedTour([]);
+      // Bỏ chọn các item trong trang hiện tại
+      const currentItemIds = currentItems.map(item => item[idKey]);
+      const newSelected = selectedItems.filter((id) => !currentItemIds.includes(id));
+      onSelectChange(newSelected);
       setSelectedAll(false);
     }
   };
 
-  const handleChangeTour = (id) => {
-    setSelectedTour(prev =>
-      prev.includes(id) ? prev.filter(tourId => tourId !== id) : [...prev, id]
-    );
+  const handleChangeItem = (id) => {
+    const newSelected = selectedItems.includes(id)
+      ? selectedItems.filter((itemId) => itemId !== id)
+      : [...selectedItems, id];
+    onSelectChange(newSelected);
   };
 
-
-  const handleDelete = async (id) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa tour này không?")) {
-      try {
-        await deleteTour(id); // Gọi deleteTour từ context
-        setSelectedTour((prev) => prev.filter((tourId) => tourId !== id));
-      } catch (err) {
-        console.error("Lỗi khi xóa tour:", err);
-      }
+  
+  // Hàm render giá trị của cột
+  const renderColumnValue = (item, column) => {
+    const value = item[column.key];
+    // if (column.format) {
+    //   return column.format(value, item);
+    // }
+    if (column.key.includes('date') || column.key.includes('created_at')) {
+      return formatDate(value);
     }
+    return value;
   };
+
   
   const handleViewDetail = (id) => {
     // Logic xem chi tiết tour, ví dụ: chuyển hướng hoặc mở modal
     console.log(`Xem chi tiết tour ${id}`);
   };
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, '0'); // Lấy ngày, thêm số 0 nếu cần
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Lấy tháng (tháng bắt đầu từ 0, nên +1)
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
 
   return (
-    <Container className="table-wrapper mt-4">
+    <Container className="table-wrapper mt-2">
       <Table hover responsive borderless className="tour-management__table">
         <thead className="bg-light">
           <tr>
@@ -109,60 +114,74 @@ const [selectedAll, setSelectedAll] = useState(false);
                 onChange={handleSelectAll}
               />
             </th>
-            <th>Mã tour</th>
-            <th>Tên tour</th>
-            <th>Thời điểm tạo</th>
-            <th>Số lượng chổ đã đặt</th>
-            <th>Ngày khởi hành</th>
-            <th></th>
+            {columns.map((column) => (
+              <th key={column.key}>{column.label}</th>
+            ))}
+            {actions.length > 0 && <th></th>}
           </tr>
         </thead>
         <tbody>
           {isLoading ? (
             <tr>
-              <td colSpan="7">Đang tải dữ liệu...</td>
+              <td colSpan={columns.length + 1 + (actions.length > 0 ? 1 : 0)}>Đang tải dữ liệu...</td>
             </tr>
-          ) : currentTours.length === 0 ? (
+          ) : error ? (
             <tr>
-              <td colSpan="7">Không có tour nào để hiển thị.</td>
+              <td colSpan={columns.length + 1 + (actions.length > 0 ? 1 : 0)}>Lỗi: {error}</td>
             </tr>
-          ) : (
-            currentTours.map((tour) => (
-              <tr key={tour.tour_id} className="tour-management__table-row align-middle">
+          ) : currentItems.length === 0 ? (
+            <tr>
+              <td colSpan={columns.length + 1 + (actions.length > 0 ? 1 : 0)}>
+                Không có dữ liệu để hiển thị.
+              </td>
+            </tr>
+            ) : (
+            currentItems.map((item) => (
+              <tr key={item[idKey]} className="tour-management__table-row align-middle">
                 <td>
                   <Form.Check
                     type="checkbox"
-                    name="selectedTour"
-                    id={`tour-${tour.tour_id}`}
-                    checked={selectedTour.includes(tour.tour_id)}
-                    onChange={() => handleChangeTour(tour.tour_id)}
+                    name="selectedItem"
+                    id={`item-${item[idKey]}`}
+                    checked={selectedItems.includes(item[idKey])}
+                    onChange={() => handleChangeItem(item[idKey])}
                   />
                 </td>
-                <td>{tour.tour_id}</td>
-                <td>{tour.name}</td>
-                <td>{formatDate(tour.created_at)}</td>
-                <td>{tour.max_guests}</td>
-                <td>{formatDate(tour.start_date)}</td>
-                <td>
-                  <ButtonGroup className="me-2" aria-label="First group">
-                    <Button variant="danger" size="sm" onClick={()=> handleDelete(tour.tour_id)}>Khóa</Button>
-                  </ButtonGroup>
-                  <ButtonGroup className="me-2" aria-label="Second group">
-                    <Button variant="success" size="sm" onClick={() => handleViewDetail(tour.tour_id)}>Chi tiết</Button>
-                  </ButtonGroup>
-                </td>
+                {columns.map((column) => (
+                  <td key={column.key}>{renderColumnValue(item, column)}</td>
+                ))}
+                {actions.length > 0 && (
+                   <td style={{display: 'flex', justifyContent: 'center'}}>
+                  {actions.map((action, index) => (
+                   <ButtonGroup key={index} className="me-2" aria-label="Actions">
+                       <Button
+                         key={index}
+                         variant={action.variant}
+                         size="sm"
+                         onClick={() => action.onClick(item[idKey], item)}
+                       >
+                         {action.label}
+                       </Button>
+                   </ButtonGroup>
+                    ))}
+                 </td>
+                )}
               </tr>
-            ))
+              ))
           )}
         </tbody>
       </Table>
       {totalPages > 1 && (
         <div className="d-flex justify-content-end mt-3">
-          <PaginationBar currentPage={currentPage} totalPages={totalPages} handlePageChange={handlePageChange}/>
+          <PaginationBar 
+            currentPage={currentPage} 
+            totalPages={totalPages} 
+            handlePageChange={handlePageChange}
+          />
         </div>
       )}
     </Container>
   );
 }
 
-export default TourTable;
+export default DataTable;

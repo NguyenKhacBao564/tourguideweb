@@ -19,7 +19,7 @@ function DropDownButton(props) {
         {selectedItem}
       </Dropdown.Toggle>
 
-      <Dropdown.Menu>
+      <Dropdown.Menu className="scrollable-menu">
         {dropitem.map((item, index) => (
           <Dropdown.Item onClick={() => handleSelect(item.name)} key={index} href={item.link}>
             {item.name} 

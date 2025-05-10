@@ -1,6 +1,7 @@
 import axios from "axios";
+import { API_URL } from "../utils/API_Port";
 
-const API_URL = "http://localhost:5000";
+
 
 // Login user
 export const loginUser = async (email, password) => {
@@ -35,7 +36,6 @@ export const registerUser = async (fullname, email, password, phone) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Lỗi đăng ký:", error);
     // Lấy mã lỗi và thông báo từ response
     if (error.response && error.response.data) {
       const err = new Error(error.response.data.message || 'Có lỗi xảy ra khi đăng ký');
@@ -48,5 +48,17 @@ export const registerUser = async (fullname, email, password, phone) => {
     }
   }
 };
+
+// Get user info
+export const getUserData = async (token) => {
+  try {
+    const response = await axios.get(`${API_URL}/auth/user`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
 
 // Other auth-related API calls can be added here 

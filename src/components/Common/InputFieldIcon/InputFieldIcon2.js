@@ -8,7 +8,10 @@ function InputFiledIcon({
     onChange, 
     placeholder = '', 
     icon,
+    name,
+    required = false,
     iconSize = 20,
+    readOnly = false,
 }) {
   const inputRef = useRef(null);
   
@@ -42,6 +45,9 @@ function InputFiledIcon({
             onChange={onChange}
             placeholder={placeholder}
             className="border-0 rounded-0 shadow-none"
+            readOnly={readOnly}
+            name={name}
+            required={required}
             />
         </InputGroup>
     </Form.Group>

@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import FormInput from '../../components/Common/FormInput/FormInput';
-import AuthBase from '../../components/Auth/AuthBase';
-import authInputs from '../../utils/AuthInput';
+import AuthBase from '../../components/Common/Auth/AuthBase';
+import authInputs from '../../utils/authInput';
 import { AuthContext } from '../../context/AuthContext';
 
 function Register() {
@@ -32,13 +32,17 @@ function Register() {
     }
     
     try {
+      //Reset lại các state
+      setError(null);
+      setErrorCode(null);
       await regist(values.username, values.email, values.password, values.phone);
-      setSuccess("Đăng ký thành công! Bạn có thể đăng nhập ngay bây giờ.");
-      setValues({ username: '', phone: '', email: '', password: '', confirmPassword: '' });
+      setSuccess("Đăng ký thành công! Chuyển hướng về trang chủ.");
+      // setValues({ username: '', phone: '', email: '', password: '', confirmPassword: '' });
     } catch (error) {
-      console.error("Đăng ký thất bại:", error);
+      setSuccess(null);
       setErrorCode(error.code);
       setError(error.message);
+      console.error("Đăng ký thất bại:", error);
     }
   };
 

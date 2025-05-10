@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import Slider from 'react-slick';
 import { SlArrowLeftCircle, SlArrowRightCircle } from 'react-icons/sl';
 import TourCard from '../components/Common/TourCard/TourCard';
@@ -99,9 +99,10 @@ function Touroutstanding(props) {
     ],
   };
 
-  const { tours, isLoading, error } = useContext(TourContext);
-
-  if (isLoading) return <div className='loading'>Đang tải...</div>;
+  // const { getTourOutstanding } = useContext(TourContext);
+  const {tours, loading, error} = props;
+  
+  if (loading) return <div className='loading'>Đang tải...</div>;
   if (error) return <div className='error'>Lỗi: {error.message}</div>;
 
   return (
@@ -113,7 +114,7 @@ function Touroutstanding(props) {
       <Slider {...settings}>
         {tours.map((tour) => (
           <div key={tour.id} style={{ padding: '0 10px' }}>
-            <TourCard {...tour} className='Tourout' />
+            <TourCard  {...tour} className='Tourout' />
           </div>
         ))}
       </Slider>

@@ -1,14 +1,17 @@
-import React, { useState, useEffect, use } from 'react';
+import React, { useState, useEffect} from 'react';
 import { Link } from "react-router-dom";
 import "../styles/layouts/Navbar.scss";
 import { FaBars, FaTimes} from "react-icons/fa";
 import UserAvatar from '../components/Common/UserAvatar/UserAvatar';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { API_URL } from '../utils/API_Port';
+import Spinner from 'react-bootstrap/Spinner';
 
 function Navbar() {
-    const { user, logout } = useContext(AuthContext);
+    const { user, loading } = useContext(AuthContext);
+
     // State to manage the open/close state of the navbar (mobile view)
     const [isOpen, setIsOpen] = useState(false);
     
@@ -45,18 +48,26 @@ function Navbar() {
                     <li className="btn--close" onClick={() => setIsOpen(!isOpen)}><FaTimes /></li>
                     <li><a href="#">About us</a></li>
                     <li><a href="#">Popular Destination</a></li>
-                    <li><a href="/contact">Contact</a></li>
+                    <li><Link to="/contact">Contact Us</Link></li>
                     <li><a href="#">Help</a></li>
-                    {!user && (
+                    {!user && loading ? (
+                        <li className="auth-loading">
+                            <Spinner animation="border" size="sm" role="status">
+                                <span className="visually-hidden">Đang tải...</span>
+                            </Spinner>
+                        </li>
+                    ) : !user ? (
                         <>
                             <li><Link to="/register" className="btn btn--signup">Đăng kí</Link></li>
                             <li><Link to="/login" className="btn btn--login">Đăng nhập</Link></li>
                         </>
-                    )}
-                    {user && (
+                    ) : (
                         <>
-                            <li><Link to="/thongtin"><UserAvatar name={user.name} image="avatar.jpg" size="50px"/></Link></li>
-                            {/* <li><button className="btn btn--login" onClick={logout}>Đăng xuất</button></li> */}
+                            <li>
+                                <Link to="/thongtin">
+                                <UserAvatar name={user.name} image={user.avatar} size="50px"/>
+                                </Link>
+                            </li>
                         </>
                     )}
                 </ul>

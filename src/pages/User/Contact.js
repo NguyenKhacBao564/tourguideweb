@@ -16,7 +16,7 @@ import { createSupportRequest } from "../../api/customerSupportAPI";
 import { AuthContext } from "../../context/AuthContext";
 
 function Contact() {
-  const { user, isAuthenticated, isLoading } = useContext(AuthContext);
+  const { user, isLoading } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -40,10 +40,10 @@ function Contact() {
 
   // Kiểm tra đăng nhập và chuyển hướng nếu chưa đăng nhập
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    if (!user) {
       navigate("/login", { state: { from: location.pathname } });
     }
-  }, [isAuthenticated, isLoading, navigate, location]);
+  }, [navigate, location]);
 
   // Cập nhật form data khi có thông tin user
   useEffect(() => {
@@ -124,10 +124,6 @@ function Contact() {
 
   if (isLoading) {
     return <div>Đang tải...</div>;
-  }
-
-  if (!isAuthenticated) {
-    return null;
   }
 
   return (

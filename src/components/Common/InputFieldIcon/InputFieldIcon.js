@@ -7,6 +7,8 @@ function InputFiledIcon({
   label, 
   value, 
   onChange, 
+  name,
+  required = false,
   placeholder = '', 
   iconColor = 'warning'
 }) {
@@ -29,6 +31,8 @@ function InputFiledIcon({
           onChange={onChange}
           placeholder={placeholder}
           className="border-0 rounded-0 shadow-none"
+          name={name}
+          required={required}
         />
         <InputGroup.Text 
           className="bg-transparent border-0"

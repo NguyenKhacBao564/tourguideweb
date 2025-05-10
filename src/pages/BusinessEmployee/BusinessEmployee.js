@@ -1,16 +1,11 @@
-import React, {use, useContext, useEffect} from 'react';
+import React from 'react';
 import ManagerLayout from '../../layouts/SystemManager/ManagerLayout'; 
- import { AuthContext } from '../../context/AuthContext';
-
+import { CustomerProvider } from '../../context/CustomerContext';
 function Employee_Business(props) {
-  const   { user } = useContext(AuthContext);
-  console.log("User in Employee_Business: ", user);
-  useEffect(() => {
-    console.log("reload ", user);
-  }
-  , [user]);
-  return (
-    <ManagerLayout/>
+
+  
+  return (   
+        <ManagerLayout/>
   );
 }
 

@@ -14,79 +14,99 @@ import BranchManagement from "./pages/Admin/BranchManagement";
 import BusinessEmployee from "./pages/BusinessEmployee/BusinessEmployee";
 import AddNewTour from "./pages/BusinessEmployee/AddNewTour/AddNewTour";
 import InforUser from "./pages/User/InforUser";
-import { AuthProvider } from "./context/AuthContext";
 import ConsultantEmployee from "./pages/ConsultantEmployee/ConsultantEmployee";
 import Chatbot from "./pages/ConsultantEmployee/ChatBot";
 import ResponeSupport from "./pages/ConsultantEmployee/ResponeSupport";
 import ResponeDetail from "./pages/ConsultantEmployee/ResponeDetail";
+import { TourProvider } from "./context/TourContext";
 // import { ConsultantSupportProvider } from "./context/ConsultantSupportContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./components/Unauthorized";
 import NotFound from "./pages/NotFound";
 import UserManagement from "./pages/BusinessEmployee/UserManagement";
+import { CustomerProvider } from "./context/CustomerContext";
+import PromotionManager from "./pages/BusinessEmployee/PromotionManager";
 
 function App() {
   return (
     <div className="App">
       <ScrollToTop />
-      <AuthProvider>
-        {/* <ConsultantSupportProvider> */}
-        <Routes>
-          <Route path="/" element={<Page />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/thongtin" element={<InforUser />} />
-          <Route path="/customer" element={<p>customer</p>} />
-          <Route path="/sale" element={<p>sale</p>} />
-          <Route path="/support" element={<p>support</p>} />
+      {/* <ConsultantSupportProvider> */}
+      <Routes>
+        <Route path="/" element={
 
-          <Route path="/businessemployee" element={
-            <ProtectedRoute allowedRoles={["Sales"]}>
-              <BusinessEmployee />
-            </ProtectedRoute>
-          }
-          >
-            <Route path="customer" element={<UserManagement />} />
-            <Route path="managetour" element={<TourManagementEmp />} />
-            <Route path="managetour/addtour" element={<AddNewTour />} />
-            <Route path="promotion" element={<p>Khuyến mãi</p>} />
-          </Route>
+          <Page />
 
-          <Route path="/unauthorized" element={<Unauthorized />} />
-          <Route path="*" element={<NotFound />} />
-          <Route path="customer" element={<p>Khách hàng</p>} />
-          <Route path="managetour" element={<TourManagementEmp />} />
-          <Route path="managetour/addtour" element={<AddNewTour />} />
-          <Route path="promotion" element={<p>Khuyến mãi</p>} />
+        } />
+        <Route path="/contact" element={
+          <ProtectedRoute allowedRoles={["customer"]}>
+            <Contact />
+          </ProtectedRoute>
+        } />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/thongtin" element={
+          <ProtectedRoute allowedRoles={["customer"]}>
+            <InforUser />
+          </ProtectedRoute>
+        } />
+        <Route path="/customer" element={<p>customer</p>} />
+        <Route path="/sale" element={<p>sale</p>} />
+        <Route path="/support" element={<p>support</p>} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="*" element={<NotFound />} />
 
-          {/* Admin Routes */}
-          <Route path="/admin" element={
-            <ProtectedRoute allowedRoles={["Admin"]}>
-              <MainLayout />
-            </ProtectedRoute>
-          }>
-            {/* <Route index element={<Dashboard />} /> */}
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="nhan-vien" element={<StaffManagement />} />
-            <Route path="nhan-vien/:id" element={<EmployeeProfile />} />
-            <Route path="quan-ly-tour" element={<TourManagement />} />
-            <Route path="quan-ly-chi-nhanh" element={<BranchManagement />} />
-          </Route>
+        {/* Business Employee Routes */}
+        <Route path="/businessemployee" element={
+          <ProtectedRoute allowedRoles={["Sales"]}>
+            <BusinessEmployee />
+          </ProtectedRoute>
+        }>
+          <Route path="customer" element={
+            <CustomerProvider>
+              <UserManagement />
+            </CustomerProvider>
+          } />
+          <Route path="managetour" element={
+            <TourProvider>
+              <TourManagementEmp />
+            </TourProvider>
+          } />
+          <Route path="managetour/addtour" element={
+            <TourProvider>
+              <AddNewTour />
+            </TourProvider>
+          } />
+          <Route path="promotion" element={<PromotionManager />} />
+        </Route>
 
-          {/* </ConsultantSupportProvider> */}
-          <Route path="/consultantemployee" element={
-            <ProtectedRoute allowedRoles={["Support"]}>
-              <ConsultantEmployee />
-            </ProtectedRoute>
-          }>
-            <Route path="chatbot" element={<Chatbot />} />
-            <Route path="request-support" element={<ResponeSupport />} />
-            <Route path="request-support/:id" element={<ResponeDetail />} />
-          </Route>
-        </Routes>
+        {/* Admin Routes */}
+        <Route path="/admin" element={
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <MainLayout />
+          </ProtectedRoute>
+        }>
+          {/* <Route index element={<Dashboard />} /> */}
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="nhan-vien" element={<StaffManagement />} />
+          <Route path="nhan-vien/:id" element={<EmployeeProfile />} />
+          <Route path="quan-ly-tour" element={<TourManagement />} />
+          <Route path="quan-ly-chi-nhanh" element={<BranchManagement />} />
+        </Route>
+        <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="*" element={<NotFound />} />
 
-      </AuthProvider>
+        {/* Consultant Employee Routes */}
+        <Route path="/consultantemployee" element={
+          <ProtectedRoute allowedRoles={["Support"]}>
+            <ConsultantEmployee />
+          </ProtectedRoute>
+        }>
+          <Route path="chatbot" element={<Chatbot />} />
+          <Route path="request-support" element={<ResponeSupport />} />
+          <Route path="request-support/:id" element={<ResponeDetail />} />
+        </Route>
+      </Routes>
     </div >
   );
 }

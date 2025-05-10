@@ -1,10 +1,6 @@
 import React, {useContext} from "react";
 import { Nav } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
-import { FaUserLarge } from "react-icons/fa6";
-import { BiCalendarCheck } from "react-icons/bi";
-import { MdDiscount } from "react-icons/md";
-import { IoLogOutSharp } from "react-icons/io5";
 import { AuthContext } from "../../../context/AuthContext";
 import "./SideBar.scss";
 

@@ -11,8 +11,6 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@azure/identity": "^4.9.0",
-    "@azure/msal-node": "^3.5.1",
     "backend": "file:",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
