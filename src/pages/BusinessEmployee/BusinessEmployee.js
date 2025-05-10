@@ -4,10 +4,8 @@ import { CustomerProvider } from '../../context/CustomerContext';
 function Employee_Business(props) {
 
   
-  return (
-      <CustomerProvider>
+  return (   
         <ManagerLayout/>
-      </CustomerProvider>
   );
 }
 

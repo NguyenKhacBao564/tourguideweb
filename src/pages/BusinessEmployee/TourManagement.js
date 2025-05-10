@@ -1,5 +1,4 @@
-// src/pages/BusinessEmployee/TourManagement.js
-import { useState, useContext, useMemo } from "react";
+import { useState, useContext, useMemo, useCallback } from "react";
 import { Container } from "react-bootstrap";
 import { Row } from "react-bootstrap";
 import TourFilterEmployee from "../../components/Employee/Filter/TourFilterEmployee";
@@ -7,6 +6,7 @@ import DataTable from "../../components/Common/DataTable/DataTable";
 import { TourContext } from "../../context/TourContext";
 import StatusFilterEmployee from "../../components/Employee/StatusFilter_Employee/StatusFilterEmployee";
 import { useNavigate } from "react-router-dom";
+import { getOccupancyFilters } from "../../utils/tourFilterHelpers";
 
 import { 
   filterToursByStatus, 
@@ -25,7 +25,9 @@ const TourManagementEmp = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState(null);
   const [selectedTour, setSelectedTour] = useState([]);
+  const occupancyFilters = useCallback(getOccupancyFilters(), []);
 
+  
   // Columns cho bảng
   const columns = [
     { key: 'tour_id', label: 'Mã tour' },
@@ -119,6 +121,7 @@ const TourManagementEmp = () => {
           onDeleteSelected={handleDeleteSelected}
           selectedItems={selectedTour}
           searchPlaceholder="Tìm kiếm theo tên hoặc mã tour"
+          occupancyFilters={occupancyFilters}
         />
       </Row>
       <Row>

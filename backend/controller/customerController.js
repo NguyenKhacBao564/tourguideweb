@@ -25,6 +25,29 @@ const getAvatar = async (req, res) => {
     }
 }
 
+const updateCustomer = async (req, res) => {
+    try{
+    console.log("req.body: ", req.body);
+    const cusId = req.params.id;
+    const {name, phone, address, image} = req.body;
+
+    const imagePath = req.file.path;
+    console.log("imagePath: ", imagePath);
+    const pool = await getPool();
+    const result = await pool.request()
+        .input("cusId", sql.NVarChar, cusId)
+        .input("name", sql.NVarChar, name)
+        .input("phone", sql.NVarChar, phone)
+        .input("address", sql.NVarChar, address)
+        .input("image", sql.NVarChar, imagePath)
+        .query("UPDATE Customer SET fullname = @name, phone = @phone, address = @address, pi_url = @image WHERE cus_id = @cusId");
+    
+        res.json(result.recordset);
+    }catch(error){
+        res.status(500).json({message: "Lỗi server", error});
+    }
+}
+
 const deleteCustomer = async (req, res) => {
     try{
         const cusId = req.params.id;
@@ -94,5 +117,6 @@ module.exports = {
     getCustomer,
     deleteBatchCustomer,
     deleteCustomer,
-    getAvatar
+    getAvatar, 
+    updateCustomer
 }

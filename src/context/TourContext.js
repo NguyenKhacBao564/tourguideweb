@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import { getTour, addTour, updateTour, blockTour} from "../api/tourAPI";
+import { getTour, addTour, updateTour, blockTour, getTourByProvince, getTourOutstanding} from "../api/tourAPI";
 import { getItinerary } from "../api/scheduleAPI";
 import { getTourImages } from "../api/imageAPI";
 
@@ -44,6 +44,7 @@ export const TourProvider = ({ children }) => {
     }
   };
 
+  // Thêm tour mới
   const handleAddTour = async (tourData) => {
     try {
       setIsLoading(true);
@@ -60,6 +61,7 @@ export const TourProvider = ({ children }) => {
     }
   };
 
+  // Cập nhật tour
   const handleUpdateTour = async (tourData) => {
     try {
       setIsLoading(true);
@@ -72,6 +74,34 @@ export const TourProvider = ({ children }) => {
         )
       );
       
+      setError(null);
+      return result;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGetTourByProvince = async (province) => {
+    try {
+      setIsLoading(true);
+      const result = await getTourByProvince(province);
+      setError(null);
+      return result;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGetTourOutstanding = async () => {
+    try {
+      setIsLoading(true);
+      const result = await getTourOutstanding();
       setError(null);
       return result;
     } catch (err) {
@@ -104,12 +134,13 @@ export const TourProvider = ({ children }) => {
     tours,
     isLoading,
     error,
-    // deleteTour: handleDeleteTour,
     addTour: handleAddTour,
     updateTour: handleUpdateTour,
     getItinerary: handleGetItinerary,
     blockTour: handleBlockTour,
     getImages: handleGetImages,
+    getTourByProvince: handleGetTourByProvince,
+    getTourOutstanding: handleGetTourOutstanding,
   };
 
   return <TourContext.Provider value={value}>{children}</TourContext.Provider>;

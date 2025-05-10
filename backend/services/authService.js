@@ -35,9 +35,9 @@ const getRoleById = async (roleId) => {
 
 //Hàm Hash password
 const hashPassword = async (password) => {
-  let hashedPassword = await bcrypt.hash(password, saltRounds);
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
   // Chuyển đổi hashedPassword thành Buffer
-  let hashedBuffer = Buffer.from(hashedPassword, "utf8");
+  const hashedBuffer = Buffer.from(hashedPassword, "utf8");
   return hashedBuffer;
 }
 

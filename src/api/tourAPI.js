@@ -21,6 +21,26 @@ export const getTourById = async (id) => {
   }
 };
 
+// Lấy danh sách tour nổi bật giá thấp nhất
+export const getTourOutstanding = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/tours/outstanding`);
+    return response.data;
+  }catch(error){
+    throw new Error(error.response?.data?.message || "Lỗi khi lấy danh sách tour");
+  }
+}
+
+// Lấy danh sách tour theo tỉnh
+export const getTourByProvince = async (province) => {
+  try {
+    const response = await axios.get(`${API_URL}/tours/province/${province}`);
+    return response.data;
+  }catch(error){
+    throw new Error(error.response?.data?.message || "Lỗi khi lấy danh sách tour theo tỉnh");
+  }
+}
+
 // Thêm tour mới
 export const addTour = async (tourData) => {
   try {
@@ -57,6 +77,7 @@ export const addTour = async (tourData) => {
         'Content-Type': 'multipart/form-data'
       }
     });
+    console.log("response: ", response.data);
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || "Lỗi khi thêm tour");

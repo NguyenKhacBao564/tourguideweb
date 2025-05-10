@@ -17,6 +17,7 @@ const {v4: uuidv4} = require("uuid");
         }
   }
 
+  
   const getTourImages = async (req, res) => {
     try{
         const tourId = req.params.id;
@@ -29,6 +30,21 @@ const {v4: uuidv4} = require("uuid");
         throw new Error("Lỗi khi lấy ảnh tour");
     }
   }
+
+  // const uploadCustomerImage = async (req, res) => {
+  //   try{
+  //       const customerId = req.params.id;
+  //       const imagePath = req.file.path;
+  //       const pool = await getPool();
+  //       const result = await pool.request()
+  //       .input("customer_id", sql.NVarChar, customerId)
+  //       .input("image_url", sql.NVarChar, imagePath)
+  //       .query(`UPDATE Customer SET image_url = @image_url WHERE customer_id = @customer_id`);
+  //       return res.status(200).json(result.recordset);
+  //   }catch(error){
+  //       throw new Error("Lỗi khi upload ảnh khách hàng");
+  //   }
+  // }
 
 
 

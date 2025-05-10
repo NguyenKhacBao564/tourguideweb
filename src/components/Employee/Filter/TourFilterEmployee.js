@@ -8,19 +8,20 @@ import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import { GoPlus } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
-import { getOccupancyFilters, OCCUPANCY_FILTERS } from "../../../utils/tourFilterHelpers";
+// import { getOccupancyFilters } from "../../../utils/tourFilterHelpers";
 
 function TourFilterEmployee({ 
   onSearch, 
   onSort, 
   onDeleteSelected, 
   selectedItems = [],
-  searchPlaceholder = "Tìm kiếm theo tên tour"
+  searchPlaceholder = "Tìm kiếm theo tên tour",
+  occupancyFilters,
 }) {
     const navigate = useNavigate();
     
     // Get occupancy filter options
-    const occupancyFilters = getOccupancyFilters();
+    // const occupancyFiltersList = getOccupancyFilters();
 
     const handleSearch = (value) => {
         

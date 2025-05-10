@@ -226,6 +226,7 @@
     width: max-content;
     padding-bottom: 0.2rem;
     margin-bottom: $spacing-sm;
+    margin-left: $spacing-xl;
     border-bottom: 2px solid #ffffff;
     text-shadow: 0 0 3px rgba(213, 211, 211, 0.8), 
       0 0 10px rgba(213, 211, 211, 0.6), 
@@ -236,6 +237,8 @@
     font-size: clamp(14px, 3vw, 16px);
     color: #9DA8B2;
     width: min(90%, 800px);
+    margin-bottom: $spacing-xl;
+    margin-left: $spacing-xl;
   }
 
   .slick-slider {

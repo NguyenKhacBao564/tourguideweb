@@ -6,6 +6,28 @@ export const getCustomerAccount = async () => {
     return response.data;
 }
 
+export const updateCustomer = async (id, data) => {
+    try{
+        
+        const formData = new FormData();
+
+        formData.append("name", data.name);
+        formData.append("phone", data.phone);
+        formData.append("address", data.address);
+        formData.append("image", data.image);
+        
+        const response = await axios.put(`${API_URL}/customers/update/${id}`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        });
+        return response.data;
+    }catch(error){
+        throw new Error(error.response?.data?.message || "Lỗi khi cập nhật thông tin khách hàng");
+    }
+   
+}
+
 export const deleteBatchCustomer = async (ids) => {
     const response = await axios.delete(`${API_URL}/customers/batch-delete`, {
         data: { ids }
