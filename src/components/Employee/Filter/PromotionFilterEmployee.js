@@ -14,7 +14,8 @@ import { useNavigate } from "react-router-dom";
 
 
 function PromotionFilterEmployee({
-    searchPlaceholder = "Tìm kiếm theo mã khuyến mãi"
+    searchPlaceholder = "Tìm kiếm theo mã khuyến mãi",
+    selectedItems = [],
 }) {
     const navigate = useNavigate();
 
@@ -36,10 +37,10 @@ function PromotionFilterEmployee({
     }
 
 
-    const selectedItems = () =>
-    {
-        return " Đã chọn tour";
-    }
+    // const selectedItems = () =>
+    // {
+    //     return " Đã chọn tour";
+    // }
 
     return (
         <div>

@@ -6,16 +6,17 @@ import DatePicker from '../../../components/Common/DatePicker/DatePicker';
 import CouterInput from '../../../components/Common/Button/CounterInput/CouterInput';
 
 function PromotionBasicInfor({values, onChange}) {
+
     return (
         <>
       <Row className="mb-3">
         <Col md={4}>
             <InputFieldIcon
                 label="Tên khuyến mãi"
-                value={values.promotionName}
+                value={values.promo_name}
                 placeholder="Nhập tên khuyến mãi"
                 onChange={onChange}
-                name="promotionName"
+                name="promo_name"
                 required={true}
               />
         </Col>
@@ -24,20 +25,20 @@ function PromotionBasicInfor({values, onChange}) {
         <Col md={4}>
             <InputFieldIcon
                 label="Mã khuyến mãi"
-                value={values.promotionCode}
+                value={values.code}
                 placeholder="Nhập mã khuyến mãi"
                 onChange={onChange}
-                name="promotionCode"
+                name="code"
                 required={true}
               />
         </Col>
         <Col md={{span: 4, offset: 1}}>
             <InputFieldIcon
                 label="Mức giảm giá"
-                value={values.discount}
+                value={values.discount_percentage}
                 placeholder="Nhập mức giảm giá"
                 onChange={onChange}
-                name="discount"
+                name="discount_percentage"
                 required={true}
               />
         </Col>
@@ -46,8 +47,8 @@ function PromotionBasicInfor({values, onChange}) {
           <Col md={2}>
           <DatePicker
               label="Ngày bắt đầu"
-              value={values.startDate}
-              name="startDate"
+              value={values.start_date}
+              name="start_date"
               onChange={onChange}
               required={true}
             />
@@ -55,8 +56,8 @@ function PromotionBasicInfor({values, onChange}) {
           <Col md={2}>
             <DatePicker
                 label="Ngày kết thúc"
-                value={values.endDate}
-                name="endDate"
+                value={values.end_date}
+                name="end_date"
                 onChange={onChange}
                 required={true}
               />
@@ -64,9 +65,9 @@ function PromotionBasicInfor({values, onChange}) {
           <Col md={2}>
              <CouterInput
                 label="Số lượng tối đa"
-                value={values.maxUse}
+                value={values.max_use}
                 onChange={onChange}
-                name="maxUse"
+                name="max_use"
               />
           </Col>
       </Row>
