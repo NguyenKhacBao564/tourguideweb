@@ -71,8 +71,8 @@ function UserManagement(props) {
   ];
    return (
     
-    <Container fluid className="tour-management">
-      <Row className="tour-management__filter">
+    <Container fluid>
+      <Row >
         <UserFilterEmployee onSearch={handleSearch} onDelete={handleDeleteSelected} selectedItems={selectedUsers}/>
       </Row>
       <Row>

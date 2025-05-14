@@ -22,7 +22,7 @@ const TourScheduleManager = ({
 
   // values.itinerary.map(schedule => console.log("shedule day number: ", schedule.day_number));
   return (
-    <Container className="schedule-section">
+    <Container fluid className="schedule-section">
       <Row>
         <Col md={9}>
           <h3>Lịch trình</h3>

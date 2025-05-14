@@ -10,6 +10,7 @@ const tourRoutes = require("./routes/tourRoutes");
 const authRoutes = require("./routes/authRoutes");
 const customerRoutes = require("./routes/customerRoutes");
 const tourPriceRoutes = require("./routes/tourPriceRoutes");
+const promotionRoutes = require("./routes/promotionRoutes");
 const scheduleRoutes = require("./routes/scheduleRoutes");
 const customerSupportRoutes = require("./routes/customerSupportRoutes");
 const consultantSupportRoutes = require("./routes/consultantSupportRoutes");
@@ -63,6 +64,7 @@ app.use('/uploads', express.static('uploads'));
 //Sử dụng các Route
 app.use("/chat", chatRoutes);
 app.use("/tours", tourRoutes);
+app.use("/promotions", promotionRoutes);
 app.use("/auth", authRoutes);
 app.use("/customers", customerRoutes);
 app.use("/tour-price", tourPriceRoutes);

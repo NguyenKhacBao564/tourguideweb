@@ -29,11 +29,11 @@ const getTourByChat = async (location, datetime, price) =>{
         LEFT JOIN Tour_Price AS tp 
         ON t.tour_id = tp.tour_id WHERE t.status = 'active' 
         AND tp.age_group = 'adultPrice'
-        AND t.destination LIKE @location
+        AND (t.destination LIKE '%' + @location + '%' OR t.name LIKE '%' + @location + '%')
         AND t.start_date >= @datetime
         AND tp.price <= @price
         `);
-
+    console.log("SQL Query:", result.query);
       // Nhóm dữ liệu theo tour_id
     const toursMap = [];
     result.recordset.forEach((row) => {
@@ -66,7 +66,7 @@ const getRespondChat = async (req, res) => {
 
     // Gọi API của chatbot Python
     const chatbotResponse = await axios.post(PYTHON_API_URL , { query });
-    const context = chatbotResponse.data.response;
+    var context = chatbotResponse.data.response;
     const response_infor = chatbotResponse.data
     console.log(response_infor);
     console.log('respond:', context);
@@ -74,6 +74,9 @@ const getRespondChat = async (req, res) => {
       try{
         const tourList = await getTourByChat(response_infor.location, response_infor.time, response_infor.price)
         console.log("tourList: ", tourList);
+        if (tourList.length === 0){
+          return res.json({ response: "Xin lỗi, hiện tại không có tour nào phù hợp với yêu cầu của bạn. Vui lòng chọn tour khác hoặc gọi đến số hotline: 0919xxxxx để được tư vấn ạ." });
+        }
         return res.json({ response: context , tourlist: tourList });
       }catch (error) {
         console.error('Error:', error.message);
@@ -81,26 +84,7 @@ const getRespondChat = async (req, res) => {
       }
 
     }
-    // console.log("location: ", respond_infor.location)
 
-    // Nếu không tìm thấy FAQ, trả về ngay thông báo
-    // if (context.startsWith('Xin lỗi')) {
-    //   return res.json({ response: context });
-    // }
-
-    // // Gọi Gemini để tạo câu trả lời tự nhiên
-    // const prompt = `
-    //   Bạn là một trợ lý ảo tư vấn du lịch thân thiện và chuyên nghiệp. 
-    //   Dựa trên thông tin tour du lịch được cung cấp trong context dưới đây, 
-    //   hãy trả lời câu hỏi của người dùng một cách tự nhiên, ngắn gọn, và đúng trọng tâm. 
-    //   Chỉ sử dụng thông tin từ context, không thêm chi tiết ngoài thông tin đã cho. 
-    //   Nếu phù hợp, hãy mời người dùng hỏi thêm để nhận hỗ trợ chi tiết hơn.
-
-    //   Context:
-    //   ${context}
-    // `;
-    // const result = await model.generateContent(prompt);
-    // const responseText = result.response.text();
 
     return res.json({ response: context });
   } catch (error) {
