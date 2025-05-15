@@ -40,6 +40,9 @@ const AuthBase = ({
     }
   }, [success]);
 
+  
+
+
   return (
     <div className="auth">
       <div className={`auth__container ${isRegister ? "" : "auth__container--login"} flex`}>
