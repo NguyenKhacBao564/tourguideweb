@@ -31,7 +31,7 @@ const getTour =  async (req, res) => {
           duration: row.duration,
           created_at: row.created_at,
           description: row.description,
-          prices: [],
+          prices: [],  //prices này có 's'
         };
       }
       if (row.age_group && row.price !== null) {
@@ -48,69 +48,48 @@ const getTour =  async (req, res) => {
     }
 }
 
+
 const getTourByProvince = async (req, res) => {
   const province = req.params.province;
-  const page = parseInt(req.query.page, 10) || 1;
-  const limit = parseInt(req.query.limit, 10) || 10;
-  const offset = (page - 1) * limit;
 
   try {
     const pool = await getPool();
-
-    // Đếm tổng số tour
-    const countResult = await pool.request()
-      .input('province', sql.NVarChar, `%${province}%`)
-      .query(`
-        SELECT COUNT(DISTINCT t.tour_id) as total 
-        FROM Tour AS t 
-        WHERE t.destination LIKE @province AND t.status = 'active'
-      `);
-    const totalTours = countResult.recordset[0].total;
-    const totalPages = Math.ceil(totalTours / limit);
-
     // Lấy dữ liệu tour theo tỉnh và có giới hạn
     const result = await pool.request()
       .input('province', sql.NVarChar, `%${province}%`)
-      .input('offset', sql.Int, offset)
-      .input('limit', sql.Int, limit)
       .query(`
-        WITH TOUR_SUBSET AS (SELECT * FROM Tour AS t WHERE t.destination LIKE @province AND t.status = 'active'
-        ORDER BY t.created_at DESC
-        OFFSET @offset ROWS
-        FETCH NEXT @limit ROWS ONLY)
-        SELECT ts.tour_id, ts.branch_id, ts.name, ts.destination, ts.departure_location, ts.start_date, ts.end_date, 
-                      ts.max_guests, ts.transport, ts.created_at, ts.description, ts.duration, tp.age_group, tp.price
+        WITH TOUR_SUBSET AS (
+          SELECT * FROM Tour AS t WHERE t.destination LIKE @province AND t.status = 'active'
+          ORDER BY t.created_at DESC
+          OFFSET 0 ROWS
+          FETCH NEXT 10 ROWS ONLY
+        )
+        SELECT ts.tour_id, ts.name, ts.destination, ts.start_date, ts.max_guests, ts.duration, tp.price,
+        (SELECT TOP 1 image_url 
+          FROM Tour_image ti 
+          WHERE ti.tour_id = ts.tour_id 
+          ORDER BY image_id ASC
+        ) AS cover_image
         FROM TOUR_SUBSET ts
-        LEFT JOIN Tour_Price AS tp ON ts.tour_id = tp.tour_id
+        LEFT JOIN Tour_Price AS tp ON ts.tour_id = tp.tour_id and tp.age_group = 'adultPrice'
       `);
     const toursMap = {};
     result.recordset.forEach((row) => {
       if (!toursMap[row.tour_id]) {
         toursMap[row.tour_id] = {
           tour_id: row.tour_id,
-          branch_id: row.branch_id,
           name: row.name,
           destination: row.destination,
-          departureLocation: row.departure_location,
           start_date: row.start_date,
-          end_date: row.end_date,
           max_guests: row.max_guests,
-          transport: row.transport,
           duration: row.duration,
-          created_at: row.created_at,
-          description: row.description,
-          prices: [],
+          price: row.price, //price không có 's'
+          cover_image: row.cover_image || 'uploads\\default.jpg'
         };
-      }
-      if (row.age_group && row.price !== null) {
-        toursMap[row.tour_id].prices.push({
-          age_group: row.age_group,
-          price: row.price,
-        });
+        console.log("image: ",  toursMap[row.tour_id].cover_image);
       }
     });
     const tours = Object.values(toursMap);
-
     return res.status(200).json(tours);
   } catch (error) {
     return res.status(500).json({ error: "Lỗi server khi lấy danh sách tour", details: error.message });
@@ -121,40 +100,47 @@ const getTourOutstanding = async (req, res) => {
   try {
     const pool = await getPool();
     const result = await pool.request()
-    .query(`SELECT t.tour_id,t.branch_id, t.name, t.destination,t.departure_location,t.start_date,t.end_date,t.max_guests,t.transport,t.created_at,t.description, t.duration, tp.age_group,tp.price 
-        FROM Tour AS t
-        LEFT JOIN Tour_Price AS tp 
-        ON t.tour_id = tp.tour_id WHERE t.status = 'active' AND tp.age_group = 'adultPrice'
-        ORDER BY tp.price ASC
-        OFFSET 0 ROWS
-        FETCH NEXT 10 ROWS ONLY
+    .query(`SELECT 
+              t.tour_id, t.name, t.destination, t.start_date, t.max_guests, t.duration, tp.price,
+              ti.image_url AS cover_image
+            FROM Tour AS t
+            LEFT JOIN Tour_Price AS tp 
+              ON t.tour_id = tp.tour_id AND tp.age_group = 'adultPrice'
+            LEFT JOIN (
+              SELECT tour_id, MIN(image_url) AS image_url
+              FROM Tour_image
+              GROUP BY tour_id
+            ) ti 
+              ON t.tour_id = ti.tour_id
+            WHERE t.status = 'active'
+            ORDER BY tp.price ASC
+            OFFSET 0 ROWS
+            FETCH NEXT 10 ROWS ONLY
         `);
         const toursMap = {};
         result.recordset.forEach((row) => {
           if (!toursMap[row.tour_id]) {
             toursMap[row.tour_id] = {
               tour_id: row.tour_id,
-              branch_id: row.branch_id,
               name: row.name,
               destination: row.destination,
-              departureLocation: row.departure_location,
               start_date: row.start_date,
-              end_date: row.end_date,
               max_guests: row.max_guests,
-              transport: row.transport,
               duration: row.duration,
-              created_at: row.created_at,
-              description: row.description,
-              prices: row.price,
+              price: row.price, //price không có 's'
+              cover_image: row.cover_image || 'uploads\\default.jpg'
             };
           }
+          console.log("image outstanding: ",  toursMap[row.tour_id].cover_image);
         }
       );
-    return res.status(200).json(result.recordset);
+      const tours = Object.values(toursMap);
+    return res.status(200).json(tours);
   }catch(error){
     return res.status(500).json({error: error.message });
   }
 }
+
 // Thêm tour mới
 const createTour =  async (req, res) => {
     let transaction;
@@ -340,11 +326,8 @@ const getTourById = async (req, res) => {
     }
   }
 
-// Lấy danh sách tour theo tỉnh thành phố
-const getTourByProvince_Price = async (req, res) => {
-  const province = req.province;
-  
-}  
+
+
 
   // Cập nhật trạng thái tour
 const blockTour = async (req, res) => {
