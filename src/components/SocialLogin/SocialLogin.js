@@ -35,7 +35,6 @@ function SocialLogin(props) {
     }, []); // Chạy một lần khi component mount
 
 
-
     function decodeJWT(token) {
 
         let base64Url = token.split(".")[1];
