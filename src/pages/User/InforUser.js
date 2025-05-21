@@ -71,15 +71,10 @@ function InforUser(props) {
                 image: image || null
             }
             
-            // // Nếu không có ảnh mới, thì thông báo
-            if(!image) {
-                setUpdateMessage("Vui lòng chọn ảnh đại diện mới");
-                return;
-            }
-            
+        
             await updateCustomer(user.id, formData);
             setUpdateMessage("Cập nhật thông tin thành công");
-            
+            console.log("đợi refresh!")
             // Làm mới thông tin người dùng từ context
             await refreshUserData();
             

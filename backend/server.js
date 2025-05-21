@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require('cookie-parser');
 const axios = require('axios');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
@@ -16,8 +17,13 @@ const customerSupportRoutes = require("./routes/customerSupportRoutes");
 const consultantSupportRoutes = require("./routes/consultantSupportRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000', // Domain của frontend
+  credentials: true, // Cho phép gửi cookie
+}));
 app.use(express.json());
+app.use(cookieParser());
+
 // // Khởi tạo client Gemini
 // const genAI = new GoogleGenerativeAI('AIzaSyCbAKE5aON2k_ewwfnqggE7dp2-p-Nqsc8');
 // const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });

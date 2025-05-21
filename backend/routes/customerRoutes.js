@@ -3,7 +3,9 @@ const router = express.Router();
 const {getCustomer, deleteBatchCustomer, deleteCustomer, getAvatar, updateCustomer} = require("../controller/customerController");
 const upload = require("../middlewares/upload");
 
-router.get("/", getCustomer);
+const {authMiddleware, restrictTo } = require('../middlewares/authMiddlewares');
+
+router.get("/", authMiddleware, restrictTo('Sales'), getCustomer);
 router.get("/:id", getAvatar);
 router.delete("/batch-delete", deleteBatchCustomer);    
 router.delete("/:id", deleteCustomer);

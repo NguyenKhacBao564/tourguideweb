@@ -3,23 +3,9 @@ import { useEffect, useRef } from 'react';
 
 function SocialLogin(props) {
 
-    // useEffect(() => {
-    //     /* global google */
-    //     google.accounts.id.initialize({
-    //         client_id: "YOUR_CLIENT_ID.apps.googleusercontent.com",
-    //         callback: handleCredentialResponse
-    //     });
-
-    //     google.accounts.id.renderButton(
-    //         document.getElementById("buttonDiv"),
-    //         { theme: "outline", size: "large" }  // customization attributes
-    //     );
-
-    //     google.accounts.id.prompt(); // also display the One Tap dialog
-    // }, []);
-    // Tích hợp Google Identity Services
     useEffect(() => {
       // Tải script Google Identity Services
+    
       const script = document.createElement('script');
       script.src = 'https://accounts.google.com/gsi/client';
       script.async = true;
@@ -27,10 +13,18 @@ function SocialLogin(props) {
 
       // Khởi tạo Google Sign-In khi script tải xong
       script.onload = () => {
+        
         window.google.accounts.id.initialize({
           client_id: '678561996244-dhafh8drnjs1ku0dj79ohre8d23nqh47.apps.googleusercontent.com', // Thay bằng Client ID của bạn
           callback: handleCredentialResponse,
+          // ux_mode: 'redirect',
+          // auto_select: false,
+          // login_uri: 'http://localhost:5000/auth/google-login', // Thay bằng URL callback của bạn
         });
+          window.google.accounts.id.renderButton(
+            document.getElementById('buttonDiv'),
+            { theme: 'outline', size: 'large'}
+          );
         // window.google.accounts.id.prompt(); // Hiển thị One Tap prompt
       };
 
@@ -39,6 +33,7 @@ function SocialLogin(props) {
         document.body.removeChild(script);
       };
     }, []); // Chạy một lần khi component mount
+
 
 
     function decodeJWT(token) {
@@ -74,25 +69,13 @@ function SocialLogin(props) {
 
     return (
         <div className="socialLogin">
-          {/* <div
-            id="g_id_onload"
-            data-auto_prompt="false"
-            data-callback="handleCredentialResponse"
-            data-client_id="PUT_YOUR_WEB_CLIENT_ID_HERE"
-          ></div> */}
-            {/* <button>
+
+           {/* <button onClick={handleGoogleSignIn} className="google-signin-button">
                 <img alt="anh1" src="./google.png" />
-            </button>
-            <button>
-                <img alt="anh2" src="./facebook.png"/>
-            </button> */}
-            {/* <div
-              id="g_id_onload"
-              data-auto_prompt="false"
-              data-callback="handleCredentialResponse"
-              data-client_id="678561996244-dhafh8drnjs1ku0dj79ohre8d23nqh47.apps.googleusercontent.com"
-            ></div> */}
-             <div className="g_id_signin"></div>
+                Đăng nhập bằng Google
+            </button>  */}
+  
+             <div id="buttonDiv" ></div>
         </div>
     );
 }

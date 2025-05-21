@@ -7,48 +7,55 @@ const PYTHON_API_URL = 'http://localhost:8000/chat';
 
 const getTourByChat = async (location, datetime, price) =>{
     console.log("location: ", location);
-    console.log("datetime: ", datetime);
+   
     console.log("price: ", price.replace(/\.|,/g, ''));
     try{
-    let formattedDatetime = null;
-    if (datetime) {
-      const date = new Date(datetime);
-      if (!isNaN(date)) {
-        formattedDatetime = date.toISOString().split('T')[0]; // YYYY-MM-DD
-      } else {
-        throw new Error('Invalid datetime format');
+      let formattedDatetime = null;
+      const currentYear = new Date().getFullYear(); // Lấy năm hiện tại (2025)
+      if (datetime) {
+          const date = new Date(datetime);
+          if (!isNaN(date)) {
+              // Kiểm tra năm của datetime
+              if (date.getFullYear() !== currentYear) {
+                  // Đặt lại năm thành năm hiện tại
+                  date.setFullYear(currentYear);
+              }
+              formattedDatetime = date.toISOString().split('T')[0]; // YYYY-MM-DD
+          } else {
+              throw new Error('Invalid datetime format');
+          }
       }
-    }
-    const pool = await getPool();
-    const result = await pool.request()
-    .input('location', sql.NVarChar, location)
-    .input('datetime', sql.Date, formattedDatetime)
-    .input('price', sql.Decimal(15, 2), price.replace(/\.|,/g, ''))
-    .query(`SELECT t.tour_id, t.name, t.destination,t.start_date,t.end_date,t.duration, tp.price, tp.age_group
-        FROM Tour AS t
-        LEFT JOIN Tour_Price AS tp 
-        ON t.tour_id = tp.tour_id WHERE t.status = 'active' 
-        AND tp.age_group = 'adultPrice'
-        AND (t.destination LIKE '%' + @location + '%' OR t.name LIKE '%' + @location + '%')
-        AND t.start_date >= @datetime
-        AND tp.price <= @price
-        `);
-    console.log("SQL Query:", result.query);
-      // Nhóm dữ liệu theo tour_id
-    const toursMap = [];
-    result.recordset.forEach((row) => {
-        toursMap.push({
-          tour_id: row.tour_id,
-          name: row.name,
-          destination: row.destination,
-          start_date: row.start_date,
-          end_date: row.end_date,
-          duration: row.duration,
-          prices: row.price,
-        })
-    });
-    // const tours = Object.values(toursMap);
-    return toursMap
+      const pool = await getPool();
+      const result = await pool.request()
+      .input('location', sql.NVarChar, location)
+      .input('datetime', sql.Date, formattedDatetime)
+      .input('price', sql.Decimal(15, 2), price.replace(/\.|,/g, ''))
+      .query(`SELECT t.tour_id, t.name, t.destination,t.start_date,t.end_date,t.duration, tp.price, tp.age_group
+          FROM Tour AS t
+          LEFT JOIN Tour_Price AS tp 
+          ON t.tour_id = tp.tour_id WHERE t.status = 'active' 
+          AND tp.age_group = 'adultPrice'
+          AND (t.destination LIKE '%' + @location + '%' OR t.name LIKE '%' + @location + '%')
+          AND t.start_date >= @datetime
+          AND tp.price <= @price
+          `);
+      console.log("datetime: ", datetime);
+      console.log("SQL Query:", result.query);
+        // Nhóm dữ liệu theo tour_id
+      const toursMap = [];
+      result.recordset.forEach((row) => {
+          toursMap.push({
+            tour_id: row.tour_id,
+            name: row.name,
+            destination: row.destination,
+            start_date: row.start_date,
+            end_date: row.end_date,
+            duration: row.duration,
+            prices: row.price,
+          })
+      });
+      // const tours = Object.values(toursMap);
+      return toursMap
     } catch (error) {
         console.error('Error querying tours:', error.message);
         throw error;

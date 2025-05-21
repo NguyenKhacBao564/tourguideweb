@@ -1,7 +1,7 @@
 // services/authService.js
 const bcrypt = require("bcrypt");
 const { sql, getPool } = require("../config/db");
-const { generateToken } = require("../utils/jwt");
+const { generateAccessToken } = require("../middlewares/jwt");
 const { v4: uuidv4 } = require("uuid");
 const ERROR_MESSAGES = require("../utils/errorConstants");
 
@@ -43,7 +43,7 @@ const hashPassword = async (password) => {
 
 
 // Hàm lấy thông tin user (cho endpoint /api/auth/me)
-const getUserInfo = async (userId, role) => {
+const getUserInfor = async (userId, role) => {
   try {
     const pool = await getPool();
     let user;
@@ -94,15 +94,9 @@ const getUserInfo = async (userId, role) => {
 };
 
 // Hàm đăng nhập
-const loginUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    console.log("Đang đăng nhập với email:", email, "và mật khẩu:", password);
+const loginUser = async (email, password) => {
     if (!email || !password) {
-      return res.status(400).json({
-        code: ERROR_MESSAGES.AUTH.LOGIN_FAILED.code,
-        message: "Email và mật khẩu là bắt buộc"
-      });
+      return {error: ERROR_MESSAGES.AUTH.LOGIN_FAILED}
     }
     ///Tạo kết nối đến database
     console.log("Đang kết nối đến database...");
@@ -114,13 +108,14 @@ const loginUser = async (req, res) => {
       const result = await pool
         .request()
         .input("email", sql.VarChar, email)
-        .query(`SELECT * FROM ${table} WHERE email = @email`);
+        .query(`SELECT ${idField}, ${roleField}, password FROM ${table} WHERE email = @email`);
       const user = result.recordset[0];
       if (!user) return null;
+      //Kiểm tra mật khẩu
       const matchPassword = await verifyPassword(password, user.password);
       if (!matchPassword) {
-        console.log("Mật khẩu không khớp!")
-        return { error: ERROR_MESSAGES.AUTH.LOGIN_FAILED };
+        console.log("Mật khẩu không khớp!");
+        return {error: ERROR_MESSAGES.AUTH.LOGIN_FAILED}
       }
       console.log("Xác thực mật khẩu thành công!")
       const role = roleField ? await getRoleById(user[roleField]) : "customer";
@@ -130,81 +125,44 @@ const loginUser = async (req, res) => {
       }
     }
 
-    // 1. Kiểm tra trong bảng Customer
-    console.log("Đang kiểm tra trong bảng Customer...");
-    let user = await checkUser("Customer", "cus_id", null);
-    if (user?.error) {
-      return res.status(401).json({
-        code: user.error.code,
-        message: user.error.message
-      });
+    let user = await checkUser("Customer", "cus_id", null) || 
+              await checkUser("Employee", "emp_id", "role_id");
+
+    if(user?.error) return {error: user.error} 
+
+    if(!user){
+      console.log("Không tìm thấy user trong cả hai bảng!");
+      return {error: ERROR_MESSAGES.AUTH.LOGIN_FAILED}
     }
+
     if (user) {
-      const token = generateToken({ userId: user.id, role: user.role });
-      return res.status(200).json({
-        token,
-        message: "Đăng nhập thành công",
-      });
+      const token = generateAccessToken({ userId: user.id, role: user.role});
+      const userInfor = await getUserInfor(user.id, user.role);
+     return {
+        token: token, 
+        userInfor: userInfor
+     }
     }
-    // 2. Kiểm tra trong bảng Employee
-    console.log("Đang kiểm tra trong bảng Employee...");
-    user = await checkUser("Employee", "emp_id", "role_id");
-    if (user?.error) {
-      return res.status(401).json({
-        code: user.error.code,
-        message: user.error.message
-      });
-    }
-
-    if (user){
-      const token = generateToken({userId: user.id, role: user.role});
-      return res.status(200).json({
-        token,
-        message: "Đăng nhập thành công",
-      });
-    }
-
-    console.log("Không tìm thấy user");
-    // Nếu không tìm thấy user
-    return res.status(401).json({
-      code: ERROR_MESSAGES.AUTH.LOGIN_FAILED.code,
-      message: ERROR_MESSAGES.AUTH.LOGIN_FAILED.message
-    });
-  } catch (error) {
-    console.error("Lỗi đăng nhập:", error.message);
-    return res.status(500).json({
-      code: ERROR_MESSAGES.API.SERVER_ERROR.code,
-      message: ERROR_MESSAGES.API.SERVER_ERROR.message
-    });
-  }
 };
 
-// Hàm đăng ký
-const registerUser = async (req, res) => {
-  try {
-    const { fullname, email, password, phone } = req.body;
-    if (!fullname || !email || !password || !phone) {
-      return res.status(400).json({
-        code: ERROR_MESSAGES.AUTH.REGISTRATION_FAILED.code,
-        message: "Vui lòng điền đầy đủ thông tin"
-      });
-    }
-    const pool = await getPool();
 
+// Hàm đăng ký
+const registerUser = async (fullname, email, password, phone) => {
+    if (!fullname || !email || !password || !phone) {
+      return {error: ERROR_MESSAGES.AUTH.REGISTRATION_FAILED}
+    }
+
+    const pool = await getPool();
     //CODE KIỂM TRA EMAIL NÀY CHƯA TỐI ƯU SẼ SỬA LẠI SAU!!!!!
     // Kiểm tra email đã tồn tại trong bảng customer
     console.log("Đang kiểm tra email trong bảng Customer...")
     const emailCheck = await pool
       .request()
       .input("email", sql.VarChar, email)
-      .query("SELECT * FROM Customer WHERE email = @email");
+      .query("SELECT cus_id FROM Customer WHERE email = @email");
 
-    
     if (emailCheck.recordset.length > 0) {
-      return res.status(400).json({
-        code: ERROR_MESSAGES.AUTH.REGISTRATION_FAILED.code,
-        message: ERROR_MESSAGES.AUTH.REGISTRATION_FAILED.message
-      });
+      return {error: ERROR_MESSAGES.AUTH.REGISTRATION_FAILED}
     }
 
     // Kiểm tra email đã tồn tại trong bảng employee
@@ -212,12 +170,9 @@ const registerUser = async (req, res) => {
     const emailCheckEmp = await pool
       .request()
       .input("email", sql.VarChar, email)
-      .query("SELECT * FROM Employee WHERE email = @email");
+      .query("SELECT emp_id FROM Employee WHERE email = @email");
     if (emailCheckEmp.recordset.length > 0) {
-      return res.status(400).json({
-        code: ERROR_MESSAGES.AUTH.REGISTRATION_FAILED.code,
-        message: ERROR_MESSAGES.AUTH.REGISTRATION_FAILED.message
-      });
+      return {error: ERROR_MESSAGES.AUTH.REGISTRATION_FAILED}
     }
 
     // Tạo emp_id mới bằng uuid
@@ -236,18 +191,13 @@ const registerUser = async (req, res) => {
         "INSERT INTO Customer (cus_id, fullname, email, password, phone) VALUES (@cusID, @fullname, @email, @password, @phone)"
       );
     // Tạo token cho người dùng
-    const token = generateToken({ userId: cusID, role: "customer" });
-    return res.status(201).json({
-      token,
+    const token = generateAccessToken({ userId: cusID, role: "customer" });
+    const userInfor = await getUserInfor(cusID, "customer");
+    return {
+      token: token,
+      userInfor: userInfor,
       message: "Đăng ký thành công",
-    });
-  } catch (error) {
-    console.error("Lỗi đăng ký:", error.message);
-    return res.status(500).json({
-      code: ERROR_MESSAGES.API.SERVER_ERROR.code,
-      message: ERROR_MESSAGES.API.SERVER_ERROR.message
-    });
-  }
+    };
 };
 
-module.exports = { loginUser, registerUser, getUserInfo };
+module.exports = { loginUser, registerUser, getUserInfor };

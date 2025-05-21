@@ -1,19 +1,22 @@
 // src/context/AuthContext.js
 import React, { createContext, useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser, registerUser, getUserData } from "../api/authAPI";
+import { loginUser, registerUser, logoutUser, getUserData } from "../api/authAPI";
 
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   console.log("AuthProvider render")
+  // const [token, setToken] = useState();
+  
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   
   // Hàm kiểm tra và điều hướng theo role
   const checkRole = (role, currentPath) => {
+    console.log("checkRole: ", role, currentPath)
     // Tránh redirect loop: Không điều hướng nếu đã ở đúng trang hoặc ở trang InforUser
     const roleRoutes = {
       customer: "/",
@@ -36,37 +39,41 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Trong AuthContext.js
-const fetchUser = async (token) => {
-  try {
-    const response = await getUserData(token);
-    const userData = response.user;   
-    console.log("userData: ", userData)
-    return userData;
-  } catch (error) {
-    throw error;
-  }
-};
+//   // Trong AuthContext.js
+// const fetchUser = async () => {
+//   try {
+//     const response = await getUserData(token);
+//     const userData = response.user;   
+//     console.log("userData: ", userData)
+//     return userData;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
   //Kiểm tra token và gửi request đến server để lấy thông tin user  
   // Kiểm tra token khi khởi động
   useEffect(() => {
     const initializeAuth = async () => {
       setLoading(true);
-      const token = localStorage.getItem("token");
-      if (token) {
-        try {
-          // const decoded = jwtDecode(token);
-          const userData = await fetchUser(token);
-          setUser(userData);
-          console.log("navigate")
-          checkRole(userData.role, window.location.pathname);
+      // const token = localStorage.getItem("token");
+      try {
+        console.log('Gọi getUserData...');
+        // const decoded = jwtDecode(token);
+        const data = await getUserData();
+        if (data) {
+          console.log('Dữ liệu người dùng:', data.user);
+          setUser(data.user);
+          checkRole(data.user.role, window.location.pathname);
+          } else {
+            console.log('Không có token, đặt user là null');
+            setUser(null); // Đặt user là null nếu không có data (không có token)
+          }
         } catch (error) {
           console.error("Token không hợp lệ:", error);
-          localStorage.removeItem("token");
+          // localStorage.removeItem("token");
           setUser(null);
         }
-      }
       setLoading(false);
     };
     initializeAuth();
@@ -76,13 +83,9 @@ const fetchUser = async (token) => {
   const refreshUserData = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      if (token) {
-        const userData = await fetchUser(token);
-        setUser(userData);
-        return userData;
-      }
-      return null;
+      const userData = await getUserData();
+      setUser(userData.user);
+      return userData;
     } catch (error) {
       console.error("Lỗi khi làm mới thông tin người dùng:", error);
       return null;
@@ -93,16 +96,18 @@ const fetchUser = async (token) => {
 
   // Hàm xử lý đăng nhập/đăng ký (tái sử dụng logic)
   const authenticateUser = async (apiCall, ...args) => {
-    setLoading(true);
+   setLoading(true);
     try {
       const data = await apiCall(...args);
-      localStorage.setItem("token", data.token);
-      const userData = await fetchUser(data.token);
+      console.log("data: ", data)
+      // localStorage.setItem("token", data.token);
+      const userData = data.user
+      // const userData = data.user;
       setUser(userData);
       checkRole(userData.role, window.location.pathname);
       return userData;
     } catch (error) {
-      throw error;
+      throw new Error(error.message || 'Thao tác thất bại');
     } finally {
       setLoading(false);
     }
@@ -117,14 +122,20 @@ const fetchUser = async (token) => {
   };
 
 
-  const logout = () => {
+  const logout = async () => {
     setLoading(true);
-    localStorage.removeItem("token");
-    setUser(null);
-    console.log("Logout success")
-    navigate("/login")
-    setLoading(false);
+    try {
+      await logoutUser();
+      setUser(null);
+      console.log('Logout success');
+      navigate('/login');
+    } catch (error) {
+      console.error('Lỗi đăng xuất:', error);
+    } finally {
+      setLoading(false);
+    }
   };
+
 
   // Sử dụng useMemo để tránh tạo object mới
   const contextValue = useMemo(() => ({

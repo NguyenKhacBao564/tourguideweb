@@ -10,7 +10,7 @@ const ERROR_MESSAGES = {
       code: "AUTH_002",
       message: "Tên đăng nhập hoặc mật khẩu không đúng!",
     },
-
+ 
     REGISTRATION_FAILED: {
       code: "AUTH_003",
       message: "Đăng ký thất bại. Email đã được sử dụng.",
@@ -22,6 +22,10 @@ const ERROR_MESSAGES = {
     USER_NOT_FOUND: {
       code: "AUTH_005",
       message: "Không tìm thấy user trong bảng Customer",
+    },
+    FORBIDDEN: {
+      code: "AUTH_006",
+      message: "Không tìm thấy user trong bảng Employee",
     },
   },
   API: {

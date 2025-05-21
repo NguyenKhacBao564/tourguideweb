@@ -4,7 +4,9 @@ import { API_URL } from "../utils/API_Port";
 
 
 export const getCustomerAccount = async () => {
-    const response = await axios.get(`${API_URL}/customers`);
+    const response = await axios.get(`${API_URL}/customers`,
+        { withCredentials: true } // Đảm bảo gửi cookie
+    );
     return response.data;
 }
 
@@ -19,9 +21,7 @@ export const updateCustomer = async (id, data) => {
         formData.append("image", data.image);
         
         const response = await axios.put(`${API_URL}/customers/update/${id}`, formData, {
-            headers: {
-                "Content-Type": "multipart/form-data"
-            }
+            withCredentials: true,
         });
         return response.data;
     }catch(error){
