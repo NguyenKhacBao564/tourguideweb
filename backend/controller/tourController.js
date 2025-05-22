@@ -1,4 +1,6 @@
 const {sql, getPool} = require("../config/db");
+const fs = require('fs').promises; // Thêm module fs để xử lý tệp
+const path = require('path'); // Thêm module path để xử lý đường dẫn
 const { insertItinerary, updateItinerary } = require("./scheduleController");
 const { addTourPrice, updateTourPrice } = require("./tourPriceController");
 const { uploadTourImage } = require("./imageController");
@@ -86,7 +88,6 @@ const getTourByProvince = async (req, res) => {
           price: row.price, //price không có 's'
           cover_image: row.cover_image || 'uploads\\default.jpg'
         };
-        console.log("image: ",  toursMap[row.tour_id].cover_image);
       }
     });
     const tours = Object.values(toursMap);
@@ -131,7 +132,6 @@ const getTourOutstanding = async (req, res) => {
               cover_image: row.cover_image || 'uploads\\default.jpg'
             };
           }
-          console.log("image outstanding: ",  toursMap[row.tour_id].cover_image);
         }
       );
       const tours = Object.values(toursMap);
@@ -275,18 +275,41 @@ const updateTour = async (req, res ) => {
     `);
     console.log("update tour request sucess")
     
+      // Lấy danh sách đường dẫn ảnh cũ trước khi xóa
+    const oldImagesResult = await transaction.request()
+      .input("tour_id", sql.NVarChar, tourId)
+      .query("SELECT image_url FROM Tour_image WHERE tour_id = @tour_id");
+
+    const oldImagePaths = oldImagesResult.recordset.map(record => record.image_url);
+
+
     // Nếu có ảnh mới, xóa ảnh cũ và thêm ảnh mới
-    if (imagePaths.length > 0 
-      ||  parsedExistingImages.length !== (await transaction.request().input("tour_id", sql.NVarChar, tourId).query("SELECT COUNT(*) as count FROM Tour_image WHERE tour_id = @tour_id")).recordset[0].count) {
+    if (
+      imagePaths.length > 0 ||  
+      parsedExistingImages.length !== oldImagePaths.length
+    ){
       console.log("XÓA ẢNH ĐANG CHẠY ...")
       // Xóa ảnh cũ
       await transaction.request()
         .input("tour_id", sql.NVarChar, tourId)
         .query(`DELETE FROM Tour_image WHERE tour_id = @tour_id`);
       
-        if (parsedExistingImages && parsedExistingImages.length > 0){
-          await uploadTourImage(transaction, tourId, parsedExistingImages);
+        // Xóa các tệp ảnh cũ trong thư mục uploads/
+      for (const imagePath of oldImagePaths) {
+        try {
+          // Đảm bảo đường dẫn là tuyệt đối hoặc phù hợp với cấu trúc thư mục
+          const fullPath = path.join(__dirname, '..', imagePath); // Điều chỉnh đường dẫn nếu cần
+          await fs.unlink(fullPath); // Xóa tệp ảnh
+          console.log(`Đã xóa tệp ảnh: ${fullPath}`);
+        } catch (err) {
+          console.warn(`Không thể xóa tệp ảnh ${imagePath}: ${err.message}`);
+          // Không rollback transaction, chỉ ghi log lỗi
         }
+      }
+
+      if (parsedExistingImages && parsedExistingImages.length > 0){
+        await uploadTourImage(transaction, tourId, parsedExistingImages);
+      }
       // Thêm ảnh mới
       if (imagePaths.length > 0) {
         await uploadTourImage(transaction, tourId, imagePaths);
