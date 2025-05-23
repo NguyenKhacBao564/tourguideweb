@@ -52,9 +52,9 @@ export const getTransactions = async () => {
 //   }
 // };
 // Lấy danh sách nhân viên theo điều kiện
-export const getEmployees = async ({ status = "active", page = 1, pageSize = 10 }) => {
+export const getEmployees = async ({page = 1, pageSize = 10 }) => {
   const res = await axios.get(`${API_URL}/api/admin/employeeFilter`, {
-    params: { status, page, pageSize }
+    params: { page, pageSize }
   });
   return res.data;
 };
@@ -82,4 +82,61 @@ export const lockEmployees = async (ids) => {
     { ids }
   );
   return res.data;
+};
+
+// Mở khoá tài khoản nhân viên
+export const unlockEmployee = async (ids) => {
+  const res = await axios.put(
+    `${API_URL}/api/admin/employees/unlock`,
+    { ids }
+  );
+  return res.data;
+};
+
+// Thêm chi nhánh mới
+export const addBranch = async ({ branch_name, phone, address }) => {
+  const res = await axios.post(`${API_URL}/api/admin/branches`, {
+    branch_name,
+    phone,
+    address,
+  });
+  return res.data;
+};
+
+export const getBranchDetail = async (id) => {
+  try {
+    const response = await axios.get(`${API_URL}/api/admin/branches/${id}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Lỗi khi lấy chi tiết chi nhánh");
+  }
+};
+
+export const getEmployeeById = async (id) => {
+  try {
+    const response = await axios.get(`${API_URL}/api/admin/employees/${id}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Lỗi khi lấy thông tin nhân viên");
+  }
+};
+
+// Cập nhật thông tin nhân viên
+export const updateEmployee = async (id, data) => {
+  try {
+    const res = await axios.put(`${API_URL}/api/admin/employees/${id}`, data);
+    return res.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Lỗi khi cập nhật thông tin nhân viên');
+  }
+};
+
+// Lấy tất cả chi nhánh
+export const getAllBranches = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/api/admin/getBranch`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Lỗi khi lấy danh sách chi nhánh');
+  }
 };

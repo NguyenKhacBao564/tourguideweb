@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import AdminDataTable from '../../../components/Admin/adminDataTable';
 import { getTour, approveTour, rejectTour } from '../../../api/adminAPI';
+import SearchFilter from '../../../components/Common/SearchFilter/SearchFilter';
+import { Button } from 'react-bootstrap';
 
 const TourManagement = () => {
   const [tours, setTours]       = useState([]);
   const [total, setTotal]       = useState(0);
   const [loading, setLoading]   = useState(false);
   const [page, setPage]         = useState(1);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const pageSize                = 10;
   const fetchTours = async () => ({ link: "/admin/staffManagement" });
 
@@ -90,17 +94,76 @@ const TourManagement = () => {
     }
   ];
 
+  // Lọc dữ liệu theo searchTerm
+  const filteredTours = tours.filter(tour => {
+    const term = searchTerm.toLowerCase();
+    return (
+      tour.name?.toLowerCase().includes(term) ||
+      tour.tour_id?.toString().toLowerCase().includes(term)
+    );
+  });
+
+  const handleBulkApprove = () => {
+    const selected = tours.filter(t => selectedRowKeys.includes(t.tour_id));
+    selected.forEach(row => handleApprove(row));
+  };
+  const handleBulkReject = () => {
+    const selected = tours.filter(t => selectedRowKeys.includes(t.tour_id));
+    selected.forEach(row => handleReject(row));
+  };
+  const handleClearSelection = () => setSelectedRowKeys([]);
+
   return (
     <div className="p-4">
       <h2>Quản lý tour</h2>
+      <div className="d-flex align-items-center mb-3" style={{gap: 12}}>
+        <div style={{flex: 1, maxWidth: 320}}>
+          <SearchFilter
+            onSearch={setSearchTerm}
+            placeholder="Tìm kiếm theo tên hoặc mã tour"
+          />
+        </div>
+        {selectedRowKeys.length > 0 && (
+          <>
+            <Button
+              variant="secondary"
+              className="ms-3"
+              onClick={handleClearSelection}
+              style={{minWidth: 110}}
+            >
+              Bỏ chọn
+            </Button>
+            <div style={{flex: 1}} />
+            <Button
+              variant="danger"
+              className="me-2"
+              onClick={handleBulkReject}
+              style={{minWidth: 170}}
+            >
+              Từ chối mục đã chọn
+            </Button>
+            <Button
+              variant="success"
+              onClick={handleBulkApprove}
+              style={{minWidth: 170}}
+            >
+              Duyệt mục đã chọn
+            </Button>
+          </>
+        )}
+      </div>
       <AdminDataTable
         columns={columns}
-        data={tours}
+        data={filteredTours}
         loading={loading}
         totalItems={total}
         currentPage={page}
         itemsPerPage={pageSize}
         onPageChange={setPage}
+        rowSelection={{
+          selectedRowKeys,
+          onChange: setSelectedRowKeys        
+        }}
       />
     </div>
   );

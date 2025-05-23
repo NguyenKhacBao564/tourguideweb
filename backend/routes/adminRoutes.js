@@ -11,7 +11,12 @@ const {
   approveTourById,
   rejectTourById,
   lockEmployeesByIds,
-  getBranch
+  getBranch,
+  createBranch,
+  getBranchDetail,
+  createEmployee,
+  getEmployeeById,
+  unlockEmployeesByIds
 } = require('../services/adminServices');
 const router = express.Router();
 
@@ -57,9 +62,9 @@ router.get('/transactions', async (req, res) => {
 
 // 5. Liệt kê nhân viên theo điều kiện 
 router.get('/employeeFilter', async (req, res) => {
-  const { status, page, pageSize } = req.query;
+  const { page, pageSize } = req.query;
   try {
-    const data = await getEmployeesByPageAndStatus(status, Number(page), Number(pageSize));
+    const data = await getEmployeesByPageAndStatus(Number(page), Number(pageSize));
     res.json(data);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -123,4 +128,68 @@ router.put('/employees/lock', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// Mở khoá tài khoản nhân viên
+router.put('/employees/unlock', async (req, res) => {
+  const { ids } = req.body;
+  try {
+    const count = await unlockEmployeesByIds(ids);
+    res.json({ message: `Đã mở khoá ${count} nhân viên thành công` });
+  } catch (err) {
+    console.error("Lỗi khi mở khoá nhân viên:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// router.put('/employees/:id/unlock', async (req, res) => {
+//   const emp_id = req.params.id;
+//   try {
+//     await unlockEmployeeById(emp_id);
+//     res.json({ message: 'Mở khoá tài khoản nhân viên thành công' });
+//   } catch (err) {
+//     console.error("Lỗi khi mở khoá nhân viên:", err);
+//     res.status(500).json({ error: err.message });
+//   }
+// });
+
+// Thêm chi nhánh mới
+router.post('/branches', async (req, res) => {
+  try {
+    const { branch_name, address, phone, status } = req.body;
+    await createBranch({ branch_name, address, phone, status });
+    res.status(201).json({ message: 'Tạo chi nhánh thành công' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/employees', async (req, res) => {
+  try {
+    const { fullname, email, password, phone, address, role_id, branch_id } = req.body;
+    // Kiểm tra trùng email, hash password, tạo emp_id, hire_day, em_status
+    await createEmployee({ fullname, email, password, phone, address, role_id, branch_id });
+    res.status(201).json({ message: 'Tạo nhân viên thành công' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get("/employees/:id", async (req, res) => {
+  try {
+    const data = await getEmployeeById(req.params.id);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get("/branches/:id", async (req, res) => {
+  try {
+    const data = await getBranchDetail(req.params.id);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;

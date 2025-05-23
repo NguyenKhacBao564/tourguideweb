@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminDataTable from '../../../components/Admin/adminDataTable';
-import { getEmployees, lockEmployees } from '../../../api/adminAPI';
+import { getEmployees, lockEmployees, unlockEmployee } from '../../../api/adminAPI';
+import { Modal, Button } from 'react-bootstrap';
 
 const roleMap = {
   1: 'Quản lý',
@@ -19,7 +20,12 @@ const StaffManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
   const [branchFilter, setBranchFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [showFilter, setShowFilter] = useState(false);
+  const [tempRole, setTempRole] = useState(roleFilter);
+  const [tempBranch, setTempBranch] = useState(branchFilter);
+  const [tempStatus, setTempStatus] = useState(statusFilter);
   const navigate = useNavigate();
 
   // 1. Lấy dữ liệu từ server
@@ -50,16 +56,15 @@ const StaffManagement = () => {
   // 3. Áp dụng filter & tìm kiếm trên client
   useEffect(() => {
     let data = employees;
-
-    // lọc theo role nếu có chọn
     if (roleFilter) {
       data = data.filter(e => e.role_id === Number(roleFilter));
     }
-    // lọc theo branch nếu có chọn
     if (branchFilter) {
       data = data.filter(e => e.branch_name === branchFilter);
     }
-    // lọc theo searchTerm: kiểm tra cả emp_id và fullname
+    if (statusFilter) {
+      data = data.filter(e => e.em_status === statusFilter);
+    }
     if (searchTerm.trim()) {
       const term = searchTerm.trim().toLowerCase();
       data = data.filter(
@@ -68,9 +73,8 @@ const StaffManagement = () => {
           e.fullname.toLowerCase().includes(term)
       );
     }
-
     setFiltered(data);
-  }, [employees, searchTerm, roleFilter, branchFilter]);
+  }, [employees, searchTerm, roleFilter, branchFilter, statusFilter]);
 
   // Khóa các nhân viên đã chọn
   const handleLockSelected = async () => {
@@ -83,6 +87,35 @@ const StaffManagement = () => {
       alert('Có lỗi khi khóa nhân viên');
     }
   };
+  
+  const handleUnlockSelected = async () => {
+    try {
+      await unlockEmployee(selectedRowKeys);
+      setSelectedRowKeys([]);
+      setPage(1);
+    } catch (err) {
+      console.error(err);
+      alert('Có lỗi khi mở khoá nhân viên');
+    }
+  };
+
+  const handleLockSingle = async (id) => {
+    try {
+      await lockEmployees([id]);
+      setPage(1);
+    } catch (err) {
+      alert('Có lỗi khi khoá nhân viên');
+    }
+  };
+  const handleUnlockSingle = async (id) => {
+    try {
+      await unlockEmployee(id);
+      setPage(1);
+    } catch (err) {
+      alert('Có lỗi khi mở khoá nhân viên');
+    }
+  };
+
   // 4. Column định nghĩa cho AdminDataTable
   const columns = [
     
@@ -99,9 +132,15 @@ const StaffManagement = () => {
           <button 
             className="btn btn-sm btn-primary me-2" 
             onClick={() => navigate(`./${row.emp_id}`)}>Sửa</button>
-          <button 
-            className="btn btn-sm btn-danger" 
-            onClick={() => console.log('Khoá', row.emp_id)}>Khoá</button>
+          {row.em_status === 'active' ? (
+            <button 
+              className="btn btn-sm btn-danger" 
+              onClick={() => handleLockSingle(row.emp_id)}>Khoá</button>
+          ) : (
+            <button 
+              className="btn btn-sm btn-success" 
+              onClick={() => handleUnlockSingle(row.emp_id)}>Mở khoá</button>
+          )}
         </div>
       )
     },
@@ -119,28 +158,12 @@ const StaffManagement = () => {
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
         />
-
-        <select
-          value={roleFilter}
-          onChange={e => setRoleFilter(e.target.value)}
-        >
-          <option value="">Tất cả vai trò</option>
-          {roleOptions.map(rid => (
-            <option key={rid} value={rid}>
-              {roleMap[rid]}
-            </option>
-          ))}
-        </select>
-
-        <select
-          value={branchFilter}
-          onChange={e => setBranchFilter(e.target.value)}
-        >  
-          <option value="">Tất cả chi nhánh</option>
-          {branchOptions.map(b => (
-            <option key={b} value={b}>{b}</option>
-          ))}
-        </select>  
+        <Button variant="outline-secondary" onClick={() => {
+          setTempRole(roleFilter);
+          setTempBranch(branchFilter);
+          setTempStatus(statusFilter);
+          setShowFilter(true);
+        }}>Bộ Lọc</Button>
         {/* Nút hành động chọn */}
         {selectedRowKeys.length > 0 && (
           <>
@@ -149,6 +172,12 @@ const StaffManagement = () => {
               className="btn btn-danger me-2"
             >
               Khóa đã chọn ({selectedRowKeys.length})
+            </button>
+            <button
+              onClick={handleUnlockSelected}
+              className="btn btn-success me-2"
+            >
+              Mở khoá đã chọn ({selectedRowKeys.length})
             </button>
             <button
               onClick={() => setSelectedRowKeys([])}
@@ -161,6 +190,49 @@ const StaffManagement = () => {
           Thêm nhân viên
         </button>
       </div>
+      {/* Modal filter */}
+      <Modal show={showFilter} onHide={() => setShowFilter(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Bộ lọc</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="mb-3">
+            <label>Quyền nhân viên</label>
+            <select className="form-select" value={tempRole} onChange={e => setTempRole(e.target.value)}>
+              <option value="">Tất cả</option>
+              {roleOptions.map(rid => (
+                <option key={rid} value={rid}>{roleMap[rid]}</option>
+              ))}
+            </select>
+          </div>
+          <div className="mb-3">
+            <label>Chi nhánh</label>
+            <select className="form-select" value={tempBranch} onChange={e => setTempBranch(e.target.value)}>
+              <option value="">Tất cả</option>
+              {branchOptions.map(b => (
+                <option key={b} value={b}>{b}</option>
+              ))}
+            </select>
+          </div>
+          <div className="mb-3">
+            <label>Trạng thái</label>
+            <select className="form-select" value={tempStatus} onChange={e => setTempStatus(e.target.value)}>
+              <option value="">Tất cả</option>
+              <option value="active">Hoạt động</option>
+              <option value="inactive">Khoá</option>
+            </select>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowFilter(false)}>Đóng</Button>
+          <Button variant="danger" onClick={() => {
+            setRoleFilter(tempRole);
+            setBranchFilter(tempBranch);
+            setStatusFilter(tempStatus);
+            setShowFilter(false);
+          }}>Xem kết quả</Button>
+        </Modal.Footer>
+      </Modal>
 
       {/* Bảng dữ liệu */}
       <AdminDataTable

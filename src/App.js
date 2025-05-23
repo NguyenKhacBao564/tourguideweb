@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
 import Page from "./pages/User/Home";
 import Register from "./pages/User/Register";
 import Login from "./pages/User/Login";
@@ -24,6 +24,9 @@ import Unauthorized from "./components/Unauthorized";
 import NotFound from "./pages/NotFound";
 import UserManagement from "./pages/BusinessEmployee/UserManagement";
 import AddNewEmployee from "./pages/Admin/Employees/AddEmployee";
+import { CustomerProvider } from "./context/CustomerContext";
+import PromotionManager from "./pages/BusinessEmployee/PromotionManager";
+import BranchInfo from "./pages/Admin/Branches/BranchInfo";
 
 function App() {
   return (
@@ -91,6 +94,7 @@ function App() {
               <Route path="staffManagement/addNewEmployee" element={<AddNewEmployee />} />
               <Route path="tourManagement" element={<TourManagement />} />
               <Route path="branchManagement" element={<BranchManagement />} />
+              <Route path="branchManagement/:id" element={<BranchInfo />} />
           </Route>
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="*" element={<NotFound />} />

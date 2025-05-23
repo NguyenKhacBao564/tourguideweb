@@ -1,76 +1,106 @@
+// src/pages/Admin/Employees/EmployeeProfile.js
+
 import React, { useState, useEffect } from 'react';
-import { Mail, Phone, MapPin, Users, Building } from 'lucide-react';
+//import { Mail, Phone, MapPin, Users, Building } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { getEmployeeById, getAllBranches, updateEmployee, lockEmployees, unlockEmployee } from '../../../api/adminAPI';
 import '../../../styles/admin/_profile.scss';
+import { Form, Row, Col } from 'react-bootstrap';
+
+// const ROLES = [
+//   { value: 2, label: 'Nhân viên kinh doanh' },
+//   { value: 3, label: 'Nhân viên hỗ trợ' },
+//   { value: 1, label: 'Quản trị viên' },
+// ];
 
 const EmployeeProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [employee, setEmployee] = useState(null);
+  const [branches, setBranches] = useState([]);
+  const [form, setForm] = useState({
+    fullname: '',
+    phone: '',
+    address: '',
+    email: '',
+    password: '',
+    role_id: '',
+    branch_id: '',
+    status: '',
+  });
+  const [loading, setLoading] = useState(true);
 
-  // Sample employee data - In a real app, this would come from an API
-  const employeeData = {
-    1: {
-      name: "Nguyễn Văn A",
-      email: "nguyenvana@example.com",
-      phone: "0123456789",
-      address: "123 Đường Lê Duẩn, Cầu Giấy, Hà Nội",
-      position: "Nhân viên bán hàng",
-      branch: "Hà Nội",
-      status: "active"
-    },
-    2: {
-      name: "Trần Thị B",
-      email: "tranthib@example.com",
-      phone: "0987654321",
-      address: "456 Đường Nguyễn Huệ, Quận 1, TP HCM",
-      position: "Quản lý chi nhánh",
-      branch: "TP HCM",
-      status: "active"
-    },
-    3: {
-      name: "Lê Văn C",
-      email: "levanc@example.com",
-      phone: "0369852147",
-      address: "789 Đường Trần Hưng Đạo, Hồng Bàng, Hải Phòng",
-      position: "Nhân viên bán hàng",
-      branch: "Hải Phòng",
-      status: "inactive"
-    },
-    4: {
-      name: "Phạm Thị D",
-      email: "phamthid@example.com",
-      phone: "0741852963",
-      address: "321 Đường Lê Duẩn, Hải Châu, Đà Nẵng",
-      position: "Nhân viên bán hàng",
-      branch: "Hà Nội",
-      status: "active"
-    },
-    5: {
-      name: "Hoàng Văn E",
-      email: "hoangvane@example.com",
-      phone: "0159753468",
-      address: "654 Đường Trần Phú, Lộc Thọ, Nha Trang",
-      position: "Quản lý chi nhánh",
-      branch: "TP HCM",
-      status: "active"
+  // Fetch employee & branches
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [emp, branchList] = await Promise.all([
+          getEmployeeById(id),
+          getAllBranches(),
+        ]);
+        setEmployee(emp);
+        setBranches(branchList);
+        setForm({
+          fullname: emp.fullname,
+          phone: emp.phone,
+          address: emp.address,
+          email: emp.email,
+          password: '',
+          role_id: emp.role_id,
+          branch_id: emp.branch_id,
+          status: emp.em_status,
+        });
+      } catch (err) {
+        alert('Không tìm thấy nhân viên!');
+        navigate('/admin/nhan-vien');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [id, navigate]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = async () => {
+    try {
+      await updateEmployee(id, form);
+      alert('Cập nhật thành công!');
+      navigate('/admin/nhan-vien');
+    } catch (err) {
+      alert('Cập nhật thất bại!');
     }
   };
 
-  useEffect(() => {
-    // In a real app, you would fetch the employee data from an API
-    const employeeDetails = employeeData[id];
-    if (employeeDetails) {
-      setEmployee(employeeDetails);
-    } else {
-      // Handle case when employee is not found
-      navigate('/admin/nhan-vien');
-    }
-  }, [id, navigate]);
+  const handleLock = async () => {
+    //if (window.confirm('Bạn chắc chắn muốn khóa tài khoản này?')) {
+      try {
+        await lockEmployees([id]);
+        setForm((prev) => ({ ...prev, status: 'inactive' }));
+        alert('Đã khóa tài khoản!');
+      } catch (err) {
+        alert('Khóa tài khoản thất bại!');
+      }
+    //}
+  };
 
-  if (!employee) {
-    return <div>Loading...</div>;
-  }
+  const handleUnlock = async () => {
+    //if (window.confirm('Bạn chắc chắn muốn mở khoá tài khoản này?')) {
+      try {
+        await unlockEmployee([id]);
+        setForm((prev) => ({ ...prev, status: 'active' }));
+        alert('Đã mở khoá tài khoản!');
+      } catch (err) {
+        alert('Mở khoá tài khoản thất bại!');
+      }
+    //}
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (!employee) return null;
 
   return (
     <div className="profile-page">
@@ -78,91 +108,77 @@ const EmployeeProfile = () => {
         <h2>Thông tin nhân viên</h2>
         <button className="logout-button" onClick={() => navigate('/admin/nhan-vien')}>Quay lại</button>
       </div>
-      
       <div className="profile-card">
         <div className="profile-header">
           <img src="/avt.jpg" alt="Profile Avatar" className="profile-avatar" />
           <div className="profile-info">
-            <h3>{employee.name}</h3>
+            <h3>{form.fullname}</h3>
             <button className="avatar-button">Đổi ảnh hồ sơ</button>
           </div>
           <div className="account-status">
             <span className="status-label">Trạng thái tài khoản:</span>
-            <span className={`status-badge ${employee.status === 'active' ? 'status-active' : 'status-inactive'}`}>
-              {employee.status === 'active' ? 'Đang hoạt động' : 'Đã nghỉ việc'}
+            <span className={`status-badge ${form.status === 'active' ? 'status-active' : 'status-inactive'}`}>
+              {form.status === 'active' ? 'Đang hoạt động' : 'Đã bị khoá'}
             </span>
           </div>
         </div>
-        
         <div className="profile-content">
-          <div className="profile-section">
-            <h4>Thông tin nhân viên</h4>
-            <div className="input-group">
-              <label htmlFor="fullname">Họ và tên</label>
-              <input type="text" id="fullname" defaultValue={employee.name} />
-            </div>
-            
-            <div className="input-group">
-              <label htmlFor="phone">Số điện thoại</label>
-              <div className="input-with-icon">
-                <span className="input-icon"><Phone size={16} /></span>
-                <input type="tel" id="phone" defaultValue={employee.phone} />
-              </div>
-            </div>
-            
-            <div className="input-group">
-              <label htmlFor="address">Địa chỉ</label>
-              <div className="input-with-icon">
-                <span className="input-icon"><MapPin size={16} /></span>
-                <input type="text" id="address" defaultValue={employee.address} />
-              </div>
-            </div>
-            
-            <div className="input-group">
-              <label htmlFor="role">Phân quyền</label>
-              <div className="input-with-icon">
-                <span className="input-icon"><Users size={16} /></span>
-                <select id="role" defaultValue={employee.position === "Quản lý chi nhánh" ? "admin" : "business"}>
-                  <option value="business">Nhân viên kinh doanh</option>
-                  <option value="admin">Quản trị viên</option>
-                  <option value="guide">Hướng dẫn viên</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          
-          <div className="profile-section">
-            <h4>Thông tin tài khoản</h4>
-            <div className="input-group">
-              <label htmlFor="email">Email</label>
-              <div className="input-with-icon">
-                <span className="input-icon"><Mail size={16} /></span>
-                <input type="email" id="email" defaultValue={employee.email} />
-              </div>
-            </div>
-            
-            <div className="input-group">
-              <label htmlFor="password">Mật khẩu</label>
-              <input type="password" id="password" defaultValue="********" />
-            </div>
-            
-            <div className="input-group">
-              <label htmlFor="branch">Chi nhánh</label>
-              <div className="input-with-icon">
-                <span className="input-icon"><Building size={16} /></span>
-                <select id="branch" defaultValue={employee.branch.toLowerCase().replace(' ', '')}>
-                  <option value="hanoi">Hà Nội</option>
-                  <option value="hcm">Hồ Chí Minh</option>
-                  <option value="danang">Đà Nẵng</option>
-                </select>
-              </div>
-            </div>
-          </div>
+          <Form>
+            <Row>
+              <Col md={6}>
+                <h4>Thông tin nhân viên</h4>
+                <Form.Group className="mb-3">
+                  <Form.Label>Họ và tên</Form.Label>
+                  <Form.Control name="fullname" value={form.fullname} onChange={handleChange} />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Số điện thoại</Form.Label>
+                  <Form.Control name="phone" value={form.phone} onChange={handleChange} />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Địa chỉ</Form.Label>
+                  <Form.Control name="address" value={form.address} onChange={handleChange} />
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <h4>Thông tin tài khoản</h4>
+                <Form.Group className="mb-3">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control name="email" value={form.email} onChange={handleChange} />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Mật khẩu mới</Form.Label>
+                  <Form.Control name="password" type="password" value={form.password} onChange={handleChange} placeholder="Để trống nếu không đổi" />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Phân quyền</Form.Label>
+                  <Form.Select name="role_id" value={form.role_id} onChange={handleChange} required>
+                    <option value="">Chọn phân quyền</option>
+                    <option value="1">Quản trị viên</option>
+                    <option value="2">Nhân viên kinh doanh</option>
+                    <option value="3">Nhân viên hỗ trợ</option>
+                  </Form.Select>
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Chi nhánh</Form.Label>
+                  <Form.Select name="branch_id" value={form.branch_id} onChange={handleChange} required>
+                    <option value="">-- Chọn chi nhánh --</option>
+                    {branches.map(branch => (
+                      <option key={branch.branch_id} value={branch.branch_id}>{branch.branch_name}</option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+            </Row>
+          </Form>
         </div>
-        
         <div className="profile-actions">
-          <button className="lock-button">Khóa tài khoản</button>
-          <button className="save-button">Lưu cập nhật</button>
+          {form.status === 'active' ? (
+            <button className="lock-button" onClick={handleLock}>Khóa tài khoản</button>
+          ) : (
+            <button className="lock-button" onClick={handleUnlock}>Mở khoá tài khoản</button>
+          )}
+          <button className="save-button" onClick={handleSave}>Lưu cập nhật</button>
         </div>
       </div>
     </div>

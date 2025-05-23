@@ -1,9 +1,12 @@
-// src/pages/Admin/addNewEmployee.js
+// src/pages/Admin/Employees/AddEmployee.js
+
 import React, { useState, useEffect } from "react";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { Camera } from "lucide-react";
 import '../../../styles/admin/addNewEmployee.scss';
 import axios from 'axios';
+import { API_URL } from "../../../utils/API_Port"; // Import API_URL nếu có
+
 const AddNewEmployee = () => {
   const [preview, setPreview] = useState(null);
   const [form, setForm] = useState({
@@ -13,32 +16,36 @@ const AddNewEmployee = () => {
     email: "",
     password: "",
     confirmPassword: "",
-    role: "",
-    branch: ""
+    role_id: "", // Đổi từ role thành role_id
+    branch_id: ""  // Đổi từ branch thành branch_id
   });
 
-  // 1. State để chứa danh sách chi nhánh và chi nhánh được chọn
+  // State để chứa danh sách chi nhánh
   const [branches, setBranches] = useState([]);
-  const [selectedBranch, setSelectedBranch] = useState('');
+  // State để theo dõi trạng thái loading
+  const [loading, setLoading] = useState(false);
 
-  // 2. Fetch khi mount
+  // Fetch danh sách chi nhánh khi component mount
   useEffect(() => {
     const fetchBranches = async () => {
+      setLoading(true);
       try {
-        const res = await axios.get('/api/admin/getBranch'); // hoặc '/api/getBranch' tuỳ cấu hình proxy
-        // nếu backend trả về mảng recordset: [{ branch_name: 'Hà Nội' }, ...]
-        setBranches(res.data);
-      } catch (err) {
-        console.error('Lỗi khi lấy chi nhánh:', err);
+        // Sử dụng endpoint getBranch từ adminAPI
+        const response = await axios.get(`${API_URL}/api/admin/getBranch`);
+        console.log("Data from API:", response.data); // Debug: Log data từ API
+        
+        // Cập nhật state branches với dữ liệu từ API
+        setBranches(response.data || []);
+      } catch (error) {
+        console.error("Lỗi khi lấy danh sách chi nhánh:", error);
+        alert("Không thể lấy danh sách chi nhánh");
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchBranches();
   }, []);
-
-  // 3. Xử lý khi user chọn
-  const handleBranchChange = (e) => {
-    setSelectedBranch(e.target.value);
-  };
   
   const handleFileChange = e => {
     const file = e.target.files[0];
@@ -52,10 +59,47 @@ const AddNewEmployee = () => {
     setForm(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    // TODO: gửi data lên server
-    console.log(form);
+    
+    // Validate form
+    if (form.password !== form.confirmPassword) {
+      alert("Mật khẩu xác nhận không khớp!");
+      return;
+    }
+    
+    try {
+      // Chuẩn bị dữ liệu gửi lên server
+      const employeeData = {
+        fullname: form.fullname,
+        email: form.email,
+        password: form.password,
+        phone: form.phone,
+        address: form.address,
+        role_id: Number(form.role_id),  // Chuyển về kiểu số
+        branch_id: Number(form.branch_id) // Chuyển về kiểu số
+      };
+      
+      // Gọi API tạo nhân viên mới
+      const response = await axios.post(`${API_URL}/api/admin/employees`, employeeData);
+      
+      alert("Thêm nhân viên thành công!");
+      // Reset form sau khi thêm thành công
+      setForm({
+        fullname: "",
+        phone: "",
+        address: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        role_id: "",
+        branch_id: ""
+      });
+      setPreview(null);
+    } catch (error) {
+      console.error("Lỗi khi thêm nhân viên:", error);
+      alert(`Lỗi khi thêm nhân viên: ${error.response?.data?.error || error.message}`);
+    }
   };
 
   return (
@@ -80,7 +124,6 @@ const AddNewEmployee = () => {
               </div>
             )}
           </label>
-          
         </div>
 
         <Form onSubmit={handleSubmit}>
@@ -96,6 +139,7 @@ const AddNewEmployee = () => {
                   name="fullname"
                   value={form.fullname}
                   onChange={handleChange}
+                  required
                 />
               </Form.Group>
 
@@ -107,6 +151,7 @@ const AddNewEmployee = () => {
                   name="phone"
                   value={form.phone}
                   onChange={handleChange}
+                  required
                 />
               </Form.Group>
 
@@ -118,6 +163,7 @@ const AddNewEmployee = () => {
                   name="address"
                   value={form.address}
                   onChange={handleChange}
+                  required
                 />
               </Form.Group>
             </Col>
@@ -133,6 +179,7 @@ const AddNewEmployee = () => {
                   name="email"
                   value={form.email}
                   onChange={handleChange}
+                  required
                 />
               </Form.Group>
 
@@ -144,6 +191,7 @@ const AddNewEmployee = () => {
                   name="password"
                   value={form.password}
                   onChange={handleChange}
+                  required
                 />
               </Form.Group>
 
@@ -155,6 +203,7 @@ const AddNewEmployee = () => {
                   name="confirmPassword"
                   value={form.confirmPassword}
                   onChange={handleChange}
+                  required
                 />
               </Form.Group>
             </Col>
@@ -165,14 +214,15 @@ const AddNewEmployee = () => {
               <Form.Group className="mb-3">
                 <Form.Label>Phân quyền</Form.Label>
                 <Form.Select
-                  name="role"
-                  value={form.role}
+                  name="role_id"
+                  value={form.role_id}
                   onChange={handleChange}
+                  required
                 >
                   <option value="">Chọn phân quyền</option>
-                  <option value="Sales">Nhân viên kinh doanh</option>
-                  <option value="Consultant">Nhân viên tư vấn</option>
-                  <option value="Admin">Quản trị viên</option>
+                  <option value="1">Quản trị viên</option>
+                  <option value="2">Nhân viên kinh doanh</option>
+                  <option value="3">Nhân viên hỗ trợ</option>
                 </Form.Select>
               </Form.Group>
             </Col>
@@ -180,20 +230,28 @@ const AddNewEmployee = () => {
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label>Chi nhánh</Form.Label>
-                  <select
-                    id="branchSelect"
-                    value={selectedBranch}
-                    onChange={handleBranchChange}
-                    required
+                <Form.Select
+                  name="branch_id"
+                  value={form.branch_id}
+                  onChange={handleChange}
+                  required
                 >
                   <option value="">-- Chọn chi nhánh --</option>
-                    {branches.map((b, idx) => (
-                  <option key={idx} value={b.branch_name}>
-                    {b.branch_name}
-                  </option>
-                  ))}
-                  </select>
-                
+                  {loading ? (
+                    <option disabled>Đang tải...</option>
+                  ) : (
+                    branches.map(branch => (
+                      <option key={branch.branch_id} value={branch.branch_id}>
+                        {branch.branch_name}
+                      </option>
+                    ))
+                  )}
+                </Form.Select>
+                {branches.length === 0 && !loading && (
+                  <div className="text-danger mt-2">
+                    Không thể tải danh sách chi nhánh
+                  </div>
+                )}
               </Form.Group>
             </Col>
           </Row>
