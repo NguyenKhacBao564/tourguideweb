@@ -3,10 +3,10 @@ const {sql, getPool} = require("../config/db");
 const getCustomer = async (req, res) => {
     try{
         const pool = await getPool();
-        const result = await pool.request().query("SELECT * FROM Customer");
+        const result = await pool.request().query("SELECT * FROM Customer WHERE cus_status='active'");
         res.json(result.recordset);
     }
-    catch(error){
+    catch(error){   
         res.status(500).json({message: "Lỗi server", error});
     }
 }
@@ -48,6 +48,45 @@ const updateCustomer = async (req, res) => {
     }
 }
 
+
+const blockCustomer = async (req, res) => {
+    console.log("blockCustomer!")
+    try{
+        const cusId = req.params.id;
+        const pool = await getPool();
+        const result = await pool.request()
+            .input("cusId", sql.NVarChar, cusId)
+            .query("UPDATE Customer SET cus_status = 'inactive' WHERE cus_id = @cusId"); 
+        res.status(200).json({ message: `Đã khóa khách hàng ${cusId}` });
+    }catch(error){
+        console.error("Error blocking customer:", error);
+        res.status(500).json({message: "Lỗi server khi khóa khách hàng", error});
+    }
+
+}
+
+
+const blockBatchCustomer = async (req, res) => {
+    console.log("blockBatchCustomer!")
+    try{
+        const { ids } = req.body;
+        console.log("Customer IDs: ", ids);
+        const pool = await getPool();
+        const transaction = pool.transaction();
+        await transaction.begin();
+        const customerIdsString = ids.map(id => `'${id}'`).join(',');
+        const result = await transaction.request()
+            .input('customerIds', sql.NVarChar, customerIdsString)
+            .query(`UPDATE Customer SET cus_status='inactive' WHERE cus_id IN (${customerIdsString})`);  //Chưa bảo mật SQL Injection
+        await transaction.commit();
+        return res.status(200).json({ message: `Đã khóa ${result.rowsAffected[0]} khách hàng thành công` });
+    }catch (error){
+        console.error("Error blocking customer:", error);
+        res.status(500).json({message: "Lỗi server khi khóa khách hàng", error});
+    }
+}
+
+
 const deleteCustomer = async (req, res) => {
     try{
         const cusId = req.params.id;
@@ -55,7 +94,6 @@ const deleteCustomer = async (req, res) => {
         const result = await pool.request()
             .input("cusId", sql.NVarChar, cusId)
             .query("DELETE FROM Customer WHERE cus_id = @cusId");
-        
         if (result.rowsAffected[0] > 0) {
             res.status(200).json({ message: "Xóa khách hàng thành công" });
         } else {
@@ -115,6 +153,8 @@ const deleteBatchCustomer = async (req, res) => {
 
 module.exports = {
     getCustomer,
+    blockCustomer,
+    blockBatchCustomer,
     deleteBatchCustomer,
     deleteCustomer,
     getAvatar, 

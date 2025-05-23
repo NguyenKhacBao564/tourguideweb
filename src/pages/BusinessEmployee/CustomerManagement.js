@@ -1,13 +1,13 @@
 import React, { useState, useContext, useMemo} from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import UserFilterEmployee from '../../components/Employee/Filter/UserFilterEmployee';
+import CustomerFilterEmployee from '../../components/Employee/Filter/CustomerFilterEmployee';
 import { TourProvider } from '../../context/TourContext';
 import DataTable from '../../components/Common/DataTable/DataTable';
 import { filterCustomerBySearchTerm } from '../../utils/customerFilterHelper';
 
 import { CustomerContext } from '../../context/CustomerContext';
-function UserManagement(props) {
-    const {customerAccount, loading, error, deleteCustomer, deleteBatchCustomer} = useContext(CustomerContext);
+function CustomerManagement(props) {
+    const {customerAccount, loading, error, blockCustomer, blockBatchCustomer} = useContext(CustomerContext);
 
    const [searchTerm, setSearchTerm] = useState("");
    const [selectedUsers, setSelectedUser] = useState([]);
@@ -24,15 +24,14 @@ function UserManagement(props) {
    const handleDeleteSelected = async (ids) => {
     if (window.confirm(`Bạn có chắc chắn muốn xóa ${ids.length} user đã chọn không?`)) {
       try {
-        const result = await deleteBatchCustomer(ids);
+        const result = await blockBatchCustomer(ids);
         setSelectedUser([]);
-        return console.log("Xóa thành công", result);
+        return console.log("Khóa thành công", result);
       } catch (err) {
         console.error('Lỗi khi xóa khách hàng', err);
         alert(`Lỗi: ${err.message}`);
       }finally{
         setSelectedUser([]);
-
       }
     }
   };
@@ -52,7 +51,7 @@ function UserManagement(props) {
       onClick: async (id) => {
         if (window.confirm('Bạn có chắc chắn muốn xóa user này không?')) {
           try {
-            const result = await deleteCustomer(id);
+            const result = await blockCustomer(id);
             setSelectedUser((prev) => prev.filter((CusId) => CusId !== id));
             return console.log("Xóa thành công: ",result);
           } catch (err) {
@@ -73,7 +72,7 @@ function UserManagement(props) {
     
     <Container fluid>
       <Row >
-        <UserFilterEmployee onSearch={handleSearch} onDelete={handleDeleteSelected} selectedItems={selectedUsers}/>
+        <CustomerFilterEmployee onSearch={handleSearch} onDelete={handleDeleteSelected} selectedItems={selectedUsers}/>
       </Row>
       <Row>
         <DataTable 
@@ -94,4 +93,4 @@ function UserManagement(props) {
     );
 }
 
-export default UserManagement;
+export default CustomerManagement;

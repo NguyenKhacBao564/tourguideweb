@@ -93,7 +93,7 @@ const getTourByProvince = async (req, res) => {
     const tours = Object.values(toursMap);
     return res.status(200).json(tours);
   } catch (error) {
-    return res.status(500).json({ error: "Lỗi server khi lấy danh sách tour", details: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -218,7 +218,7 @@ const createTour =  async (req, res) => {
         await transaction.rollback();
       }
       console.error("Lỗi khi thêm tour:", error);
-      return res.status(500).json({ error: "Lỗi server khi thêm tour", details: error });
+      return res.status(500).json({ error: error.message });
     }
   }
   
@@ -326,7 +326,7 @@ const updateTour = async (req, res ) => {
       await transaction.rollback();
     }
     console.error("Lỗi khi cập nhật tour:", error);
-    return res.status(500).json({ error: "Lỗi server khi cập nhật tour", details: error });
+    return res.status(500).json({ error: error.message });
   }
 }
 
@@ -344,8 +344,8 @@ const getTourById = async (req, res) => {
       } else {
         res.status(404).json({ message: "Không tìm thấy tour" });
       }
-    } catch (err) {
-      res.status(500).json({ error: "Lỗi server", details: err });
+    } catch (error) {
+      res.status(500).json({ error: error.message  });
     }
   }
 
@@ -355,7 +355,6 @@ const getTourById = async (req, res) => {
   // Cập nhật trạng thái tour
 const blockTour = async (req, res) => {
   try {
-    console.log("Received delete request for tour_id:", req.params.id);
     // const tourId = parseInt(req.params.id, 10); // Chuyển về số nguyên
     // if (isNaN(tourId)) {
     //   return res.status(400).json({ error: "Invalid tour ID" });
@@ -373,12 +372,40 @@ const blockTour = async (req, res) => {
     } else {
       res.status(404).json({ message: "Không tìm thấy tour" });
     }
-  } catch (err) {
-    console.error("Lỗi khi khóa tour:", err);
-    res.status(500).send({ error: "Lỗi khi khóa tour", details: err });
+  } catch (error) {
+    console.error("Lỗi khi khóa tour:", error);
+    res.status(500).send({ error: error.message  });
   }
 }
 
 
+const blockBatchTour = async (req, res) => {
+  let transaction;
+  try{
+    const {tour_ids} = req.body; //Danh sách tour_id từ body
+    if (!tour_ids || !Array.isArray(tour_ids) || tour_ids.length === 0) {
+      return res.status(400).json({ message: "Danh sách ID không hợp lệ" });
+    }    
+    const pool = await getPool();
+    transaction = pool.transaction();
+    await transaction.begin();
 
-  module.exports = {getTour, createTour, getTourById, blockTour, updateTour, getTourByProvince, getTourOutstanding};
+    //Chuyển danh sách tour_ids thành chuỗi để truy vấn
+    const tourIdsString = tour_ids.map(id => `'${id}'`).join(", ");
+    const result = await transaction.request()
+      .input("tour_ids", sql.NVarChar, tourIdsString)
+      .query(`UPDATE Tour SET status = 'inactive' WHERE tour_id IN (${tourIdsString})`); //Chưa bảo mật SQL Injection
+    await transaction.commit();
+    return res.status(200).json({ message: `Đã khóa ${result.rowsAffected[0]} tour` });
+  }catch (error){
+    console.error("Lỗi khi khóa tour:", error);
+    if (transaction) {
+      await transaction.rollback();
+    }
+    return res.status(500).json({ error: error.message });
+  }
+
+}
+
+
+  module.exports = {getTour, createTour, getTourById, blockTour, blockBatchTour, updateTour, getTourByProvince, getTourOutstanding};

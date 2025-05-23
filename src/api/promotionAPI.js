@@ -24,7 +24,7 @@ export const createPromotion = async (promotionData) => {
 
 export const updatePromotion = async (promotionId, promotionData) => {
     try {
-        const response = await axios.put(`${API_URL}/promotions/${promotionId}`, promotionData);
+        const response = await axios.put(`${API_URL}/promotions/update/${promotionId}`, promotionData);
         return response.data;
         
     } catch (error) {
@@ -35,10 +35,20 @@ export const updatePromotion = async (promotionId, promotionData) => {
 
 export const blockPromotion = async (promotionId) => {
     try {
-        const response = await axios.put(`${API_URL}/promotions/${promotionId}`);
+        const response = await axios.put(`${API_URL}/promotions/block/${promotionId}`);
         return response.data;
     } catch (error) {
         console.error("Error blocking promotion:", error);
+        throw error;
+    }
+}
+
+export const blockBatchPromotion = async (promotionIds) => {
+    try {
+        const response = await axios.put(`${API_URL}/promotions/block_batch`, { ids: promotionIds });
+        return response.data;
+    } catch (error) {
+        console.error("Error blocking promotions:", error);
         throw error;
     }
 }

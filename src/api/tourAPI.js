@@ -128,10 +128,20 @@ export const updateTour = async (tourData, tourId) => {
 // Khóa tour
 export const blockTour = async (id) => {
   try {
-    const response = await axios.put(`${API_URL}/tours/${id}`);
+    const response = await axios.put(`${API_URL}/tours/block/${id}`);
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || "Lỗi khi khóa tour");
+  }
+}
+
+//Khóa nhiều tour
+export const blockBatchTour = async (ids) => {
+  try {
+    const response = await axios.put(`${API_URL}/tours/block_batch`, { tour_ids: ids });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Lỗi khi khóa nhiều tour");
   }
 }
 

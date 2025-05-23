@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 function TourFilterEmployee({ 
   onSearch, 
   onSort, 
-  onDeleteSelected, 
+  onBlockSelected, 
   selectedItems = [],
   searchPlaceholder = "Tìm kiếm theo tên tour",
   occupancyFilters,
@@ -37,8 +37,8 @@ function TourFilterEmployee({
     };
     
     const handleDeleteSelected = () => {
-        if (onDeleteSelected && selectedItems.length > 0) {
-            onDeleteSelected(selectedItems);
+        if (onBlockSelected && selectedItems.length > 0) {
+            onBlockSelected(selectedItems);
         }
     };
 

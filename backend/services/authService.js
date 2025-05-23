@@ -53,7 +53,7 @@ const getUserInfor = async (userId, role) => {
       const result = await pool
         .request()
         .input("userId", sql.VarChar, userId)
-        .query("SELECT * FROM Customer WHERE cus_id = @userId");
+        .query("SELECT * FROM Customer WHERE cus_id = @userId AND cus_status = 'active'");
       user = result.recordset[0];
       if (!user) throw new Error("Không tìm thấy user trong bảng Customer");
       console.log("Đã tìm thấy user!");
@@ -71,7 +71,7 @@ const getUserInfor = async (userId, role) => {
       const result = await pool
         .request()
         .input("userId", sql.VarChar, userId)
-        .query("SELECT * FROM Employee WHERE emp_id = @userId");
+        .query("SELECT * FROM Employee WHERE emp_id = @userId AND em_status = 'active'");
       user = result.recordset[0];
       if (!user) throw new Error("Không tìm thấy user trong bảng Employee");
       const roleName = await getRoleById(user.role_id);
@@ -136,8 +136,8 @@ const loginUser = async (email, password) => {
     }
 
     if (user) {
-      const token = generateAccessToken({ userId: user.id, role: user.role});
       const userInfor = await getUserInfor(user.id, user.role);
+      const token = generateAccessToken({ userId: user.id, role: user.role}); // Tạo token cho người dùng
      return {
         token: token, 
         userInfor: userInfor
@@ -188,11 +188,12 @@ const registerUser = async (fullname, email, password, phone) => {
       .input("password", sql.VarBinary, hashedPassword)
       .input("phone", sql.NVarChar, phone)
       .query(
-        "INSERT INTO Customer (cus_id, fullname, email, password, phone) VALUES (@cusID, @fullname, @email, @password, @phone)"
+        "INSERT INTO Customer (cus_id, fullname, email, password, phone, cus_status) VALUES (@cusID, @fullname, @email, @password, @phone, 'active')"
       );
-    // Tạo token cho người dùng
-    const token = generateAccessToken({ userId: cusID, role: "customer" });
+  
     const userInfor = await getUserInfor(cusID, "customer");
+    const token = generateAccessToken({ userId: cusID, role: "customer" });   // Tạo token cho người dùng
+   
     return {
       token: token,
       userInfor: userInfor,

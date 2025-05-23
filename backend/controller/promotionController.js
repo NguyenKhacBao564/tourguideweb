@@ -7,7 +7,7 @@ const getPromotion = async (req, res) => {
         const result = await pool.request().query("SELECT * FROM Promotion WHERE status='active'");
         return res.json(result.recordset);
     } catch (error) {
-        return res.status(500).json({ error: "Lỗi server khi lấy danh sách khuyến mãi", details: error.message });
+        return res.status(500).json({ error: error.message  });
     }
 }
 
@@ -26,7 +26,7 @@ const createPromotion = async (req, res) => {
             .query("INSERT INTO Promotion (promo_id, promo_name, code, discount_percentage, start_date, end_date, max_use) VALUES (@promotionId, @promo_name, @code, @discount_percentage, @start_date, @end_date, @max_use)");
         return res.status(201).json({ message: "Khuyến mãi đã được thêm thành công" });
     } catch (error) {
-        return res.status(500).json({ error: "Lỗi server khi thêm khuyến mãi", details: error.message });
+        return res.status(500).json({ error: error.message  });
     }
 }
 
@@ -40,8 +40,33 @@ const blockPromotion = async (req, res) => {
 
         return res.status(200).json({ message: "Khuyến mãi đã được chặn thành công" });
     } catch (error) {
-        return res.status(500).json({ error: "Lỗi server khi chặn khuyến mãi", details: error.message });
+        return res.status(500).json({ error: error.message  });
     }
+}
+
+
+const blockBatchPromotion= async (req, res) => {
+    let transaction;
+    try{
+        const { ids } = req.body;
+        console.log("Promotion IDs: ", ids);
+        const pool = await getPool();
+        transaction = pool.transaction();
+        await transaction.begin();
+        const promotionIdsString = ids.map(id => `'${id}'`).join(',');
+        const result = await transaction.request()
+            .input('promotionIds', sql.NVarChar, promotionIdsString)
+            .query(`UPDATE Promotion SET status='inactive' WHERE promo_id IN (${promotionIdsString})`);  //Chưa bảo mật SQL Injection
+        await transaction.commit();
+        return res.status(200).json({ message: `Đã tạm ngưng ${result.rowsAffected[0]} khuyến mãi thành công` });
+    } catch(error){
+        console.error("Lỗi khi khóa khuyến mãi:", error);
+        if (transaction) {
+            await transaction.rollback();
+        }
+        return res.status(500).json({ error: error.message });
+    }
+
 }
 
 
@@ -61,10 +86,9 @@ const updatePromotion = async (req, res) => {
             .input('end_date', sql.Date, end_date)
             .input('max_use', sql.Int, max_use)
             .query("UPDATE Promotion SET promo_name = @promo_name, code = @code, discount_percentage = @discount_percentage, start_date = @start_date, end_date = @end_date, max_use = @max_use WHERE promo_id = @promotionId");
-        
-            return res.status(200).json({ message: "Khuyến mãi đã được cập nhật thành công" });
+        return res.status(200).json({ message: "Khuyến mãi đã được cập nhật thành công" });
     } catch (error) {
-        return res.status(500).json({ error: "Lỗi server khi cập nhật khuyến mãi", details: error.message });
+        return res.status(500).json({ error: error.message });
     }
 }
 
@@ -74,5 +98,6 @@ module.exports = {
     getPromotion,
     createPromotion,
     blockPromotion,
+    blockBatchPromotion,
     updatePromotion
 }

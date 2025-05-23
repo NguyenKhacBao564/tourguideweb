@@ -30,6 +30,28 @@ export const updateCustomer = async (id, data) => {
    
 }
 
+export const blockCustomer = async (id) => {
+    try{
+        const response = await axios.put(`${API_URL}/customers/block/${id}`, {}, {
+            withCredentials: true,
+        });
+        return response.data;
+    }catch(error){
+        throw new Error(error.response?.data?.message || "Lỗi khi khóa khách hàng");
+    }
+}
+
+export const blockBatchCustomer = async (ids) => {
+    try{
+        const response = await axios.put(`${API_URL}/customers/block_batch`, { ids }, {
+            withCredentials: true,
+        });
+        return response.data;
+    }catch(error){
+        throw new Error(error.response?.data?.message || "Lỗi khi khóa khách hàng");
+    }
+}
+
 export const deleteBatchCustomer = async (ids) => {
     const response = await axios.delete(`${API_URL}/customers/batch-delete`, {
         data: { ids }

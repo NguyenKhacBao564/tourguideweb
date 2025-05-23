@@ -2,10 +2,18 @@ import React from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock, faCar, faUsers, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FaCalendarAlt } from "react-icons/fa";
+import {formatDate} from "../../../feature/formatDate";
 import { API_URL } from "../../../utils/API_Port";
 import "./TourCard.scss";
-
+import { useNavigate } from 'react-router';
 function TourCard(props) {
+    const navigate = useNavigate();
+    const handleBooking = () => {
+        // Truyền id qua query parameter
+        console.log("click đặt tour")
+        const tourId = props.tour_id; // Giả định props có id, nếu không cần điều chỉnh
+        navigate(`/booking?id=${tourId}`);
+    };
 
     const adultPrice = Number(props.price).toLocaleString('vi-VN');
 
@@ -48,7 +56,7 @@ function TourCard(props) {
                     </li>
                     <li>
                         <p>
-                            <FaCalendarAlt /> Ngày khởi hành: 25/09/2025
+                            <FaCalendarAlt /> Ngày khởi hành: {formatDate(props.start_date)}
                         </p>
                     </li>
                 </ul>
@@ -57,7 +65,7 @@ function TourCard(props) {
                         <p>Giá từ:</p>
                         <p id="price">{adultPrice} đ</p>
                     </div>
-                    <button className="book-btn">Đặt ngay</button>
+                    <button className="book-btn" onClick={() => handleBooking()}>Đặt ngay</button>
                 </div>
             </div>
         </div>
