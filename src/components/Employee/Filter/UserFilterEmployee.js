@@ -17,7 +17,6 @@ function UserFilterEmployee(
 ) 
 {   
 
-    
     const handleDeleteSelected = () => {
         if (onDelete && selectedItems.length > 0) {
             onDelete(selectedItems);

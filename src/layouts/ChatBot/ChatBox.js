@@ -18,11 +18,19 @@ const ChatBox = () => {
   const tour_info = (tourlist) => {
       let tour_infor_form = "";
       tourlist.forEach((tour,index) =>{
-        tour_infor_form = tour_infor_form + `\n\n### ** ${index + 1}.` + tour.name + '**'+
-        '\n\n**Ngày khởi hành:** ' + tour.start_date +
-        '\n\n**Ngày kết thúc:** ' + tour.end_date +
-        '\n\n**Thời gian:** ' + tour.duration +
-        '\n\n**Giá:** ' + tour.prices +
+        const formatDate = (dateStr) => {
+          const date = new Date(dateStr);
+          const day = String(date.getUTCDate()).padStart(2, '0');
+          const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+          const year = date.getUTCFullYear();
+          return `${day}/${month}/${year}`;
+        };
+        tour_infor_form = tour_infor_form + `\n\n### ${index + 1}.` + tour.name +
+        `\n\n**Ngày khởi hành:** ${formatDate(tour.start_date)}` +
+        `\n\n**Ngày kết thúc:** ${formatDate(tour.end_date)}` +
+        '\n\n**Thời gian:** ' + tour.duration + " ngày" +
+        '\n\n**Điểm đến:** ' + tour.destination +
+        '\n\n**Giá:** ' + tour.prices + " VNĐ" +
         '\n\n'
       })
       return tour_infor_form;
@@ -46,7 +54,14 @@ const ChatBox = () => {
         botMessage += tour_info(tourlist);
       }
 
-      console.log("response:", response.data);
+      const greetings = ["Xin chào","xin chào", "Chào", "Hello", "Hi", "Chào bạn", "Chào bạn nhé"];
+    
+      if (greetings.includes(input.trim())) {
+        botMessage = "Xin chào! Tôi là trợ lý ảo của công ty du lịch TourGuide. Bạn cần hỗ trợ gì?";
+      }
+      
+      
+      // console.log("response:", response.data);
       setMessages([...newMessages, {bot: botMessage}]);
       setInput("");
       setIsLoading(false);

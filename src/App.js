@@ -22,11 +22,14 @@ import { TourProvider } from "./context/TourContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./components/Unauthorized";
 import NotFound from "./pages/NotFound";
+// import AddNewPromotion from "./pages/BusinessEmployee/AddNewPromotion";
 import UserManagement from "./pages/BusinessEmployee/UserManagement";
 import AddNewEmployee from "./pages/Admin/Employees/AddEmployee";
 import { CustomerProvider } from "./context/CustomerContext";
 import PromotionManager from "./pages/BusinessEmployee/PromotionManager";
 import BranchInfo from "./pages/Admin/Branches/BranchInfo";
+import Checkout from "./pages/User/Checkout";
+import AddNewPromotion from "./pages/BusinessEmployee/AddNewPromotion/AddNewPromotion";
 
 function App() {
   return (
@@ -34,11 +37,8 @@ function App() {
       <ScrollToTop />
         {/* <ConsultantSupportProvider> */}
         <Routes>
-          <Route path="/" element={
-            
-              <Page />
-          
-          } />
+          <Route path="/" element={<Page />}/>
+          <Route path="/checkout" element={<Checkout />}/>
           <Route path="/contact" element={
             <ProtectedRoute allowedRoles={["customer"]}>
               <Contact />
@@ -63,6 +63,7 @@ function App() {
               <BusinessEmployee />
             </ProtectedRoute>
             }>
+
             <Route path="customer" element={
               <CustomerProvider>
                 <UserManagement />
@@ -73,10 +74,14 @@ function App() {
                   <TourManagementEmp />
                 </TourProvider>
             }/>
+
             <Route path="managetour/addtour" element={
               <TourProvider> 
                 <AddNewTour />
               </TourProvider>
+            }/>
+            <Route path="promotion/addpromotion" element={
+                <AddNewPromotion />
             }/>
             <Route path="promotion" element={<PromotionManager />} />
         </Route>

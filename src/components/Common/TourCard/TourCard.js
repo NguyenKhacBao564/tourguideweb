@@ -2,12 +2,13 @@ import React from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock, faCar, faUsers, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FaCalendarAlt } from "react-icons/fa";
+import { API_URL } from "../../../utils/API_Port";
 import "./TourCard.scss";
 
 function TourCard(props) {
 
-    const adultPrice = Number(props.price? props.price : (props.prices.length > 0) ? props.prices.find(price => price.age_group === 'adultPrice').price : 0).toLocaleString('vi-VN');
-    
+    const adultPrice = Number(props.price).toLocaleString('vi-VN');
+
     // console.log(props.prices);
     return (
         <div className="tour-card">
@@ -21,8 +22,8 @@ function TourCard(props) {
 
                 {/* Hình ảnh */}
                 <img
-                    src="https://images.pexels.com/photos/1658967/pexels-photo-1658967.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                    alt="Phú Yên"
+                    src={`${API_URL}/${props.cover_image}`}
+                    alt="Tour"
                     className="tour-card__img"
                 />
             </div>

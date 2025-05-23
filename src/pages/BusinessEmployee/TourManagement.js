@@ -113,7 +113,7 @@ const TourManagementEmp = () => {
   };
 
   return (
-    <Container fluid className="tour-management">
+    <Container fluid>
       <Row>
         <TourFilterEmployee 
           onSearch={handleSearch}

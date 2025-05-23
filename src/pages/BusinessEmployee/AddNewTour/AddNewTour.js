@@ -173,7 +173,7 @@ function AddTourPage() {
       </h2>
       
       {/* Main form container */}
-      <Container className="tour-booking-form py-4">
+      <Container fluid className="tour-booking-form py-4">
         <Form onSubmit={handleSubmit}>
           {/* Tour name and exit button */}
           <Row className="mb-3 mt-3 d-flex justify-content-between align-items-center">

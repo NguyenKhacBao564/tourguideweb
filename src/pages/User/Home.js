@@ -12,7 +12,6 @@ function Page(props) {
           <TourProvider>
             <HomeContent/>
           </TourProvider>
-          <Link to="/businessemployee/managetour">Admin</Link>
           <Footer/>
         </div>
     );

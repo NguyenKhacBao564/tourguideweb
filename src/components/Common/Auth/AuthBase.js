@@ -40,6 +40,9 @@ const AuthBase = ({
     }
   }, [success]);
 
+  
+
+
   return (
     <div className="auth">
       <div className={`auth__container ${isRegister ? "" : "auth__container--login"} flex`}>
@@ -71,7 +74,7 @@ const AuthBase = ({
             )}
           </div>
           
-          <form onSubmit={handleSubmit} className="auth__form grid">
+          <form onSubmit={handleSubmit} className="auth__form grid" autocomplete="on">
             {children}
             
             <span className="auth__separator">Hoặc</span>

@@ -22,8 +22,10 @@ function Maincontent() {
     const fetchTours = async () => {
       try {
         const toursByProvince = await getTourByProvince(provinceFilter[index].name);
+        console.log("toursByProvince: ", toursByProvince)
         setToursByProvince(toursByProvince);
         const toursOutstanding = await getTourOutstanding();
+        console.log("toursOutstanding: ", toursOutstanding)
         setToursOutstanding(toursOutstanding);
         setLoading(false);
       } catch (err) {

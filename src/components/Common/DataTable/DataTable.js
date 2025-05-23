@@ -25,7 +25,7 @@ function DataTable(
     },
     selectedItems = [],
     onSelectChange = () => {},
-    idKey = 'id',
+    idKey = 'id', // Khóa duy nhất của mỗi mục (thay đổi tùy vào dữ liệu)
   }
 ) {
 
