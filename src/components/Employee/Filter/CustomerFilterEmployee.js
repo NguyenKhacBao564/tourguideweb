@@ -9,9 +9,9 @@ import { RiDeleteBin2Fill } from "react-icons/ri";
 
 
 
-function UserFilterEmployee(
+function CustomerFilterEmployee(
     {onSearch,
-    selectedItems,
+    selectedItems = [],
     onDelete
     }
 ) 
@@ -48,4 +48,4 @@ function UserFilterEmployee(
     );
 }
 
-export default UserFilterEmployee;         
+export default CustomerFilterEmployee;         

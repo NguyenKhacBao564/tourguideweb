@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { getTour, createTour, getTourById, blockTour, updateTour, getTourByProvince, getTourOutstanding } = require("../controller/tourController");
+const { getTour, createTour, getTourById, blockTour, blockBatchTour, updateTour, getTourByProvince, getTourOutstanding } = require("../controller/tourController");
 
 const { getTourImages } = require("../controller/imageController");
 
@@ -11,7 +11,8 @@ router.get("/outstanding", getTourOutstanding);
 router.get("/province/:province", getTourByProvince);
 router.post("/", upload.array("image",10), createTour);
 router.get("/:id", getTourById);
-router.put("/:id", blockTour);
+router.put("/block/:id", blockTour);
+router.put("/block_batch", blockBatchTour);
 router.put("/update/:id", upload.array("image",10), updateTour);
 router.get("/images/:id", getTourImages);
 

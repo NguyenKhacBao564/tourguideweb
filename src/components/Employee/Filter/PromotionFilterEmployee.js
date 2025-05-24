@@ -16,17 +16,20 @@ import { useNavigate } from "react-router-dom";
 function PromotionFilterEmployee({
     searchPlaceholder = "Tìm kiếm theo mã khuyến mãi",
     selectedItems = [],
+    onBlockSelected
 }) {
     const navigate = useNavigate();
 
     const occupancyFilters = [
         { key: 'all', label: 'Tất cả' },
-        { key: 'occupied', label: 'Đã đặt' },
-        { key: 'available', label: 'Còn trống' },
+        { key: 'occupied', label: 'Đang hoạt động' },
+        { key: 'available', label: 'Hết hạn' },
     ];
 
-    const handleDeleteSelected = () => {
-        console.log("Delete selected items");
+    const handleBlockSelected = () => {
+        if(onBlockSelected && selectedItems.length > 0) {
+            onBlockSelected(selectedItems);
+        }
     }
 
     const handleSort = (key) => {
@@ -66,7 +69,7 @@ function PromotionFilterEmployee({
                         <Button 
                             variant="danger" 
                             className='flex-center gap-2'
-                            onClick={handleDeleteSelected}
+                            onClick={handleBlockSelected}
                             disabled={selectedItems.length === 0}
                         >
                             Khóa khuyến mãi đã chọn {selectedItems.length > 0 && `(${selectedItems.length})`} <RiDeleteBin2Fill />

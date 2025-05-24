@@ -18,7 +18,7 @@ import {
 
 const TourManagementEmp = () => {
   const navigate = useNavigate();
-  const { tours, isLoading, error, blockTour } = useContext(TourContext);
+  const { tours, isLoading, error, blockTour, blockBatchTour } = useContext(TourContext);
   console.log('tours', tours);
   // Các trạng thái lọc và sắp xếp
   const [statusFilter, setStatusFilter] = useState(FILTER_KEYS.ALL);
@@ -57,13 +57,8 @@ const TourManagementEmp = () => {
       label: 'Chi tiết',
       variant: 'success',
       onClick: (id, tourDetail) => {
-        // Ensure price fields are properly formatted as strings
-        const formattedTour = {
-          ...tourDetail,
-        };
-        
         navigate("/businessemployee/managetour/addtour", {
-          state: { tourDetail: formattedTour }
+          state: { tourDetail: tourDetail }
         });
       },
     },
@@ -98,16 +93,13 @@ const TourManagementEmp = () => {
     setSortOrder(order);
   };
   
-  const handleDeleteSelected = async (ids) => {
-    if (window.confirm(`Bạn có chắc chắn muốn xóa ${ids.length} tour đã chọn không?`)) {
+  const handleBlockSelected = async (ids) => {
+    if (window.confirm(`Bạn có chắc chắn muốn xóa ${ids.length} tour đã chọn không batch?`)) {
       try {
-        // Xóa lần lượt các tour đã chọn
-        for (const id of ids) {
-          await blockTour(id);
-        }
+        const result = await blockBatchTour(ids);
         setSelectedTour([]);
-      } catch (err) {
-        console.error('Lỗi khi khóa tour:', err);
+      } catch (error) {
+        console.error('Lỗi khi khóa tour:', error);
       }
     }
   };
@@ -118,7 +110,7 @@ const TourManagementEmp = () => {
         <TourFilterEmployee 
           onSearch={handleSearch}
           onSort={handleSort}
-          onDeleteSelected={handleDeleteSelected}
+          onBlockSelected={handleBlockSelected}
           selectedItems={selectedTour}
           searchPlaceholder="Tìm kiếm theo tên hoặc mã tour"
           occupancyFilters={occupancyFilters}

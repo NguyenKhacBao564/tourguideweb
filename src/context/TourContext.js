@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import { getTour, addTour, updateTour, blockTour, getTourByProvince, getTourOutstanding} from "../api/tourAPI";
+import { getTour, addTour, updateTour, blockTour, blockBatchTour, getTourByProvince, getTourOutstanding} from "../api/tourAPI";
 import { getItinerary } from "../api/scheduleAPI";
 import { getTourImages } from "../api/imageAPI";
 
@@ -39,6 +39,20 @@ export const TourProvider = ({ children }) => {
       setError(null);
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  //Khóa nhiều tour
+  const handleBlockBatchTour = async (ids) => {
+    try {
+      setIsLoading(true);
+      await blockBatchTour(ids);
+      setTours((prevTours) => prevTours.filter((tour) => !ids.includes(tour.tour_id)));
+      setError(null);
+    } catch (error) {
+      setError(error.message);
     } finally {
       setIsLoading(false);
     }
@@ -138,6 +152,7 @@ export const TourProvider = ({ children }) => {
     updateTour: handleUpdateTour,
     getItinerary: handleGetItinerary,
     blockTour: handleBlockTour,
+    blockBatchTour: handleBlockBatchTour,
     getImages: handleGetImages,
     getTourByProvince: handleGetTourByProvince,
     getTourOutstanding: handleGetTourOutstanding,

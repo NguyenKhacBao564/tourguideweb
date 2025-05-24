@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { getCustomerAccount, deleteBatchCustomer, deleteCustomer } from '../api/customerAccountAPI';
+import { getCustomerAccount, blockCustomer, blockBatchCustomer, deleteBatchCustomer, deleteCustomer } from '../api/customerAccountAPI';
 
 export const CustomerContext = createContext();
 
@@ -24,6 +24,34 @@ export const CustomerProvider = ({children}) => {
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error.message}</div>;
+
+    const handleBlockCustomer = async (id) => {
+        try{
+            setLoading(true);
+            const result = await blockCustomer(id);
+            setCustomerAccount((prev) => prev.filter((cus) => cus.cus_id !== id));
+            setError(null);
+            return result;
+        }catch(err){
+            setError(err.message);
+        }finally{
+            setLoading(false);
+        }
+    }
+
+    const handleBlockBatchCustomer = async (ids) => {
+        try{
+            setLoading(true);
+            const result = await blockBatchCustomer(ids);
+            setCustomerAccount((prev) => prev.filter((cus) => !ids.includes(cus.cus_id)));
+            setError(null);
+            return result;
+        }catch(err){
+            setError(err.message);
+        }finally{
+            setLoading(false);
+        }
+    }
 
     const handleDeleteCustomer = async (id) => {
         try{
@@ -57,6 +85,8 @@ export const CustomerProvider = ({children}) => {
         customerAccount,
         loading,
         error,
+        blockCustomer: handleBlockCustomer,
+        blockBatchCustomer: handleBlockBatchCustomer,
         deleteCustomer: handleDeleteCustomer,
         deleteBatchCustomer: handleDeleteBatchCustomer,
     };

@@ -103,7 +103,7 @@ function DataTable(
 
   return (
     <Container className="table-wrapper mt-2">
-      <Table hover responsive borderless className="tour-management__table">
+      <Table hover responsive borderless className="tour-management__table" >
         <thead className="bg-light">
           <tr>
             <th>
@@ -152,19 +152,19 @@ function DataTable(
                   <td key={column.key}>{renderColumnValue(item, column)}</td>
                 ))}
                 {actions.length > 0 && (
-                   <td style={{display: 'flex', justifyContent: 'center'}}>
-                  {actions.map((action, index) => (
-                   <ButtonGroup key={index} className="me-2" aria-label="Actions">
-                       <Button
-                         key={index}
-                         variant={action.variant}
-                         size="sm"
-                         onClick={() => action.onClick(item[idKey], item)}
-                       >
-                         {action.label}
-                       </Button>
-                   </ButtonGroup>
-                    ))}
+                   <td className="text-center">
+                    {actions.map((action, index) => (
+                    <ButtonGroup key={index} className="me-2" aria-label="Actions" >
+                        <Button
+                          key={index}
+                          variant={action.variant}
+                          size="sm"
+                          onClick={() => action.onClick(item[idKey], item)}
+                        >
+                          {action.label}
+                        </Button>
+                    </ButtonGroup>
+                      ))}
                  </td>
                 )}
               </tr>

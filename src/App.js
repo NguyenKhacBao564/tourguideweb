@@ -23,8 +23,10 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./components/Unauthorized";
 import NotFound from "./pages/NotFound";
 // import AddNewPromotion from "./pages/BusinessEmployee/AddNewPromotion";
-import UserManagement from "./pages/BusinessEmployee/UserManagement";
+//import UserManagement from "./pages/BusinessEmployee/UserManagement";
 import AddNewEmployee from "./pages/Admin/Employees/AddEmployee";
+import CustomerManagement from "./pages/BusinessEmployee/CustomerManagement";
+import BookingTour from "./pages/User/BookingTour";
 import { CustomerProvider } from "./context/CustomerContext";
 import PromotionManager from "./pages/BusinessEmployee/PromotionManager";
 import BranchInfo from "./pages/Admin/Branches/BranchInfo";
@@ -39,6 +41,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Page />}/>
           <Route path="/checkout" element={<Checkout />}/>
+          <Route path="/booking" element={<BookingTour/>}/>
           <Route path="/contact" element={
             <ProtectedRoute allowedRoles={["customer"]}>
               <Contact />
@@ -66,7 +69,7 @@ function App() {
 
             <Route path="customer" element={
               <CustomerProvider>
-                <UserManagement />
+                <CustomerManagement />
               </CustomerProvider>
               } />
             <Route path="managetour" element={
