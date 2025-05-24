@@ -124,7 +124,7 @@ export const getEmployeeById = async (id) => {
 // Cập nhật thông tin nhân viên
 export const updateEmployee = async (id, data) => {
   try {
-    const res = await axios.put(`${API_URL}/api/admin/employees/${id}`, data);
+    const res = await axios.put(`${API_URL}/api/admin/employees/update/${id}`, data);
     return res.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Lỗi khi cập nhật thông tin nhân viên');

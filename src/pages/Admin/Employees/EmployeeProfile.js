@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getEmployeeById, getAllBranches, updateEmployee, lockEmployees, unlockEmployee } from '../../../api/adminAPI';
 import '../../../styles/admin/_profile.scss';
-import { Form, Row, Col } from 'react-bootstrap';
+import { Form, Row, Col, Button } from 'react-bootstrap';
 
 // const ROLES = [
 //   { value: 2, label: 'Nhân viên kinh doanh' },
@@ -27,6 +27,15 @@ const EmployeeProfile = () => {
     role_id: '',
     branch_id: '',
     status: '',
+  });
+  const [originalForm, setOriginalForm] = useState({
+    fullname: '',
+    phone: '',
+    address: '',
+    email: '',
+    password: '',
+    role_id: '',
+    branch_id: '',
   });
   const [loading, setLoading] = useState(true);
 
@@ -50,6 +59,15 @@ const EmployeeProfile = () => {
           branch_id: emp.branch_id,
           status: emp.em_status,
         });
+        setOriginalForm({
+          fullname: emp.fullname,
+          phone: emp.phone,
+          address: emp.address,
+          email: emp.email,
+          password: '',
+          role_id: emp.role_id,
+          branch_id: emp.branch_id,
+        });
       } catch (err) {
         alert('Không tìm thấy nhân viên!');
         navigate('/admin/nhan-vien');
@@ -68,8 +86,9 @@ const EmployeeProfile = () => {
   const handleSave = async () => {
     try {
       await updateEmployee(id, form);
-      alert('Cập nhật thành công!');
-      navigate('/admin/nhan-vien');
+
+      //alert('Cập nhật thành công!');
+      
     } catch (err) {
       alert('Cập nhật thất bại!');
     }
@@ -97,6 +116,18 @@ const EmployeeProfile = () => {
         alert('Mở khoá tài khoản thất bại!');
       }
     //}
+  };
+
+  const isFormChanged = () => {
+    if (!originalForm) return false;
+    // So sánh từng trường, bỏ qua password nếu rỗng
+    for (let key in form) {
+      if (key === 'password' && !form.password) continue;
+      //if (form[key] !== originalForm[key]) return true;
+      if (form[key]?.toString() !== originalForm[key]?.toString()) return true;
+
+    }
+    return false;
   };
 
   if (loading) return <div>Loading...</div>;
@@ -178,7 +209,13 @@ const EmployeeProfile = () => {
           ) : (
             <button className="lock-button" onClick={handleUnlock}>Mở khoá tài khoản</button>
           )}
-          <button className="save-button" onClick={handleSave}>Lưu cập nhật</button>
+          <Button className={`save-button${isFormChanged() ? ' changed' : ''}`}
+            variant={isFormChanged() ? "success" : "outline-success"}
+            onClick={handleSave}
+            disabled={!isFormChanged()}
+          >
+            Lưu cập nhật
+          </Button>
         </div>
       </div>
     </div>

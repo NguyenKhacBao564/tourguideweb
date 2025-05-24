@@ -1,3 +1,5 @@
+@import '../admin/_variables';
+
 .add-employee-page {
     padding: 0rem;
   
@@ -6,6 +8,7 @@
       margin-bottom: 1rem;
       font-family: 'Times New Roman', Times, serif;
     }
+
   
     .form-card {
       background: #fff;
@@ -55,6 +58,17 @@
   
       .text-end {
         margin-top: 1.5rem;
+
+        &.add-employee-button {
+          background-color: white;
+          border: 1px solid $primary-color;
+          color: $primary-color;
+          transition: background 0.2s, color 0.2s;
+          &:hover {
+            background-color: $primary-color;
+            color: white;
+          }
+        }
       }
     }
   }

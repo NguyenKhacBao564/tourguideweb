@@ -16,7 +16,8 @@ const {
   getBranchDetail,
   createEmployee,
   getEmployeeById,
-  unlockEmployeesByIds
+  unlockEmployeesByIds,
+  updateEmployee
 } = require('../services/adminServices');
 const router = express.Router();
 
@@ -187,6 +188,17 @@ router.get("/branches/:id", async (req, res) => {
   try {
     const data = await getBranchDetail(req.params.id);
     res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.put("/employees/update/:id", async (req, res) => {
+  const emp_id = req.params.id;
+  const { fullname, email, password, phone, address, role_id, branch_id } = req.body;
+  try {
+    await updateEmployee(emp_id, { fullname, email, password, phone, address, role_id, branch_id });
+    res.json({ message: 'Cập nhật thông tin nhân viên thành công' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

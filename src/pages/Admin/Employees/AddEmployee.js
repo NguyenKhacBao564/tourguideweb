@@ -257,7 +257,7 @@ const AddNewEmployee = () => {
           </Row>
 
           <div className="text-end">
-            <Button variant="success" type="submit">
+            <Button className="add-employee-button" type="submit" onClick={handleSubmit}>
               THÊM NHÂN VIÊN
             </Button>
           </div>

@@ -102,15 +102,24 @@ const StaffManagement = () => {
   const handleLockSingle = async (id) => {
     try {
       await lockEmployees([id]);
-      setPage(1);
+      setEmployees(prev =>
+        prev.map(emp =>
+          emp.emp_id === id ? { ...emp, em_status: 'inactive' } : emp
+        )
+      );
     } catch (err) {
       alert('Có lỗi khi khoá nhân viên');
     }
   };
+  
   const handleUnlockSingle = async (id) => {
     try {
-      await unlockEmployee(id);
-      setPage(1);
+      await unlockEmployee([id]);
+      setEmployees(prev =>  // cập nhật trạng thái nhân viên
+        prev.map(emp =>
+          emp.emp_id === id ? { ...emp, em_status: 'active' } : emp
+        )
+      );
     } catch (err) {
       alert('Có lỗi khi mở khoá nhân viên');
     }

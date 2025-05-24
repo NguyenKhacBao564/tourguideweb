@@ -36,7 +36,7 @@ const TourManagement = () => {
     console.log('Duyệt tour', row.tour_id);
     approveTour(row.tour_id)
       .then(() => {
-        setTours(prevTours => prevTours.filter(tour => tour.tour_id !== row.tour_id));
+        setTours(prevTours => prevTours.filter(tour => tour.tour_id !== row.tour_id)); // lọc tour đã duyệt
         //alert('Duyệt tour thành công');
       })
       .catch(err => {
@@ -49,7 +49,7 @@ const TourManagement = () => {
     console.log('Từ chối tour', row.tour_id);
     rejectTour(row.tour_id)
       .then(() => {
-        setTours(prevTours => prevTours.filter(tour => tour.tour_id !== row.tour_id));
+        setTours(prevTours => prevTours.filter(tour => tour.tour_id !== row.tour_id)); // lọc tour đã từ chối
         //alert('Từ chối tour thành công');
       })
       .catch(err => {

@@ -43,18 +43,18 @@ const getBranch = async ()=>{
     throw new Error(ERROR_MESSAGES.API.SERVER_ERROR.message);
   }
 };
-// Lấy thông tin chi nhánh theo ID
+// Lấy thông tin chi tiết chi nhánh theo ID
 const getBranchDetail = async (branchId, year = new Date().getFullYear()) => {
   try {
     const pool = await getPool();
     
     // 1. Lấy thông tin cơ bản của chi nhánh
     const branchInfo = await pool.request()
-      .input("id", sql.Int, branchId)
+      .input("branch_id", sql.Int, branchId)
       .query(`
         SELECT branch_id, branch_name, phone, address, status
         FROM Branch
-        WHERE branch_id = @id
+        WHERE branch_id = @branch_id
       `);
     
     if (branchInfo.recordset.length === 0) {
@@ -63,128 +63,167 @@ const getBranchDetail = async (branchId, year = new Date().getFullYear()) => {
     
     const branch = branchInfo.recordset[0];
     
-    // 2. Lấy doanh thu theo từng tháng trong năm
+    // 2. Lấy doanh thu theo từng tháng trong năm (theo start_date của Tour, chỉ tính booking confirmed)
     const revenueByMonth = await pool.request()
-      .input("branchId", sql.Int, branchId)
+      .input("branch_id", sql.Int, branchId)
       .input("year", sql.Int, year)
       .query(`
         SELECT 
-          MONTH(B.booking_date) AS month,
+          MONTH(T.start_date) AS month,
           ISNULL(SUM(B.total_price), 0) AS revenue
         FROM Tour T
         LEFT JOIN Booking B ON T.tour_id = B.tour_id AND B.status = 'confirmed'
-        WHERE T.branch_id = @branchId
-          AND YEAR(B.booking_date) = @year
-        GROUP BY MONTH(B.booking_date)
+        WHERE T.branch_id = @branch_id
+          AND YEAR(T.start_date) = @year
+        GROUP BY MONTH(T.start_date)
         ORDER BY month
       `);
     
     // Tạo mảng doanh thu cho 12 tháng, điền 0 cho tháng không có dữ liệu
     const monthlyRevenue = Array(12).fill(0);
     revenueByMonth.recordset.forEach(item => {
-      monthlyRevenue[item.month - 1] = item.revenue;
+      if (item.month) {
+        monthlyRevenue[item.month - 1] = item.revenue;
+      }
     });
     
-    // 3. Lấy số liệu tour hoàn thành/hủy trong năm
-    const tourStatusCounts = await pool.request()
-      .input("branchId", sql.Int, branchId)
+    // 3. Lấy thống kê tour theo trạng thái
+    const tourStats = await pool.request()
+      .input("branch_id", sql.Int, branchId)
+      .query(`
+        SELECT
+          COUNT(CASE WHEN status = 'pending' THEN 1 END) AS pending_tours,
+          COUNT(CASE WHEN status = 'active' THEN 1 END) AS active_tours,
+          COUNT(CASE WHEN status = 'approved' THEN 1 END) AS approved_tours,
+          COUNT(CASE WHEN status = 'rejected' THEN 1 END) AS rejected_tours,
+          COUNT(CASE WHEN status = 'completed' THEN 1 END) AS completed_tours,
+          COUNT(*) AS total_tours
+        FROM Tour
+        WHERE branch_id = @branch_id
+      `);
+    
+    // 4. Lấy thống kê booking trong năm hiện tại
+    const bookingStats = await pool.request()
+      .input("branch_id", sql.Int, branchId)
       .input("year", sql.Int, year)
       .query(`
         SELECT
-          COUNT(CASE WHEN B.status = 'confirmed' THEN 1 END) AS booked,
-          COUNT(CASE WHEN B.status = 'canceled' THEN 1 END) AS canceled
-        FROM Tour T
-        LEFT JOIN Booking B ON T.tour_id = B.tour_id
-        WHERE T.branch_id = @branchId
+          COUNT(CASE WHEN B.status = 'confirmed' THEN 1 END) AS confirmed_bookings,
+          COUNT(CASE WHEN B.status = 'pending' THEN 1 END) AS pending_bookings,
+          COUNT(CASE WHEN B.status = 'canceled' THEN 1 END) AS canceled_bookings,
+          COUNT(*) AS total_bookings,
+          ISNULL(SUM(CASE WHEN B.status = 'confirmed' THEN B.total_price END), 0) AS total_revenue
+        FROM Booking B
+        INNER JOIN Tour T ON B.tour_id = T.tour_id
+        WHERE T.branch_id = @branch_id
           AND YEAR(B.booking_date) = @year
       `);
     
-    const bookingStats = tourStatusCounts.recordset[0];
-    const totalBookings = bookingStats.booked + bookingStats.canceled;
-    const cancelRate = totalBookings > 0 ? Math.round((bookingStats.canceled * 100) / totalBookings) : 0;
-    
-    // 4. Lấy thống kê tour theo trạng thái hiện tại
-    const today = new Date().toISOString().split('T')[0];
-    const oneWeekFromNow = new Date();
-    oneWeekFromNow.setDate(oneWeekFromNow.getDate() + 7);
-    const oneWeekFromNowStr = oneWeekFromNow.toISOString().split('T')[0];
-    
-    const tourStats = await pool.request()
-      .input("branchId", sql.Int, branchId)
-      .input("today", sql.Date, today)
-      .input("oneWeekFromNow", sql.Date, oneWeekFromNowStr)
+    // 5. Lấy thống kê nhân viên
+    const employeeStats = await pool.request()
+      .input("branch_id", sql.Int, branchId)
       .query(`
         SELECT
-          -- Tours đang chờ duyệt
-          COUNT(CASE WHEN T.status = 'active' THEN 1 END) AS pending,
-          
-          -- Tours đã duyệt
-          COUNT(CASE WHEN T.status = 'approved' THEN 1 END) AS approved,
-          
-          -- Tours sắp khởi hành (trong 7 ngày tới)
-          COUNT(CASE WHEN T.status = 'approved' 
-                    AND T.start_date > @today 
-                    AND T.start_date <= @oneWeekFromNow 
-                THEN 1 END) AS upcoming,
-          
-          -- Tours đang khởi hành (hiện tại, lấp đầy >= 60%)
-          COUNT(CASE WHEN T.status = 'approved' 
-                    AND @today BETWEEN T.start_date AND T.end_date
-                    AND (T.booked_guests * 100 / T.max_guests) >= 60
-                THEN 1 END) AS in_progress,
-          
-          -- Tours đã hoàn thành (qua ngày, lấp đầy >= 60%)
-          COUNT(CASE WHEN T.status = 'approved' 
-                    AND T.end_date < @today
-                    AND (T.booked_guests * 100 / T.max_guests) >= 60
-                THEN 1 END) AS completed
-        FROM Tour T
-        WHERE T.branch_id = @branchId
+          COUNT(CASE WHEN em_status = 'active' THEN 1 END) AS active_employees,
+          COUNT(CASE WHEN em_status = 'inactive' THEN 1 END) AS inactive_employees,
+          COUNT(*) AS total_employees
+        FROM Employee
+        WHERE branch_id = @branch_id
       `);
     
-    // 5. Lấy danh sách các năm có dữ liệu để tạo bộ lọc năm
+    // 6. Lấy top 5 tour có doanh thu cao nhất
+    const topTours = await pool.request()
+      .input("branch_id", sql.Int, branchId)
+      .input("year", sql.Int, year)
+      .query(`
+        SELECT TOP 5
+          T.tour_id,
+          T.name AS tour_name,
+          T.destination,
+          COUNT(B.booking_id) AS total_bookings,
+          ISNULL(SUM(B.total_price), 0) AS revenue
+        FROM Tour T
+        LEFT JOIN Booking B ON T.tour_id = B.tour_id AND B.status = 'confirmed'
+        WHERE T.branch_id = @branch_id
+          AND (B.booking_date IS NULL OR YEAR(B.booking_date) = @year)
+        GROUP BY T.tour_id, T.name, T.destination
+        ORDER BY revenue DESC
+      `);
+    
+    // 7. Lấy danh sách các năm có dữ liệu để tạo bộ lọc năm
     const yearsData = await pool.request()
-      .input("branchId", sql.Int, branchId)
+      .input("branch_id", sql.Int, branchId)
       .query(`
         SELECT DISTINCT YEAR(B.booking_date) AS year
         FROM Tour T
-        JOIN Booking B ON T.tour_id = B.tour_id
-        WHERE T.branch_id = @branchId
+        INNER JOIN Booking B ON T.tour_id = B.tour_id
+        WHERE T.branch_id = @branch_id
+          AND B.booking_date IS NOT NULL
         ORDER BY year DESC
       `);
     
     const years = yearsData.recordset.map(item => item.year);
     // Thêm năm hiện tại nếu chưa có
-    if (!years.includes(new Date().getFullYear())) {
-      years.unshift(new Date().getFullYear());
+    const currentYear = new Date().getFullYear();
+    if (!years.includes(currentYear)) {
+      years.unshift(currentYear);
     }
     
-    // Tạo dữ liệu kết quả
-    const tourStatsObj = tourStats.recordset[0];
-    const tourStatsArray = [
-      { label: "Tour đang chờ duyệt", value: tourStatsObj.pending || 0, color: "#ffb300" },
-      { label: "Tour đã duyệt", value: tourStatsObj.approved || 0, color: "#1976d2" },
-      { label: "Tour sắp khởi hành", value: tourStatsObj.upcoming || 0, color: "#00e676" },
-      { label: "Tour đang khởi hành", value: tourStatsObj.in_progress || 0, color: "#ff5252" },
-      { label: "Tour đã hoàn thành", value: tourStatsObj.completed || 0, color: "#388e3c" }
-    ];
-    
     // Kết hợp tất cả dữ liệu
+    const tourStatsData = tourStats.recordset[0] || {};
+    const bookingStatsData = bookingStats.recordset[0] || {};
+    const employeeStatsData = employeeStats.recordset[0] || {};
+    
+    // Tính tỷ lệ hủy booking
+    const totalBookingsCount = bookingStatsData.total_bookings || 0;
+    const canceledBookingsCount = bookingStatsData.canceled_bookings || 0;
+    const cancellationRate = totalBookingsCount > 0 ? 
+      Math.round((canceledBookingsCount * 100) / totalBookingsCount) : 0;
+    
     return {
+      // Thông tin cơ bản chi nhánh
       branch_id: branch.branch_id,
       branch_code: `BR${branch.branch_id.toString().padStart(3, '0')}`,
       branch_name: branch.branch_name,
       phone: branch.phone,
       address: branch.address,
       status: branch.status,
+      
+      // Dữ liệu biểu đồ doanh thu
       months: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"],
       monthlyRevenue,
       years,
       selectedYear: year,
-      booked: bookingStats.booked || 0,
-      canceled: bookingStats.canceled || 0,
-      cancelRate,
-      tourStats: tourStatsArray
+      
+      // Thống kê tour
+      tourStats: {
+        pending: tourStatsData.pending_tours || 0,
+        active: tourStatsData.active_tours || 0,
+        approved: tourStatsData.approved_tours || 0,
+        rejected: tourStatsData.rejected_tours || 0,
+        completed: tourStatsData.completed_tours || 0,
+        total: tourStatsData.total_tours || 0
+      },
+      
+      // Thống kê booking
+      bookingStats: {
+        confirmed: bookingStatsData.confirmed_bookings || 0,
+        pending: bookingStatsData.pending_bookings || 0,
+        canceled: bookingStatsData.canceled_bookings || 0,
+        total: bookingStatsData.total_bookings || 0,
+        totalRevenue: bookingStatsData.total_revenue || 0,
+        cancellationRate
+      },
+      
+      // Thống kê nhân viên
+      employeeStats: {
+        active: employeeStatsData.active_employees || 0,
+        inactive: employeeStatsData.inactive_employees || 0,
+        total: employeeStatsData.total_employees || 0
+      },
+      
+      // Top tour
+      topTours: topTours.recordset || []
     };
   } catch (error) {
     console.error('Lỗi khi lấy chi tiết chi nhánh:', error);
@@ -521,6 +560,24 @@ const createEmployee = async ({ fullname, email, password, phone, address, role_
             VALUES (@emp_id, @branch_id, @fullname, @email, @password, @phone, @address, @role_id, @hire_day, @em_status)`);
 };
 
+// Update thông tin nhân viên 
+const updateEmployee = async (emp_id, { fullname, email, password, phone, address, role_id, branch_id }) => {
+  const hashedPassword = Buffer.from(await hashPassword(password));
+  const pool = await getPool();
+  await pool.request()
+    .input('emp_id', sql.VarChar, emp_id)
+    .input('fullname', sql.NVarChar, fullname)
+    .input('email', sql.NVarChar, email)
+    .input('password', sql.VarBinary, hashedPassword)
+    .input('phone', sql.NVarChar, phone)
+    .input('address', sql.NVarChar, address)
+    .input('role_id', sql.Int, role_id)
+    .input('branch_id', sql.Int, branch_id)
+    .query(`UPDATE Employee
+            SET fullname = @fullname, email = @email, password = @password, phone = @phone, address = @address, role_id = @role_id, branch_id = @branch_id
+            WHERE emp_id = @emp_id`);
+};
+
 module.exports = {
   approveTourById,
   rejectTourById,
@@ -536,5 +593,6 @@ module.exports = {
   lockEmployeesByIds,
   getBranchDetail,
   getEmployeeById,
-  unlockEmployeesByIds
+  unlockEmployeesByIds,
+  updateEmployee
 };
