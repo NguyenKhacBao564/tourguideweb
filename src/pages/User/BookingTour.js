@@ -13,7 +13,7 @@ import TourInforCard from '../../components/TourInforCard.js/TourInforCard';
 import ReviewSection from '../../layouts/ReviewSection';
 import { API_URL } from '../../utils/API_Port';
 import TourCard from '../../components/Common/TourCard/TourCard';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 
 
 function BookingTour(props) {
@@ -21,6 +21,18 @@ function BookingTour(props) {
     const [searchParams] = useSearchParams();
     const tourId = searchParams.get('id');
     console.log("Tour ID:", tourId); // Kiểm tra giá trị tourId
+    const navigate = useNavigate();
+
+    const currentTour = {
+        name: "Du lịch Đà Lạt - Samten Hills - Puppy Farm - Langbiang - Gallery La Chocotea - Thác Bobla",
+        start: "TP. HCM",
+        code: "43210",
+        date: "24/03/2025",
+        priceAdult: 4129000,
+        priceChild: 1990000,
+        priceBaby: 0,
+        image: "https://i.imgur.com/e2UnpdB.jpg"
+    };
 
     const tours = [
         {
@@ -72,6 +84,11 @@ function BookingTour(props) {
             start_date: "09/09/2025"
         }
     ]
+
+    const handleBookNow = () => {
+        navigate('/user/booking-info', { state: { tour: currentTour } });
+    };
+
     return (
         <div className="bookingPage" ref={bookingPageRef}>
             <Navbar bookingPageRef={bookingPageRef}/>
@@ -144,7 +161,7 @@ function BookingTour(props) {
                                 <h6>Giá</h6>
                                 <h4 className="text-danger text-center fw-bold">4.129.000 đ <span style={{fontWeight: 'bold', color: "black", fontSize: '15px'}}>/ Khách</span></h4>
                                 <Card.Text as="div">
-                                     <Button variant="custom-primary" className="mb-2 w-100">Đặt Tour</Button>
+                                     <Button variant="custom-primary" className="mb-2 w-100" onClick={handleBookNow}>Đặt Tour</Button>
                                 </Card.Text>
                                 <Card.Text>
                                     <Button variant="custom-secondary" className="mb-2 w-100">

@@ -27,6 +27,7 @@ import NotFound from "./pages/NotFound";
 import AddNewEmployee from "./pages/Admin/Employees/AddEmployee";
 import CustomerManagement from "./pages/BusinessEmployee/CustomerManagement";
 import BookingTour from "./pages/User/BookingTour";
+import BookingInfo from "./pages/User/BookingInfo";
 import { CustomerProvider } from "./context/CustomerContext";
 import PromotionManager from "./pages/BusinessEmployee/PromotionManager";
 import BranchInfo from "./pages/Admin/Branches/BranchInfo";
@@ -42,6 +43,7 @@ function App() {
           <Route path="/" element={<Page />}/>
           <Route path="/checkout" element={<Checkout />}/>
           <Route path="/booking" element={<BookingTour/>}/>
+          <Route path="/user/booking-info" element={<BookingInfo/>}/>
           <Route path="/contact" element={
             <ProtectedRoute allowedRoles={["customer"]}>
               <Contact />
