@@ -160,7 +160,7 @@ jobs:
             if ! command -v node &> /dev/null
             then
                 echo "Node.js not found, installing..."
-                curl -fsSL https://rpm.nodesource.com/setup_18.x | sudo bash -
+                curl -fsSL https://rpm.nodesource.com/setup_20.x | sudo bash -
                 sudo yum install -y nodejs
                 node -v
                 npm -v
