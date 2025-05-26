@@ -56,7 +56,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           # timeout: 1800
           script: |
-            cd /home/ec2-user/web
+            cd /home/ec2-user/web/src
             npm install
             npm run build
             ls -lah build/
