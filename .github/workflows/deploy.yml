@@ -149,32 +149,34 @@ jobs:
     #       target: "/home/ec2-user/" # Đặt vào /home/ec2-user/backend/ trên EC2
 
       # 4. Cài Node.js trên EC2 (nếu chưa cài)
-      - name: Install Node.js & npm on EC2
+      - name: Install/Update Node.js 20 on EC2
         uses: appleboy/ssh-action@master
         with:
           host: 13.57.34.159
           username: ec2-user
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # Cài Node.js 18.x nếu chưa có
-            if ! command -v node &> /dev/null
-            then
-                echo "Node.js not found, installing..."
-                curl -fsSL https://rpm.nodesource.com/setup_20.x | sudo bash -
-                sudo yum install -y nodejs
-                node -v
-                npm -v
+            # Kiểm tra version Node hiện tại
+            CURRENT_NODE_VERSION=$(node -v 2>/dev/null || echo "none")
+            echo "Current Node version: $CURRENT_NODE_VERSION"
+            
+            # Cài/nâng cấp Node 20 nếu cần
+            if [[ "$CURRENT_NODE_VERSION" != v20* ]]; then
+              echo "Installing/updating Node.js 20..."
+              curl -fsSL https://rpm.nodesource.com/setup_20.x | sudo bash -
+              sudo yum install -y nodejs
             else
-                echo "Node.js already installed."
+              echo "Node.js 20 already installed."
             fi
             
+            # Kiểm tra kết quả
+            node -v
+            npm -v
+            
             # Cài pm2 nếu chưa có
-            if ! command -v pm2 &> /dev/null
-            then
-                echo "pm2 not found, installing..."
-                sudo npm install -g pm2
-            else
-                echo "pm2 already installed."
+            if ! command -v pm2 &> /dev/null; then
+              echo "Installing pm2..."
+              sudo npm install -g pm2
             fi
 
       # 5. Build FRONTEND trên EC2
