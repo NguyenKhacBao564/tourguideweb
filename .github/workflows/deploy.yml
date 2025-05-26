@@ -1,148 +1,112 @@
-# .github/workflows/deploy-frontend.yml
-
-name: Deploy Frontend to EC2
+name: Deploy Fullstack to EC2
 
 on:
   push:
     branches:
-      - main  # Chỉ chạy khi push lên nhánh main
+      - main  # Mỗi khi push lên nhánh main
 
 jobs:
-  deploy-frontend:
+  deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 20 # Tăng thời gian timeout cho job
-
     steps:
-      # 1. Checkout code từ repository
+      # 1. Checkout code
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
-      # 2. Copy source code FRONTEND lên EC2
-      # Giả sử frontend nằm ở thư mục gốc của repo, copy toàn bộ trừ thư mục backend và .github
-      - name: Copy Frontend source code to EC2
+      # 2. Copy FRONTEND source code lên EC2
+      - name: Copy FRONTEND source code to EC2
         uses: appleboy/scp-action@master
         with:
           host: 13.57.34.159
           username: ec2-user
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "./" # Copy toàn bộ thư mục gốc của repo
-          target: "/home/ec2-user/frontend_app/" # Thư mục đích cho frontend trên EC2
-          exclude: ".github,backend" # Loại trừ thư mục .github và backend
+          source: "./"
+          exclude: ".github/, backend/"
+          target: "/home/ec2-user/frontend/"
 
-      # 3. Cài đặt/Cập nhật Node.js và pm2 trên EC2
-      - name: Install/Update Node.js & pm2 on EC2
+    #   # 3. Copy BACKEND source code lên EC2
+    #   - name: Copy BACKEND source code to EC2
+    #     uses: appleboy/scp-action@master
+    #     with:
+    #       host: 13.57.34.159
+    #       username: ec2-user
+    #       key: ${{ secrets.SSH_PRIVATE_KEY }}
+    #       source: "backend/"
+    #       target: "/home/ec2-user/"
+
+      # 4. Cài Node.js trên EC2 (nếu chưa cài)
+      - name: Install Node.js & npm on EC2
         uses: appleboy/ssh-action@master
         with:
           host: 13.57.34.159
           username: ec2-user
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            echo "--- Checking/Installing Node.js ---"
-            # Cài Node.js 20.x nếu chưa có hoặc không đúng version
-            if ! command -v node &> /dev/null || ! node -v | grep -q "v20."; then
-              echo "Node.js v20 not found or incorrect version, installing/updating..."
-              curl -fsSL https://rpm.nodesource.com/setup_20.x | sudo bash -
-              sudo yum install -y nodejs
-            else
-              echo "Node.js v20 already installed."
-            fi
+            # Cài Node.js 18.x
+            curl -fsSL https://rpm.nodesource.com/setup_18.x | sudo bash -
+            sudo yum install -y nodejs
             node -v
             npm -v
 
-            echo "--- Checking/Installing pm2 ---"
-            # Cài pm2 nếu chưa có
-            if ! command -v pm2 &> /dev/null; then
-              echo "pm2 not found, installing..."
-              sudo npm install -g pm2
-            else
-              echo "pm2 already installed."
-            fi
-            pm2 -v
-
-      # 4. Build FRONTEND trên EC2 (bao gồm kiểm tra mạng)
-      - name: Build Frontend on EC2
+      # 5. Build FRONTEND trên EC2
+      - name: Build frontend on EC2
         uses: appleboy/ssh-action@master
         with:
           host: 13.57.34.159
           username: ec2-user
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          timeout: 1200s # Tăng thời gian timeout cho bước này (20 phút)
+          # timeout: 1800
           script: |
-            echo "--- Starting Frontend Build Process ---"
-            cd "/home/ec2-user/frontend_app"
-            
-            echo "Current directory: $(pwd)"
-            echo "Listing contents of current directory:"
-            ls -lah
-            
-            echo "--- Network Connectivity Test ---"
-            echo "Attempting to resolve registry.npmjs.org..."
-            nslookup registry.npmjs.org
-            
-            echo "Attempting to ping registry.npmjs.org..."
-            ping -c 3 registry.npmjs.org
-            
-            echo "Attempting to curl registry.npmjs.org (verbose)..."
-            curl -vI https://registry.npmjs.org/
-            
-            echo "Checking DNS configuration (/etc/resolv.conf)..."
-            cat /etc/resolv.conf
-            echo "--- End of Network Connectivity Test ---"
-            
-            echo "Attempting to clean npm cache (if issues persist)..."
-            npm cache clean --force || echo "npm cache clean failed, continuing..."
-
-            echo "Attempting 'npm install' with increased timeout and verbose logging..."
-            # Đảm bảo file package-lock.json không bị lỗi thời hoặc xung đột
-            # rm -f package-lock.json # Cân nhắc nếu gặp lỗi liên quan đến package-lock
-            npm install --verbose --timeout=600000 # Tăng timeout cho npm install lên 10 phút
-            
-            echo "Attempting 'npm run build'..."
+            cd /home/ec2-user/frontend
+            npm install
             npm run build
-            
-            echo "Listing contents of build directory:"
             ls -lah build/
-            echo "--- Frontend Build Process Completed ---"
 
-      # 5. Deploy FRONTEND build sang thư mục của Nginx
-      - name: Deploy Frontend Build to Nginx
+      # 6. Deploy FRONTEND build sang /var/www/html (hoặc folder tuỳ ý)
+      # - name: Deploy build to Apache
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     host: ${{ secrets.EC2_HOST }}
+      #     username: ${{ secrets.EC2_USER }}
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     script: |
+      #       sudo rm -rf /var/www/html/*
+      #       sudo cp -r /home/ec2-user/frontend/build/* /var/www/html/
+      #       sudo chown -R apache:apache /var/www/html
+      #       sudo chmod -R 755 /var/www/html
+      #       sudo systemctl restart httpd
+      - name: Deploy build to Nginx
         uses: appleboy/ssh-action@master
         with:
           host: 13.57.34.159
           username: ec2-user
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            echo "--- Starting Nginx Deployment ---"
-            # Kiểm tra xem Nginx đã được cài đặt chưa
-            if ! command -v nginx &> /dev/null; then
-                echo "Nginx not found, installing Nginx..."
-                sudo yum update -y
-                sudo amazon-linux-extras install nginx1 -y
-                sudo systemctl enable nginx
-                sudo systemctl start nginx
-            else
-                echo "Nginx is already installed."
-            fi
-            
-            # Kiểm tra thư mục Nginx web root
-            NGINX_WEB_ROOT="/usr/share/nginx/html"
-            if [ ! -d "$NGINX_WEB_ROOT" ]; then
-                echo "Nginx web root $NGINX_WEB_ROOT does not exist. Creating..."
-                sudo mkdir -p "$NGINX_WEB_ROOT"
-                # Hoặc bạn cần kiểm tra lại cấu hình Nginx để biết web root chính xác
-            fi
-
-            echo "Clearing old files from Nginx web root: $NGINX_WEB_ROOT"
-            sudo rm -rf "${NGINX_WEB_ROOT:?}"/* # Dấu :? đểป้องกัน xóa nhầm nếu biến rỗng
-            
-            echo "Copying new build files to Nginx web root..."
-            sudo cp -r "/home/ec2-user/frontend_app/build/"* "$NGINX_WEB_ROOT/"
-            
-            echo "Setting ownership and permissions for Nginx..."
-            sudo chown -R nginx:nginx "$NGINX_WEB_ROOT"
-            sudo chmod -R 755 "$NGINX_WEB_ROOT"
-            
-            echo "Restarting Nginx service..."
+            sudo rm -rf /usr/share/nginx/html/*
+            sudo cp -r /home/ec2-user/frontend/build/* /usr/share/nginx/html/
+            sudo chown -R nginx:nginx /usr/share/nginx/html
+            sudo chmod -R 755 /usr/share/nginx/html
             sudo systemctl restart nginx
-            sudo systemctl status nginx
-            echo "--- Nginx Deployment Completed ---"
+    
+    #   # 7. Cài đặt Backend dependencies & run
+    #   - name: Deploy backend on EC2
+    #     uses: appleboy/ssh-action@master
+    #     with:
+    #       host: 13.57.34.159
+    #       username: ec2-user
+    #       key: ${{ secrets.SSH_PRIVATE_KEY }}
+    #       script: |
+    #         cd /home/ec2-user/backend
+    #         npm install
+
+    #         # Bạn có thể build nếu có step build (TypeScript, Babel, v.v.), ví dụ:
+    #         # npm run build
+
+    #         # Dùng pm2 để chạy server (đảm bảo pm2 đã được cài)
+    #         sudo npm install -g pm2
+    #         pm2 stop my-backend || true
+    #         pm2 delete my-backend || true
+    #         pm2 start ./src/app.js --name my-backend --watch
+
+    #         # Kiểm tra pm2 status
+    #         pm2 status
