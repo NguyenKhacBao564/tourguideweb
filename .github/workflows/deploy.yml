@@ -21,7 +21,7 @@ jobs:
           username: ec2-user
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "src/"
-          target: "/home/ec2-user/"
+          target: "/home/ec2-user/web"
 
       # 3. Copy BACKEND source code lên EC2
       - name: Copy BACKEND source code to EC2
@@ -31,7 +31,7 @@ jobs:
           username: ec2-user
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "backend/"
-          target: "/home/ec2-user/"
+          target: "/home/ec2-user/web"
 
       # 4. Cài Node.js trên EC2 (nếu chưa cài)
       - name: Install Node.js & npm on EC2
@@ -56,7 +56,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           # timeout: 1800
           script: |
-            cd /home/ec2-user
+            cd /home/ec2-user/web
             npm install
             npm run build
             ls -lah build/
@@ -82,7 +82,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             sudo rm -rf /usr/share/nginx/html/*
-            sudo cp -r /home/ec2-user/src/build/* /usr/share/nginx/html/
+            sudo cp -r /home/ec2-user/web/src/build/* /usr/share/nginx/html/
             sudo chown -R nginx:nginx /usr/share/nginx/html
             sudo chmod -R 755 /usr/share/nginx/html
             sudo systemctl restart nginx
@@ -95,7 +95,7 @@ jobs:
           username: ec2-user
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /home/ec2-user/backend
+            cd /home/ec2-user/web/backend
             npm install
 
             # Bạn có thể build nếu có step build (TypeScript, Babel, v.v.), ví dụ:
