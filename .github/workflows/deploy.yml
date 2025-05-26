@@ -178,7 +178,7 @@ jobs:
     #         fi
 
       # 5. Build FRONTEND trên EC2
-      - name: Build frontend on EC2
+      - name: Build frontend on EC2 part 1
         uses: appleboy/ssh-action@master
         with:
           host: 13.57.34.159
@@ -193,6 +193,27 @@ jobs:
             
             # Cài đặt dependencies cho frontend
             npm install
+            
+            # Build frontend
+            # npm run build
+            # echo "Listing contents of build directory:"
+            # ls -lah build/
+     # 5. Build FRONTEND trên EC2 part 2
+      - name: Build frontend on EC2 part 2
+        uses: appleboy/ssh-action@master
+        with:
+          host: 13.57.34.159
+          username: ec2-user
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Di chuyển vào thư mục gốc của frontend app trên EC2
+            cd /home/ec2-user/frontend
+            echo "Current directory after cd: $(pwd)"
+            echo "Listing contents of current directory:"
+            ls -lah
+            
+            # Cài đặt dependencies cho frontend
+            # npm install
             
             # Build frontend
             npm run build
