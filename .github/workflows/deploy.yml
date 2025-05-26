@@ -59,6 +59,18 @@ jobs:
           script: |
             cd /home/ec2-user/frontend
             npm install
+            #npm run build
+            #ls -lah build/
+      - name: Build frontend on EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: 13.57.34.159
+          username: ec2-user
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          # timeout: 1800
+          script: |
+            cd /home/ec2-user/frontend
+            # npm install
             npm run build
             ls -lah build/
 
