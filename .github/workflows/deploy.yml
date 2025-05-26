@@ -20,8 +20,9 @@ jobs:
           host: 54.219.205.247
           username: ec2-user
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "./"
-          exclude: ".github/, backend/"
+        #   source: "./"
+        #   exclude: ".github/, backend/"
+          source: "src/, package.json, package-lock.json, public/"
           target: "/home/ec2-user/frontend/"
 
     #   # 3. Copy BACKEND source code lên EC2
