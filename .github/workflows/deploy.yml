@@ -26,7 +26,7 @@ jobs:
           username: ec2-user
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "./" # Copy toàn bộ thư mục gốc của repo
-          target: "/home/${{ secrets.EC2_USER }}/frontend_app/" # Thư mục đích cho frontend trên EC2
+          target: "/home/ec2-user/frontend_app/" # Thư mục đích cho frontend trên EC2
           exclude: ".github,backend" # Loại trừ thư mục .github và backend
 
       # 3. Cài đặt/Cập nhật Node.js và pm2 trên EC2
