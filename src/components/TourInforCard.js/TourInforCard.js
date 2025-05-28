@@ -7,10 +7,18 @@ import { IoIosTime } from "react-icons/io";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { MdEventSeat } from "react-icons/md";
 import { FaCar } from "react-icons/fa";
-
+import {formatDate} from "../../feature/formatDate";
+import { formatPrice } from '../../feature/formatPrice';
 
 function TourInforCard(props) {
    
+    const {tour} = props;
+
+    // const adultPrice = tourPrices.find(item => item.age_group === 'adultPrice');
+    // const childPrice = tourPrices.find(item => item.age_group === 'childPrice')?.price || '0';
+    // const infantPrice = tourPrices.find(item => item.age_group === 'infantPrice')?.price || '0';
+
+
     return (
         <Card className="tourInforCard">
              <Container className="p-3 mb-4">
@@ -21,7 +29,7 @@ function TourInforCard(props) {
                             <Col md={1} className="tour__infor--icon"><FaLocationDot/> </Col>
                             <Col className="tour_infor">
                                 <p><strong>Địa Điểm:</strong></p>
-                                <p>Đà Lạt</p>
+                                <p>{tour.destination}</p>
                             </Col>
                         </Row>
                         <Row>
@@ -37,14 +45,14 @@ function TourInforCard(props) {
                             <Col md={1} className="tour__infor--icon"><IoIosTime/></Col>
                             <Col className="tour_infor">
                                 <p><strong>Thời Lượng:</strong></p>
-                                <p>4 ngày 3 đêm</p>
+                                <p>{tour.duration} ngày {tour.duration - 1} đêm</p>
                             </Col>
                         </Row>
                         <Row>
                             <Col md={1} className="tour__infor--icon"><FaRegCalendarAlt/></Col>
                             <Col className="tour_infor">
                                 <p><strong>Ngày Khởi Hành:</strong></p>
-                                <p>20/03/2025</p>
+                                <p>{formatDate(tour.start_date)}</p>
                             </Col>
                         </Row>
                     </Col>
@@ -60,7 +68,7 @@ function TourInforCard(props) {
                             <Col md={1} className="tour__infor--icon"><FaRegCalendarAlt/></Col>
                             <Col className="tour_infor">
                                 <p><strong>Ngày Trở Về:</strong></p>
-                                <p>24/03/2025</p>
+                                <p>{formatDate(tour.end_date)}</p>
                             </Col>
                         </Row>
                     </Col>
@@ -78,14 +86,14 @@ function TourInforCard(props) {
                                 <p><strong>Người lớn</strong></p>
                                 <p>(Từ 12 tuổi trở lên)</p>
                             </Col>
-                            <Col><p className="price">4.129.000 đ</p></Col>
+                            <Col><p className="price">{formatPrice(tour.adultPrice)}</p></Col>
                         </Row>
                         <Row className="flex ">
                             <Col className="ageGroup__label">
                                 <p><strong>Trẻ em:</strong></p>
                                 <p>(Từ 4 - 11 tuổi)</p>
                             </Col>
-                            <Col><p className="price">3.129.000 đ</p></Col>
+                            <Col><p className="price">{formatPrice(tour.childPrice)}</p></Col>
                         </Row>
                     </Col>
                     <Col md="auto" className="flex-center">
@@ -97,7 +105,7 @@ function TourInforCard(props) {
                                 <p><strong>Em bé:</strong></p>
                                 <p>(Dưới 4 tuổi)</p>
                             </Col>
-                            <Col><p className="price">0 đ</p></Col>
+                            <Col><p className="price">{formatPrice(tour.infantPrice)}</p></Col>
                         </Row>
                     </Col>
                 </Row>

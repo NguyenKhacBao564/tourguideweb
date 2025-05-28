@@ -113,7 +113,7 @@ export const useTourForm = (branchId) => {
     
     // Check if all prices are valid
     const hasPrices = values.prices.every(price => 
-      parseInt(price.price.replace(/\D/g, '')) > 0
+      parseInt(price.price.replace(/\D/g, '')) >= 0
     );
     
     if (!hasPrices) {

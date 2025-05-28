@@ -16,6 +16,7 @@ const scheduleRoutes = require("./routes/scheduleRoutes");
 const customerSupportRoutes = require("./routes/customerSupportRoutes");
 const consultantSupportRoutes = require("./routes/consultantSupportRoutes");
 const chatRoutes = require("./routes/chatRoutes");
+const reviewRoutes = require("./routes/reviewRoutes");
 
 app.use(cors({
   origin: 'http://localhost:3000', // Domain của frontend
@@ -37,6 +38,7 @@ app.use("/tour-price", tourPriceRoutes);
 app.use("/schedule", scheduleRoutes);
 app.use("/api", customerSupportRoutes); // Thêm route cho support
 app.use("/api", consultantSupportRoutes);
+app.use("/reviews", reviewRoutes);
 app.listen(PORT, () => {
   console.log(`🚀 Server chạy tại http://localhost:${PORT}`);
 });
