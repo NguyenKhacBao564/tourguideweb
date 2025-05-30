@@ -45,7 +45,7 @@ function InforUser(props) {
                 name: user.name || '',
                 phone: user.phone || '',
                 address: user.address || '',
-                image: user.avatar || ''
+                image: user.avatar || null
             });
         }
     }, [user]);

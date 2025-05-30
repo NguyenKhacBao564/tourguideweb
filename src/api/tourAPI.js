@@ -21,6 +21,19 @@ export const getTourById = async (id) => {
   }
 };
 
+
+export const getTourByFilter = async (filter) => {
+  try {
+    const response = await axios.get(`${API_URL}/tours/tourfilter`, {
+      params: filter
+    });
+    console.log("Response from getTourByFilter: ", filter);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Lỗi khi lấy danh sách tour theo bộ lọc");
+  }
+}
+
 // Lấy danh sách tour nổi bật giá thấp nhất
 export const getTourOutstanding = async () => {
   try {
