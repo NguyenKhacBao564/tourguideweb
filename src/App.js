@@ -1,4 +1,5 @@
 import { Routes, Route, Link } from "react-router-dom";
+import "./styles/payment.css";
 import Page from "./pages/User/Home";
 import Register from "./pages/User/Register";
 import Login from "./pages/User/Login";
@@ -33,6 +34,9 @@ import PromotionManager from "./pages/BusinessEmployee/PromotionManager";
 import BranchInfo from "./pages/Admin/Branches/BranchInfo";
 import Checkout from "./pages/User/Checkout";
 import AddNewPromotion from "./pages/BusinessEmployee/AddNewPromotion/AddNewPromotion";
+import PaymentResult from "./pages/Payment/PaymentResult";
+import PaymentDemo from "./pages/Payment/PaymentDemo";
+import MoMoTestPage from "./pages/Payment/MoMoTestPage";
 
 function App() {
   return (
@@ -44,6 +48,9 @@ function App() {
           <Route path="/checkout" element={<Checkout />}/>
           <Route path="/booking" element={<BookingTour/>}/>
           <Route path="/user/booking-info" element={<BookingInfo/>}/>
+          <Route path="/payment/result" element={<PaymentResult />}/>
+          <Route path="/payment/demo" element={<PaymentDemo />}/>
+          <Route path="/payment/momo-test" element={<MoMoTestPage />}/>
           <Route path="/contact" element={
             <ProtectedRoute allowedRoles={["customer"]}>
               <Contact />
