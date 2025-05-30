@@ -53,18 +53,21 @@ const getTour =  async (req, res) => {
 
 const getTourByProvince = async (req, res) => {
   const province = req.params.province;
+  const limit = parseInt(req.query.limit) || 10; // Giới hạn số lượng tour trả về, mặc định là 10
+  console.log("Province:", province, "Limit:", limit);
 
   try {
     const pool = await getPool();
     // Lấy dữ liệu tour theo tỉnh và có giới hạn
     const result = await pool.request()
       .input('province', sql.NVarChar, `%${province}%`)
+      .input('limit', sql.Int, limit)
       .query(`
         WITH TOUR_SUBSET AS (
           SELECT * FROM Tour AS t WHERE t.destination LIKE @province AND t.status = 'active'
           ORDER BY t.created_at DESC
           OFFSET 0 ROWS
-          FETCH NEXT 10 ROWS ONLY
+          FETCH NEXT @limit ROWS ONLY
         )
         SELECT ts.tour_id, ts.name, ts.destination, ts.start_date, ts.max_guests, ts.duration, tp.price,
         (SELECT TOP 1 image_url 

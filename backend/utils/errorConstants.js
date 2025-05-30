@@ -27,6 +27,10 @@ const ERROR_MESSAGES = {
       code: "AUTH_006",
       message: "Không tìm thấy user trong bảng Employee",
     },
+    ACCOUNT_INACTIVE: {
+      code: "AUTH_INACTIVE",
+      message: "Tài khoản hiện không hoạt động"
+    },
   },
   API: {
     NETWORK_ERROR: {
@@ -45,5 +49,4 @@ const ERROR_MESSAGES = {
     }
   },
 };
-
 module.exports = ERROR_MESSAGES;

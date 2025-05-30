@@ -5,11 +5,16 @@ const axios = require('axios');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const app = express();
-const PORT = 5000;
+
 
 const tourRoutes = require("./routes/tourRoutes");
 const authRoutes = require("./routes/authRoutes");
 const customerRoutes = require("./routes/customerRoutes");
+const adminRoutes = require('./routes/adminRoutes'); // NKBao đã thêm
+
+require("dotenv").config();
+const PORT = process.env.PORT || 3001;
+
 const tourPriceRoutes = require("./routes/tourPriceRoutes");
 const promotionRoutes = require("./routes/promotionRoutes");
 const scheduleRoutes = require("./routes/scheduleRoutes");
@@ -34,8 +39,12 @@ app.use("/tours", tourRoutes);
 app.use("/promotions", promotionRoutes);
 app.use("/auth", authRoutes);
 app.use("/customers", customerRoutes);
+app.use("/api/admin", adminRoutes); // NKBao đã thêm
+app.use("/tourPrice", tourPriceRoutes);
+
 app.use("/tour-price", tourPriceRoutes);
 app.use("/schedule", scheduleRoutes);
+
 app.use("/api", customerSupportRoutes); // Thêm route cho support
 app.use("/api", consultantSupportRoutes);
 app.use("/reviews", reviewRoutes);

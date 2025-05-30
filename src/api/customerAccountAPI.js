@@ -1,8 +1,6 @@
 import axios from "axios";
 import { API_URL } from "../utils/API_Port";
 
-
-
 export const getCustomerAccount = async () => {
     const response = await axios.get(`${API_URL}/customers`,
         { withCredentials: true } // Đảm bảo gửi cookie

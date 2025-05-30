@@ -44,7 +44,7 @@ const ChatBox = () => {
     setInput(""); 
     try {
       // Gửi câu hỏi đến backend
-      const response = await axios.post('http://localhost:5000/chat/chatbot', { query: input });
+      const response = await axios.post('http://localhost:3001/chat/chatbot', { query: input });
       var botMessage = response.data.response;
 
       // console.log("response:", response.data);

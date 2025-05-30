@@ -9,7 +9,7 @@ import { useLocation } from "react-router-dom";
 import { API_URL } from '../utils/API_Port';
 import Spinner from 'react-bootstrap/Spinner';
 
-function Navbar({ bookingPageRef }) {
+function Navbar({ pageRef }) {
     const { user, loading } = useContext(AuthContext);
 
     // State to manage the open/close state of the navbar (mobile view)
@@ -24,9 +24,9 @@ function Navbar({ bookingPageRef }) {
     useEffect(() => {
     // Function to handle scroll event and change navbar style
         const handleScroll = () => {
-           if (bookingPageRef?.current) {
+           if (pageRef?.current) {
                 // Kiểm tra vị trí cuộn của .bookingPage
-                if (bookingPageRef.current.scrollTop > 0) {
+                if (pageRef.current.scrollTop > 0) {
                     setIsScrolled(true);
                 } else {
                     setIsScrolled(false);
@@ -41,14 +41,14 @@ function Navbar({ bookingPageRef }) {
       }
         };
         // Thêm sự kiện cuộn cho .bookingPage hoặc window
-        const scrollElement = bookingPageRef?.current || window;
+        const scrollElement = pageRef?.current || window;
         scrollElement.addEventListener("scroll", handleScroll);
         
         return () => {
             window.removeEventListener("scroll", handleScroll);
         }
    
-    },[bookingPageRef]);
+    },[pageRef]);
 
 
     return (
@@ -60,7 +60,7 @@ function Navbar({ bookingPageRef }) {
                     <li><a href="#">About us</a></li>
                     <li><a href="#">Popular Destination</a></li>
                     <li><Link to="/contact">Contact Us</Link></li>
-                    <li><a href="#">Help</a></li>
+                    <li><Link to="/tourFavourite">Tour Yêu thích</Link></li>
                     {!user && loading ? (
                         <li className="auth-loading">
                             <Spinner animation="border" size="sm" role="status">

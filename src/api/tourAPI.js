@@ -32,9 +32,11 @@ export const getTourOutstanding = async () => {
 }
 
 // Lấy danh sách tour theo tỉnh
-export const getTourByProvince = async (province) => {
+export const getTourByProvince = async (province, limit=10) => {
   try {
-    const response = await axios.get(`${API_URL}/tours/province/${province}`);
+    const response = await axios.get(`${API_URL}/tours/province/${province}`, {
+      params: { limit }
+    });
     return response.data;
   }catch(error){
     throw new Error(error.response?.data?.message || "Lỗi khi lấy danh sách tour theo tỉnh");

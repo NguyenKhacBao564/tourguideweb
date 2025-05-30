@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
 import Page from "./pages/User/Home";
 import Register from "./pages/User/Register";
 import Login from "./pages/User/Login";
@@ -6,11 +6,11 @@ import ScrollToTop from "./feature/scrollToTop";
 import Contact from "./pages/User/Contact";
 import TourManagementEmp from "./pages/BusinessEmployee/TourManagement";
 import MainLayout from "./pages/Admin/layout/MainLayout";
-import Dashboard from "./pages/Admin/Dashboard";
-import StaffManagement from "./pages/Admin/StaffManagement";
-import EmployeeProfile from "./pages/Admin/EmployeeProfile";
-import TourManagement from "./pages/Admin/TourManagement";
-import BranchManagement from "./pages/Admin/BranchManagement";
+import Dashboard from "./pages/Admin/Dashboard/Dashboard";
+import StaffManagement from "./pages/Admin/Employees/EmployeeList";
+import EmployeeProfile from "./pages/Admin/Employees/EmployeeProfile";
+import TourManagement from "./pages/Admin/Tours/TourList";
+import BranchManagement from "./pages/Admin/Branches/BranchList";
 import BusinessEmployee from "./pages/BusinessEmployee/BusinessEmployee";
 import AddNewTour from "./pages/BusinessEmployee/AddNewTour/AddNewTour";
 import InforUser from "./pages/User/InforUser";
@@ -23,12 +23,18 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./components/Unauthorized";
 import NotFound from "./pages/NotFound";
 // import AddNewPromotion from "./pages/BusinessEmployee/AddNewPromotion";
+//import UserManagement from "./pages/BusinessEmployee/UserManagement";
+import AddNewEmployee from "./pages/Admin/Employees/AddEmployee";
 import CustomerManagement from "./pages/BusinessEmployee/CustomerManagement";
 import BookingTour from "./pages/User/BookingTour";
+import BookingInfo from "./pages/User/BookingInfo";
 import { CustomerProvider } from "./context/CustomerContext";
 import PromotionManager from "./pages/BusinessEmployee/PromotionManager";
+import BranchInfo from "./pages/Admin/Branches/BranchInfo";
 import Checkout from "./pages/User/Checkout";
 import AddNewPromotion from "./pages/BusinessEmployee/AddNewPromotion/AddNewPromotion";
+import FindTour from "./pages/User/FindTour";
+import TourFavourite from "./pages/User/TourFavourite";
 
 function App() {
   return (
@@ -39,6 +45,9 @@ function App() {
           <Route path="/" element={<Page />}/>
           <Route path="/checkout" element={<Checkout />}/>
           <Route path="/booking" element={<BookingTour/>}/>
+          <Route path="/findtour" element={<FindTour/>}/>
+          <Route path="/user/booking-info" element={<BookingInfo/>}/>
+          <Route path="/tourFavourite" element={<TourFavourite/>}/>
           <Route path="/contact" element={
             <ProtectedRoute allowedRoles={["customer"]}>
               <Contact />
@@ -94,10 +103,12 @@ function App() {
           }>
               {/* <Route index element={<Dashboard />} /> */}
               <Route path="dashboard" element={<Dashboard />} />
-              <Route path="nhan-vien" element={<StaffManagement />} />
-              <Route path="nhan-vien/:id" element={<EmployeeProfile />} />
-              <Route path="quan-ly-tour" element={<TourManagement />} />
-              <Route path="quan-ly-chi-nhanh" element={<BranchManagement />} />
+              <Route path="staffManagement" element={<StaffManagement />} />
+              <Route path="staffManagement/:id" element={<EmployeeProfile />} />
+              <Route path="staffManagement/addNewEmployee" element={<AddNewEmployee />} />
+              <Route path="tourManagement" element={<TourManagement />} />
+              <Route path="branchManagement" element={<BranchManagement />} />
+              <Route path="branchManagement/:id" element={<BranchInfo />} />
           </Route>
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="*" element={<NotFound />} />

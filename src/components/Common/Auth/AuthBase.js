@@ -11,22 +11,12 @@ const AuthBase = ({
   error, 
   errorCode,
   success, 
-  handleSubmit
+  handleSubmit,
+  showError
 }) => {
-  const [showError, setShowError] = useState(false);
+  // const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   
-  // Effect để xử lý hiển thị và tự động ẩn thông báo lỗi
-  useEffect(() => {
-    if (error) {
-      setShowError(true);
-      // Tự động ẩn thông báo lỗi sau 1 giây
-      const timer = setTimeout(() => {
-        setShowError(false);
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [error]);
 
   // Effect để xử lý hiển thị và tự động ẩn thông báo thành công
   useEffect(() => {

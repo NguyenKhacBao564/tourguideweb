@@ -10,7 +10,7 @@ import { addReview} from '../../api/reviewAPI';
 function ReviewFilter(props) {
   const { tour_id } = props;
   console.log("Tour ID in ReviewFilter:", tour_id);
-  const { user } = useContext(AuthContext);
+  const { user, loading } = useContext(AuthContext);
 
   const [values, setValues] = useState({
     content: '',
@@ -63,16 +63,19 @@ function ReviewFilter(props) {
 
   return (
     <div className="review-filter">
-      <Form onSubmit={handleSubmit}>
-        <div className="review-input-header">
-          <Image
-            src={user ? `${API_URL}/${user.avatar}` : 'default-avatar.png'}
-            roundedCircle
-            className="user-avatar"
-          />
-          <span>{user ? user.name : 'Khách'}</span>
-        </div>
-        <Form.Group className="mb-3">
+      { loading ? (
+        <div className="loading-spinner">Loading...</div>
+      ) : (
+        <Form onSubmit={handleSubmit}>
+          <div className="review-input-header">
+            <Image
+              src={user?.avatar  ? `${API_URL}/${user.avatar}` : `/default-avatar.jpg`}
+              roundedCircle
+              className="user-avatar"
+            />
+            <span>{user ? user.name : 'Khách'}</span>
+          </div>
+          <Form.Group className="mb-3">
           <Form.Control
             as="textarea"
             rows={4}
@@ -96,7 +99,7 @@ function ReviewFilter(props) {
         <Button variant="primary" type="submit" className="submit-btn">
           Gửi đánh giá
         </Button>
-      </Form>
+      </Form>)}
     </div>
   );
 }

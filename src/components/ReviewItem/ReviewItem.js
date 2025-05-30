@@ -10,7 +10,7 @@ function ReviewItem(props) {
     
     return (
         <div className="review-item" key={review.id}>
-            <img className="avatar" src={`${API_URL}/${review.avatar}`} alt={review.name} />
+            <img className="avatar" src={review.avatar ? `${API_URL}/${review.avatar}` : '/default-avatar.jpg'} alt={review.name} />
             <div className="review-content">
                 <div className="review-info">
                     <span className="name">{review.name}</span>

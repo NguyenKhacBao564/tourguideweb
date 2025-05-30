@@ -1,4 +1,4 @@
-import React, {use, useRef, useState, useEffect} from 'react';
+import React, { useRef, useState, useEffect} from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import "../../styles/pages/BookingTour.scss";
 import Card from 'react-bootstrap/Card';
@@ -18,32 +18,72 @@ import { getTourImages} from '../../api/imageAPI';
 import { getTourById } from '../../api/tourAPI';
 import {getItinerary} from '../../api/scheduleAPI';
 import { formatPrice } from '../../feature/formatPrice';
+import { useNavigate } from 'react-router-dom';
+import { getStatsResults } from '../../api/reviewAPI';
+import { getTourByProvince } from '../../api/tourAPI';
 
 function BookingTour(props) {
     const bookingPageRef = useRef(null); // Tạo ref cho .bookingPage để sử dụng trong Navbar
-    const [searchParams] = useSearchParams();
+    const relatedToursRef = useRef(null);
+    const [searchParams] = useSearchParams(); // Sử dụng useSearchParams để lấy query parameters
+    // Lấy tourId từ query parameters
     const tourId = searchParams.get('id');
     const [isLoading, setIsLoading] = useState(true);
     console.log("Tour ID:", tourId); // Kiểm tra giá trị tourId
     const [imageIndex, setImageIndex] = useState(0);
     const [images, setImages] = useState([]); // Lưu trữ hình ảnh của tour
-
-    const [tour, setTour] = useState({});
+    const [tour, setTour] = useState({});   // Lưu trữ thông tin tour
+    const [tours, setTours] = useState([]); // Lưu trữ danh sách tour liên quan
+    const [isLoadingRelatedTours, setIsLoadingRelatedTours] = useState(false); // Loading cho tour liên quan
     const [schedules, setSchedules] = useState([]);
+    const [stats, setStats] = useState({});
+    const navigate = useNavigate();
+    
+    console.log("BookingTour component rendered");
+    const currentTour = {
+    name: "Du lịch Đà Lạt - Samten Hills - Puppy Farm - Langbiang - Gallery La Chocotea - Thác Bobla",
+    start: "TP. HCM",
+    code: "43210",
+    date: "24/03/2025",
+    priceAdult: 4129000,
+    priceChild: 1990000,
+    priceBaby: 0,
+    image: "https://i.imgur.com/e2UnpdB.jpg"
+    };
 
+     // Cuộn về đầu trang và reset trạng thái khi tourId thay đổi
+    
+ // Redirect if no tourId is provided
+    useEffect(() => {
+        if (!tourId) {
+            navigate('/unauthorized', { replace: true }); // Redirect to tours list page
+            return;
+        }
 
+        window.scrollTo(0, 0);
+        setTours([]);
+        setImages([]);
+        setSchedules([]);
+        setStats({});
+        setTour({});
+        setImageIndex(0);
+    }, [tourId, navigate]);
 
     useEffect(() => {
         const fetchTour = async () => {
             setIsLoading(true);
+            
             console.log("is loading...")
             const tourData = await getTourById(tourId);
             const scheduleData = await getItinerary(tourId);
             const imageData = await getTourImages(tourId);
+            const statsData = await getStatsResults(tourId);
+
             console.log("Image data:", imageData); // Kiểm tra dữ liệu hình ảnh
             setTour(tourData);
             setSchedules(scheduleData);
             setImages(imageData);
+            setStats(statsData);
             console.log("Schedule data:", scheduleData); // Kiểm tra dữ liệu lịch trình
             console.log("get data success...")
             setIsLoading(false);
@@ -52,92 +92,65 @@ function BookingTour(props) {
         
     }, [tourId]);
 
+    // Intersection Observer để tải 8 tour liên quan
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && tours.length === 0) {
+                    const fetchRelatedTours = async () => {
+                        if (!tour.destination) return; // Kiểm tra tour.province
+                        setIsLoadingRelatedTours(true);
+                        try {
+                            const relatedTours = await getTourByProvince(tour.destination, 8); // Lấy tối đa 8 tour
+                            const filteredTours = relatedTours.filter(t => t.tour_id !== tourId);
+                            setTours(filteredTours); // Loại bỏ tour hiện tại
+                            console.log("Related tours fetched:", filteredTours);
+                        } catch (error) {
+                            console.error("Error fetching related tours:", error);
+                        } finally {
+                            setIsLoadingRelatedTours(false);
+                        }
+                    };
+                    fetchRelatedTours();
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        if (relatedToursRef.current) {
+            observer.observe(relatedToursRef.current);
+        }
+
+        return () => {
+            if (relatedToursRef.current) {
+                observer.unobserve(relatedToursRef.current);
+            }
+        };
+    }, [tourId, tour.destination, tours.length]);
+    
+
     console.log("Tour data:", tour); // Kiểm tra dữ liệu tour
 
-    // const images = [
-    //     {
-    //         src: "https://dulichtoday.vn/wp-content/uploads/2017/04/vinh-Ha-Long.jpg",
-    //         alt: "Image 1",
-    //     },
-    //     {
-    //         src: "https://dulichtoday.vn/wp-content/uploads/2017/04/vinh-Ha-Long.jpg",
-    //         alt: "Image 2",
-    //     },
-    //     {
-    //         src: "https://media.hanamtv.vn/upload/image/201708/medium/49847_Du-Lich_1-01.jpg",
-    //         alt: "Image 3",
-    //     },
-    //     {
-    //         src: "https://thoibaonganhang.vn/stores/news_dataimages/canhnq/042023/13/20/1419_du-lich-ninh-binh-721.jpg",
-    //         alt: "Image 4",
-    //     },
-    //     {
-    //         src: "https://images.vietnamtourism.gov.vn/vn/images/2020/Thang_9/_DSC3768.JPG",
-    //         alt: "Image 5",
-    //     }
-    // ]
+   
+    const handleBookNow = () => {
+        navigate('/user/booking-info', { state: { tour: currentTour } });
+    };
 
-    const tours = [
-        {
-            cover_image: `${API_URL}/uploads/1745472098120-963422392.jpg`,
-            name:"Tour 1",
-            duration: "2 ngày 1 đêm",
-            transport: "Xe máy",
-            max_guest: "90",
-            start_date: "09/09/2025"
-        },
-        {
-            cover_image: `${API_URL}/uploads/1745472098120-963422392.jpg`,
-            name:"Tour 1",
-            duration: "2 ngày 1 đêm",
-            transport: "Xe máy",
-            max_guest: "90",
-            start_date: "09/09/2025"
-        },
-        {
-            cover_image: `${API_URL}/uploads/1745472098120-963422392.jpg`,
-            name:"Tour 1",
-            duration: "2 ngày 1 đêm",
-            transport: "Xe máy",
-            max_guest: "90",
-            start_date: "09/09/2025"
-        },
-        {
-            cover_image: `${API_URL}/uploads/1745472098120-963422392.jpg`,
-            name:"Tour 1",
-            duration: "2 ngày 1 đêm",
-            transport: "Xe máy",
-            max_guest: "90",
-            start_date: "09/09/2025"
-        },
-        {
-            cover_image: `${API_URL}/uploads/1745472098120-963422392.jpg`,
-            name:"Tour 1",
-            duration: "2 ngày 1 đêm",
-            transport: "Xe máy",
-            max_guest: "90",
-            start_date: "09/09/2025"
-        },
-        {
-            cover_image: `${API_URL}/uploads/1745472098120-963422392.jpg`,
-            name:"Tour 1",
-            duration: "2 ngày 1 đêm",
-            transport: "Xe máy",
-            max_guest: "90",
-            start_date: "09/09/2025"
-        }
-    ]
     return (
         <div className="bookingPage" ref={bookingPageRef}>
-            <Navbar bookingPageRef={bookingPageRef}/>
+            <Navbar pageRef={bookingPageRef}/>
             <Container className="bookingContent"  >
                 <Row>
                     <Col md={9} className="bookingContent-left">
                         <h1>{tour.name}</h1>
                         <div className="d-flex align-items-center mb-3">
                             <span className="me-2">{tour.destination}</span>
-                            <span className="text-warning">★★★★★</span>
-                            <span className="ms-2 text-muted">(348 đánh giá)</span>
+                            <span className="text-warning">
+                                {[1,2,3,4,5].map(i => (
+                                    <span key={i} className={i <= stats.average_rating ? "star filled" : "star"}>★</span>
+                                ))}
+                            </span>
+                            <span className="ms-2 text-muted">{stats.total_reviews} đánh giá</span>
                         </div>
                         {/*Vùng hiển thị hình ảnh */}
                         <Container className="mb-4 p-0">
@@ -200,7 +213,11 @@ function BookingTour(props) {
                         <hr className="my-4"></hr>
 
                         <h3 className="section-title">Đánh giá của du khách</h3>
-                        <ReviewSection tour_id={tourId} />
+                        <ReviewSection 
+                            num_reviews={stats.total_reviews}  
+                            avg_rating={stats.average_rating}
+                            tour_id={tourId} 
+                        />
 
                         {/* <hr className="my-4"></hr> */}
 
@@ -213,7 +230,7 @@ function BookingTour(props) {
                                 <h6>Giá</h6>
                                 <h4 className="text-danger text-center fw-bold">{formatPrice(tour.adultPrice)} đ<span style={{fontWeight: 'bold', color: "black", fontSize: '15px'}}>/ Khách</span></h4>
                                 <Card.Text as="div">
-                                     <Button variant="custom-primary" className="mb-2 w-100">Đặt Tour</Button>
+                                     <Button variant="custom-primary" className="mb-2 w-100" onClick={handleBookNow}>Đặt Tour</Button>
                                 </Card.Text>
                                 <Card.Text>
                                     <Button variant="custom-secondary" className="mb-2 w-100">
@@ -228,16 +245,22 @@ function BookingTour(props) {
                     </Col>
                 </Row>
                 
-                <div className='my-md-5'>
+                <div className='my-md-5' ref={relatedToursRef}>
                     <h2 className="tour-relevant py-md-3 text-center">Các tour liên quan</h2>
                     <Container className="tourlist-container">
-                        <Row className="custom-row g-3" xs={1} sm={2} md={3} xl={3} xxl={4}>
-                        {tours.map((tour) => (
-                            <Col key={tour.tour_id} className="custom-col">
-                            <TourCard {...tour} />
-                            </Col>
-                        ))}
-                        </Row>
+                             {isLoadingRelatedTours ? (
+                            <p className="text-center">Đang tải các tour liên quan...</p>
+                        ) : tours.length === 0 ? (
+                            <p className="text-center">Không có tour liên quan</p>
+                        ) : (
+                            <Row className="custom-row g-3" xs={1} sm={2} md={3} xl={3} xxl={4}>
+                                {tours.map((tour) => (
+                                    <Col key={tour.tour_id} className="custom-col">
+                                        <TourCard {...tour} />
+                                    </Col>
+                                ))}
+                            </Row>
+                        )}
                         {/* <div className="show-all-container">
                         <ShowAllButton />
                         </div> */}
@@ -245,9 +268,6 @@ function BookingTour(props) {
                 </div>
             </Container>
             
-
-            
-
             {/* <Container className="tour-relevant" >
                 <h3 className="section-title">Các tour liên quan</h3>
                 <TourList tours={tours}/>

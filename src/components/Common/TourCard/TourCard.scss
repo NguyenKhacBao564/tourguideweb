@@ -41,9 +41,12 @@
       justify-content: center;
       cursor: pointer;
       font-size: 18px;
-      color: red;
+      color: rgba(100, 100, 100, 0.534);
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
       transition: background 0.3s ease;
+      &.filled{
+        color: #E01600 !important;
+      }
       &:hover{
         background: white;
       }
