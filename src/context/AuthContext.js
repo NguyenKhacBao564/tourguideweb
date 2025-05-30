@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
     };
     
     // Các trang không cần chuyển hướng về trang chính của role
-    const exemptPages = ["/thongtin"];
+    const exemptPages = ["/thongtin",'/booking'];
     
     // Nếu đang ở trang được miễn trừ (như trang thông tin cá nhân), không chuyển hướng
     if (exemptPages.some(page => currentPath.includes(page))) {
@@ -117,8 +117,8 @@ export const AuthProvider = ({ children }) => {
     return authenticateUser(loginUser, email, password);
   };
 
-  const regist = async (fullname, email, password, phone) => {
-    return authenticateUser(registerUser, fullname, email, password, phone);
+  const regist = async (fullname, email, password, phone, date_of_birth) => {
+    return authenticateUser(registerUser, fullname, email, password, phone, date_of_birth );
   };
 
 

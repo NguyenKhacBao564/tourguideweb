@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock, faCar, faUsers, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FaCalendarAlt } from "react-icons/fa";
@@ -7,24 +7,26 @@ import { API_URL } from "../../../utils/API_Port";
 import "./TourCard.scss";
 import { useNavigate } from 'react-router';
 function TourCard(props) {
+    const [tourFavourite, settourFavourite] = useState(false);
     const navigate = useNavigate();
     const handleBooking = () => {
         // Truyền id qua query parameter
         console.log("click đặt tour")
         const tourId = props.tour_id; // Giả định props có id, nếu không cần điều chỉnh
-        navigate(`/booking?id=${tourId}`);
+        window.location.href = `/booking?id=${tourId}`;
+        // navigate(`/booking?id=${tourId}`);
     };
 
     const adultPrice = Number(props.price).toLocaleString('vi-VN');
 
     // console.log(props.prices);
     return (
-        <div className="tour-card">
+        <div className="tour-card" >
             <div className="tour-card__image-container">
-                {/* Biểu tượng khuyến mãi */}
-                <div className="tour-card__discount">-20%</div>
+                {/* Biểu tượng khuyến mãi
+                <div className="tour-card__discount">-20%</div> */}
                 {/* Nút yêu thích */}
-                <button className="tour-card__favorite">
+                <button className={`tour-card__favorite ${tourFavourite ? "filled" : ""}`} onClick={() => settourFavourite(!tourFavourite)}>
                     <FontAwesomeIcon icon={faHeart} />
                 </button>
 

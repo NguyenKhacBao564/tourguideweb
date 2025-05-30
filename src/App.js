@@ -37,6 +37,8 @@ import AddNewPromotion from "./pages/BusinessEmployee/AddNewPromotion/AddNewProm
 import PaymentResult from "./pages/Payment/PaymentResult";
 import PaymentDemo from "./pages/Payment/PaymentDemo";
 import MoMoTestPage from "./pages/Payment/MoMoTestPage";
+import FindTour from "./pages/User/FindTour";
+import TourFavourite from "./pages/User/TourFavourite";
 
 function App() {
   return (
@@ -47,10 +49,12 @@ function App() {
           <Route path="/" element={<Page />}/>
           <Route path="/checkout" element={<Checkout />}/>
           <Route path="/booking" element={<BookingTour/>}/>
+          <Route path="/findtour" element={<FindTour/>}/>
           <Route path="/user/booking-info" element={<BookingInfo/>}/>
           <Route path="/payment/result" element={<PaymentResult />}/>
           <Route path="/payment/demo" element={<PaymentDemo />}/>
           <Route path="/payment/momo-test" element={<MoMoTestPage />}/>
+          <Route path="/tourFavourite" element={<TourFavourite/>}/>
           <Route path="/contact" element={
             <ProtectedRoute allowedRoles={["customer"]}>
               <Contact />

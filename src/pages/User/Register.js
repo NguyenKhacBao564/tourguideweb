@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import FormInput from '../../components/Common/FormInput/FormInput';
 import AuthBase from '../../components/Common/Auth/AuthBase';
 import authInputs from '../../utils/AuthInput';
@@ -11,13 +11,39 @@ function Register() {
     username: '', 
     phone: '', 
     email: '', 
+    date_of_birth: '',
     password: '', 
     confirmPassword: '' 
   });
   const [error, setError] = useState(null);
   const [errorCode, setErrorCode] = useState(null);
   const [success, setSuccess] = useState(null);
-  
+  const [showError, setShowError] = useState(false); // Thêm trạng thái showError
+
+  // Hàm tính tuổi từ ngày sinh
+  const calculateAge = (dob) => {
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
+  // Effect để tự động ẩn thông báo lỗi
+    useEffect(() => {
+      if (error) {
+        setShowError(true);
+        const timer = setTimeout(() => {
+          setShowError(false);
+          setError(null); // Reset error after showing
+        }, 1000);
+        return () => clearTimeout(timer);
+      }
+    }, [error]);
+
   const onChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
@@ -31,11 +57,23 @@ function Register() {
       return;
     }
     
+    // Kiểm tra tuổi
+    if (values.date_of_birth) {
+      const age = calculateAge(values.date_of_birth);
+      if (age < 18) {
+        setError("Bạn phải trên 18 tuổi để đăng ký!");
+        return;
+      }
+    } else {
+      setError("Vui lòng nhập ngày sinh!");
+      return;
+    }
+
     try {
       //Reset lại các state
       setError(null);
       setErrorCode(null);
-      await regist(values.username, values.email, values.password, values.phone);
+      await regist(values.username, values.email, values.password, values.phone, values.date_of_birth);
       setSuccess("Đăng ký thành công! Chuyển hướng về trang chủ.");
       // setValues({ username: '', phone: '', email: '', password: '', confirmPassword: '' });
     } catch (error) {
@@ -53,6 +91,7 @@ function Register() {
       errorCode={errorCode}
       success={success} 
       handleSubmit={handleSubmit}
+      showError={showError} // Truyền trạng thái showError vào AuthBase
     >
       {/* Form inputs specific to register */}
       {authInputs.register.map(input => (

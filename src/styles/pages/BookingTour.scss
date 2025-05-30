@@ -3,7 +3,6 @@
 
 .bookingPage {
   overflow-y: scroll;
-  border: 5px solid red;
   height: 100vh;
   min-height: 100vh;
 
@@ -11,6 +10,33 @@
     margin-top: calc(#{$navbar-height} + 20px);
     // border: 1px solid rgb(0, 89, 255);
     min-height: 100vh;
+
+    // Container của ảnh chính
+    .main-image-container {
+      width: 100%;
+      height: 500px; // Chiều cao cố định cho ảnh chính
+      overflow: hidden; // Ẩn phần ảnh thừa
+      border-radius: 5px; // Bo góc nhẹ
+    }
+
+    // Ảnh chính
+    .main-image {
+      width: 100%;
+      height: 100%; // Kéo dài theo container
+      object-fit: cover; // Giữ tỷ lệ, cắt bớt phần thừa
+      object-position: center; // Căn giữa ảnh
+    }
+    .thumbnail-image {
+      width: 15%;
+      cursor: pointer;
+      transition: opacity 0.3s ease, transform 0.3s ease, border 0.3s ease;
+
+      &:hover {
+        opacity: 0.8; // Làm mờ nhẹ (giữ từ trước)
+        transform: scale(1.1); // Phóng to nhẹ
+      }
+    }
+
     h1{
         padding: 0;
         margin: 0;
@@ -30,7 +56,7 @@
       // border: 1px solid #0a47f0;
       // min-height: 100vh;
       .booking-card-sticky {
-        margin-top: 50px;
+        margin-top: 100px;
         position: sticky;
         top: calc(#{$navbar-height} + 50px); /* Khoảng cách từ top để tránh bị Navbar che khuất */
         z-index: 1; /* Đảm bảo card không bị các phần tử khác đè lên */
@@ -51,7 +77,13 @@
 }
 
 
-
+.star {
+    color: #ddd;
+    font-size: 1.5rem;
+    &.filled {
+      color: #f7b500;
+    }
+}
 
 
 .btn-custom-primary {

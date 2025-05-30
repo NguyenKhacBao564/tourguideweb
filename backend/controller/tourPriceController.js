@@ -15,6 +15,24 @@ const getTourPrice = async (req, res) => {
     
 }
 
+
+const getTourPriceById = async (req, res) => {
+    try{
+        const tour_id = req.params.tour_id;
+        const pool = await getPool();
+        const result =  await pool.request()
+        .input("tour_id", sql.NVarChar, tour_id)
+        .query("SELECT * FROM Tour_price WHERE tour_id = @tour_id");
+        
+        return res.status(200).json(result.recordset);
+    } catch (error) {
+        return res.status(500).json({error: error.message});
+    }
+    
+}
+
+
+
 const getAllTourPrice = async (req, res) => {
     try{
         const pool = await getPool();
@@ -43,10 +61,7 @@ const updateTourPrice = async (transaction, tour_id, prices) =>{
 const addTourPrice = async (transaction, tour_id, listPrice) => {
     for (const item of listPrice) {
         const {age_group, price} = item;
-
-        if (!age_group || !price) {
-            throw new Error('Thiếu dữ liệu!');
-        }
+        console.log("item: ", item);
         // const formatPrice = price.replace(/\./g, '')
         const tourPriceRequest = transaction.request();
         await tourPriceRequest

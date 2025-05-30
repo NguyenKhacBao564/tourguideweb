@@ -1,10 +1,11 @@
 // src/pages/User/BookingInfo.js
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Form, Button, Row, Col, Card, InputGroup } from "react-bootstrap";
 import { FaMapMarkerAlt, FaCalendarAlt, FaUser, FaUsers, FaBaby } from "react-icons/fa";
 import NavBar from '../../layouts/Navbar';
 import "../../styles/pages/BookingInfo.scss";
+import { AuthContext } from '../../context/AuthContext';
 
 const defaultPassenger = (type) => ({
   type, // 'adult', 'child', 'baby'
@@ -16,6 +17,7 @@ const defaultPassenger = (type) => ({
 const BookingInfo = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
   
   // Lấy dữ liệu tour từ location.state hoặc context
   const tour = location.state?.tour || {
@@ -46,6 +48,7 @@ const BookingInfo = () => {
   ]);
   const [payment, setPayment] = useState("bank");
   const [agree, setAgree] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   // Tính tổng tiền
   const total = adults * tour.priceAdult + children * tour.priceChild + babies * tour.priceBaby;
@@ -74,14 +77,33 @@ const BookingInfo = () => {
   // Xử lý submit
   const handleSubmit = (e) => {
     e.preventDefault();
+    setSubmitted(true);
+
+    // Kiểm tra contact
+    if (
+      !contact.fullname.trim() ||
+      !contact.phone.trim() ||
+      !contact.email.trim() ||
+      !contact.address.trim()
+    ) {
+      return;
+    }
+
+    // Kiểm tra từng passenger
+    for (let p of passengers) {
+      if (!p.fullname.trim() || !p.gender.trim() || !p.dob.trim()) {
+        return;
+      }
+    }
+
     if (!agree) {
       alert("Bạn phải đồng ý với các điều khoản!");
       return;
     }
-    
+
     // Tạo booking code
     const bookingCode = `${Date.now().toString().slice(-8)}VPHXB`;
-    
+
     navigate("/checkout", {
       state: {
         contact,
@@ -94,6 +116,18 @@ const BookingInfo = () => {
       }
     });
   };
+
+  // Auto-fill contact info from user context
+  useEffect(() => {
+    if (user) {
+      setContact({
+        fullname: user.name || '',
+        phone: user.phone || '',
+        email: user.email || '',
+        address: user.address || ''
+      });
+    }
+  }, [user]);
 
   return (
     <div style={{background: '#f7f8fa', minHeight: '100vh'}}>
@@ -130,7 +164,9 @@ const BookingInfo = () => {
                           placeholder="Nhập họ tên"
                           className="form-input"
                         />
-                        <div className="validation-text">Thông tin bắt buộc</div>
+                        {submitted && !contact.fullname && (
+                          <div className="validation-text">Thông tin bắt buộc</div>
+                        )}
                       </Form.Group>
                     </Col>
                     <Col md={6} className="mb-3">
@@ -143,7 +179,9 @@ const BookingInfo = () => {
                           placeholder="Nhập số điện thoại"
                           className="form-input"
                         />
-                        <div className="validation-text">Thông tin bắt buộc</div>
+                        {submitted && !contact.phone && (
+                          <div className="validation-text">Thông tin bắt buộc</div>
+                        )}
                       </Form.Group>
                     </Col>
                     <Col md={6} className="mb-3">
@@ -157,7 +195,9 @@ const BookingInfo = () => {
                           placeholder="Nhập email"
                           className="form-input"
                         />
-                        <div className="validation-text">Thông tin bắt buộc</div>
+                        {submitted && !contact.email && (
+                          <div className="validation-text">Thông tin bắt buộc</div>
+                        )}
                       </Form.Group>
                     </Col>
                     <Col md={6} className="mb-3">
@@ -170,7 +210,9 @@ const BookingInfo = () => {
                           placeholder="Nhập địa chỉ"
                           className="form-input"
                         />
-                        <div className="validation-text">Thông tin bắt buộc</div>
+                        {submitted && !contact.address && (
+                          <div className="validation-text">Thông tin bắt buộc</div>
+                        )}
                       </Form.Group>
                     </Col>
                   </Row>
@@ -304,7 +346,9 @@ const BookingInfo = () => {
                                 placeholder="Nhập họ tên"
                                 className="form-input"
                               />
-                              <div className="validation-text">Thông tin bắt buộc</div>
+                              {submitted && !p.fullname && (
+                                <div className="validation-text">Thông tin bắt buộc</div>
+                              )}
                             </Form.Group>
                           </Col>
                           <Col md={4} className="mb-3">
@@ -324,7 +368,9 @@ const BookingInfo = () => {
                                 <option value="Nam">Nam</option>
                                 <option value="Nữ">Nữ</option>
                               </Form.Select>
-                              <div className="validation-text">Thông tin bắt buộc</div>
+                              {submitted && !p.gender && (
+                                <div className="validation-text">Thông tin bắt buộc</div>
+                              )}
                             </Form.Group>
                           </Col>
                           <Col md={4} className="mb-3">
@@ -341,7 +387,9 @@ const BookingInfo = () => {
                                 }}
                                 className="form-input"
                               />
-                              <div className="validation-text">Thông tin bắt buộc</div>
+                              {submitted && !p.dob && (
+                                <div className="validation-text">Thông tin bắt buộc</div>
+                              )}
                             </Form.Group>
                           </Col>
                         </Row>

@@ -3,10 +3,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot, faUser, faCalendarDays, faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 import styles from "./SearchBar.module.scss";
 import SearchbarMobile from "./SearchbarMobile";
-
+import {useNavigate}   from "react-router-dom";
 const Searchbar = (props) => {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
-
+    const navigate = useNavigate();
     const toggleSearch = () => {
         setIsSearchOpen(!isSearchOpen);
     };
@@ -49,7 +49,7 @@ const Searchbar = (props) => {
                     <input type="date" className={styles.searchInput} /> 
                 </div>
 
-                <button className={styles.searchButton}>Search</button>
+                <button className={styles.searchButton} onClick={()=> navigate("/findtour")}>Search</button>
             </div>
         </div>
     );
