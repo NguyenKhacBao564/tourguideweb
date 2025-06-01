@@ -11,7 +11,7 @@ import Spinner from 'react-bootstrap/Spinner';
 
 function Navbar({ pageRef }) {
     const { user, loading } = useContext(AuthContext);
-
+    console.log("Navbar user:", user);
     // State to manage the open/close state of the navbar (mobile view)
     const [isOpen, setIsOpen] = useState(false);
     
@@ -60,7 +60,7 @@ function Navbar({ pageRef }) {
                     <li><a href="#">About us</a></li>
                     <li><a href="#">Popular Destination</a></li>
                     <li><Link to="/contact">Contact Us</Link></li>
-                    <li><Link to="/tourFavourite">Tour Yêu thích</Link></li>
+                    <li><Link to="/tourFavorite">Tour Yêu thích</Link></li>
                     {!user && loading ? (
                         <li className="auth-loading">
                             <Spinner animation="border" size="sm" role="status">

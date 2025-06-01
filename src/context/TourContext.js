@@ -98,10 +98,10 @@ export const TourProvider = ({ children }) => {
     }
   };
 
-  const handleGetTourByProvince = async (province) => {
+  const handleGetTourByProvince = async (province, limit, cusId) => {
     try {
       setIsLoading(true);
-      const result = await getTourByProvince(province);
+      const result = await getTourByProvince(province, limit, cusId);
       setError(null);
       return result;
     } catch (err) {
@@ -112,10 +112,10 @@ export const TourProvider = ({ children }) => {
     }
   };
 
-  const handleGetTourOutstanding = async () => {
+  const handleGetTourOutstanding = async (cusID) => {
     try {
       setIsLoading(true);
-      const result = await getTourOutstanding();
+      const result = await getTourOutstanding(cusID);
       setError(null);
       return result;
     } catch (err) {

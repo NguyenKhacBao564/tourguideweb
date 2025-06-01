@@ -47,7 +47,11 @@ function App() {
           <Route path="/booking" element={<BookingTour/>}/>
           <Route path="/findtour" element={<FindTour/>}/>
           <Route path="/user/booking-info" element={<BookingInfo/>}/>
-          <Route path="/tourFavourite" element={<TourFavourite/>}/>
+          <Route path="/tourFavorite" element={
+            <ProtectedRoute allowedRoles={["customer"]}>
+              <TourFavourite/>
+            </ProtectedRoute>
+          }/>
           <Route path="/contact" element={
             <ProtectedRoute allowedRoles={["customer"]}>
               <Contact />

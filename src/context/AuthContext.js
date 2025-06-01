@@ -25,8 +25,8 @@ export const AuthProvider = ({ children }) => {
       Admin: "/admin/dashboard",
     };
     
-    // Các trang không cần chuyển hướng về trang chính của role
-    const exemptPages = ["/thongtin",'/booking'];
+    // Các trang không cần chuyển hướng về trang chính của role khi reset
+    const exemptPages = ["/thongtin",'/booking','/tourFavorite','/contact'];
     
     // Nếu đang ở trang được miễn trừ (như trang thông tin cá nhân), không chuyển hướng
     if (exemptPages.some(page => currentPath.includes(page))) {
@@ -39,17 +39,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-//   // Trong AuthContext.js
-// const fetchUser = async () => {
-//   try {
-//     const response = await getUserData(token);
-//     const userData = response.user;   
-//     console.log("userData: ", userData)
-//     return userData;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
 
   //Kiểm tra token và gửi request đến server để lấy thông tin user  
   // Kiểm tra token khi khởi động

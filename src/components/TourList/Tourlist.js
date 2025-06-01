@@ -8,7 +8,7 @@ import ShowAllButton from "../Common/Button/ShowAllButton";
 import "./TourList.scss";
 
 function Tourlist(props) {
-  const { tours, isLoading, error } = props;
+  const { tours, isLoading, error, onChangeFavoriteTour } = props;
   console.log(tours);
   if (isLoading) return <div className="loading">Đang tải...</div>;
   if (error) return <div className="error">Lỗi: {error.message}</div>;
@@ -19,7 +19,7 @@ function Tourlist(props) {
         <Row className="custom-row g-3" xs={1} sm={2} md={3} xl={4} xxl={5}>
           {tours.map((tour) => (
             <Col key={tour.tour_id} className="custom-col">
-              <TourCard {...tour} />
+              <TourCard {...tour}  onFavoriteChange={onChangeFavoriteTour}/>
             </Col>
           ))}
         </Row>

@@ -29,7 +29,7 @@ const Searchbar = (props) => {
         );
     }
 
-    console.log("Searchbar values: ", values);
+    // console.log("Searchbar values: ", values);
     // // Xử lý thay đổi giá trị dropdown
     // const handleBudgetChange = (e) => {
     //     setBudget(e.target.value);

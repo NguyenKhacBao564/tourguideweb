@@ -100,8 +100,8 @@ function Touroutstanding(props) {
   };
 
   // const { getTourOutstanding } = useContext(TourContext);
-  const {tours, loading, error} = props;
-  
+  const {tours, loading, error, onChangeFavoriteTour} = props;
+
   if (loading) return <div className='loading'>Đang tải...</div>;
   if (error) return <div className='error'>Lỗi: {error.message}</div>;
 
@@ -114,7 +114,7 @@ function Touroutstanding(props) {
       <Slider {...settings}>
         {tours.map((tour) => (
           <div key={tour.id} style={{ padding: '0 10px' }}>
-            <TourCard  {...tour} className='Tourout' />
+            <TourCard  {...tour} className='Tourout' onFavoriteChange={onChangeFavoriteTour}/>
           </div>
         ))}
       </Slider>

@@ -10,15 +10,17 @@ import provinceFilter from '../utils/provinceFilter'; // Nhập categories từ 
 import { TourContext } from '../context/TourContext';
 import FloatingChatButton from './ChatBot/FloatingChat';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 
 function Maincontent() {
   
   const navigate = useNavigate();
+  const { user, loading } = useContext(AuthContext);
   const { getTourByProvince, getTourOutstanding } = useContext(TourContext);
   const [index, setIndex] = useState(0);
   const [toursByProvince, setToursByProvince] = useState([]);
   const [toursOutstanding, setToursOutstanding] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const handleDiscovery = (province) => {
@@ -26,27 +28,40 @@ function Maincontent() {
     navigate("/findtour", {
       state: { filterInfor: { destination: province } }
     });
-
   };
 
-  useEffect(() => {
-    const fetchTours = async () => {
+  
+  const fetchTours = async () => {
       try {
-        const toursByProvince = await getTourByProvince(provinceFilter[index].name);
-        console.log("toursByProvince: ", toursByProvince)
+        if (loading) {
+          console.log("Đang tải thông tin xác thực...");
+          return; // Chờ xác thực hoàn tất
+        }
+        setError(null);
+        // console.log("Lấy danh sách tour cho id ", user ? user.id : "không có người dùng");
+        const toursByProvince = await getTourByProvince(provinceFilter[index].name, 10, user ? user.id : null); // Truyền user.id
         setToursByProvince(toursByProvince);
-        const toursOutstanding = await getTourOutstanding();
-        console.log("toursOutstanding: ", toursOutstanding)
+        const toursOutstanding = await getTourOutstanding(user ? user.id : null); // Truyền user.id nếu có
         setToursOutstanding(toursOutstanding);
-        setLoading(false);
       } catch (err) {
+        console.log("Lỗi khi lấy danh sách tour: ", err);
         setError(err.message);
-        setLoading(false);
       }
     };
-    fetchTours();
-  }, [index]);
-  
+
+    const handleChangeFavoriteTour = async () => {
+      // Cập nhật danh sách tour yêu thích
+      console.log("Cập nhật danh sách tour yêu thích HOME CONTENT");
+      await fetchTours();
+      console.log("Đã cập nhật danh sách tour yêu thích");
+      // window.location.reload()
+    };
+
+
+  useEffect(() => {
+      fetchTours();
+  }, [index, user, loading]);
+
 
   return (
     <div className='maincontent'>
@@ -87,8 +102,8 @@ function Maincontent() {
       </Carousel>
       <FloatingChatButton/>
       <h1 className="tourlist_Label">Các tour nổi bật</h1>
-      <Tourlist tours={toursByProvince} loading={loading} error={error} />
-      <Touroutstanding tours={toursOutstanding} loading={loading} error={error} />
+      <Tourlist tours={toursByProvince} loading={loading} error={error} onChangeFavoriteTour={handleChangeFavoriteTour}/>
+      <Touroutstanding tours={toursOutstanding} loading={loading} error={error} onChangeFavoriteTour={handleChangeFavoriteTour}/>
       <StatsOverview />
     </div>
   );

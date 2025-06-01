@@ -16,7 +16,7 @@ const getTour =  async (req, res) => {
         LEFT JOIN Tour_Price AS tp 
         ON t.tour_id = tp.tour_id WHERE t.status = 'active'`);
 
-      // Nhóm dữ liệu theo tour_id
+    // Nhóm dữ liệu theo tour_id
     const toursMap = {};
     result.recordset.forEach((row) => {
       if (!toursMap[row.tour_id]) {
@@ -54,15 +54,45 @@ const getTour =  async (req, res) => {
 const getTourByProvince = async (req, res) => {
   const province = req.params.province;
   const limit = parseInt(req.query.limit) || 10; // Giới hạn số lượng tour trả về, mặc định là 10
+  const cusId = req.query.cusId; // Lấy cusId từ query params nếu có
+  console.log("Get tours by province with param    efffefffs:", req.query);
   console.log("Province:", province, "Limit:", limit);
 
   try {
     const pool = await getPool();
-    // Lấy dữ liệu tour theo tỉnh và có giới hạn
-    const result = await pool.request()
-      .input('province', sql.NVarChar, `%${province}%`)
-      .input('limit', sql.Int, limit)
-      .query(`
+    
+    let query;
+    if (cusId) {
+      // Nếu có cusId, lấy thêm thông tin yêu thích
+      query = `
+        WITH TOUR_SUBSET AS (
+          SELECT * FROM Tour AS t WHERE t.destination LIKE @province AND t.status = 'active'
+          ORDER BY t.created_at DESC
+          OFFSET 0 ROWS
+          FETCH NEXT @limit ROWS ONLY
+        )
+        SELECT ts.tour_id, ts.name, ts.destination, ts.start_date, ts.max_guests, ts.duration, tp.price,
+        (SELECT TOP 1 image_url 
+          FROM Tour_image ti 
+          WHERE ti.tour_id = ts.tour_id 
+          ORDER BY image_id ASC
+        ) AS cover_image,
+        CASE 
+          WHEN EXISTS (
+            SELECT 1 FROM Favorite_Tour ft 
+            WHERE ft.tour_id = ts.tour_id AND ft.cus_id = @cusId
+          ) THEN 1 
+          ELSE 0 
+        END AS is_favorite,
+        (SELECT ft.fav_id 
+           FROM Favorite_Tour ft 
+           WHERE ft.tour_id = ts.tour_id AND ft.cus_id = @cusId) AS fav_id
+        FROM TOUR_SUBSET ts
+        LEFT JOIN Tour_Price AS tp ON ts.tour_id = tp.tour_id AND tp.age_group = 'adultPrice'
+      `;
+    } else {
+      // Nếu không có cusId, không lấy thông tin yêu thích
+      query = `
         WITH TOUR_SUBSET AS (
           SELECT * FROM Tour AS t WHERE t.destination LIKE @province AND t.status = 'active'
           ORDER BY t.created_at DESC
@@ -76,8 +106,16 @@ const getTourByProvince = async (req, res) => {
           ORDER BY image_id ASC
         ) AS cover_image
         FROM TOUR_SUBSET ts
-        LEFT JOIN Tour_Price AS tp ON ts.tour_id = tp.tour_id and tp.age_group = 'adultPrice'
-      `);
+        LEFT JOIN Tour_Price AS tp ON ts.tour_id = tp.tour_id AND tp.age_group = 'adultPrice'
+      `;
+    }
+
+    const result = await pool.request()
+      .input('province', sql.NVarChar, `%${province}%`)
+      .input('limit', sql.Int, limit)
+      .input('cusId', sql.NVarChar, cusId || null) // Truyền cusId hoặc null
+      .query(query);
+
     const toursMap = {};
     result.recordset.forEach((row) => {
       if (!toursMap[row.tour_id]) {
@@ -89,38 +127,109 @@ const getTourByProvince = async (req, res) => {
           max_guests: row.max_guests,
           duration: row.duration,
           price: row.price, //price không có 's'
-          cover_image: row.cover_image || 'uploads\\default.jpg'
+          cover_image: row.cover_image || 'uploads\\default.jpg',
+          ...(cusId && {
+              is_favorite: row.is_favorite === 1, // Chỉ thêm nếu có cusId
+              fav_id: row.fav_id || null // Chỉ thêm nếu có cusId
+          })
         };
       }
     });
     const tours = Object.values(toursMap);
     return res.status(200).json(tours);
   } catch (error) {
+    console.log("Error fetching tours by province:", error);
     return res.status(500).json({ error: error.message });
   }
 };
 
 const getTourOutstanding = async (req, res) => {
+  const cusId = req.query.cusId; // Lấy cusId từ query params nếu có
+  console.log("Get outstanding tours with cusId:", cusId);
   try {
     const pool = await getPool();
-    const result = await pool.request()
-    .query(`SELECT 
-              t.tour_id, t.name, t.destination, t.start_date, t.max_guests, t.duration, tp.price,
-              ti.image_url AS cover_image
+
+    let query;
+    if (cusId) {
+      query = `
+          WITH TOUR_SUBSET AS (
+          SELECT 
+            t.tour_id, t.name, t.destination, t.start_date, t.max_guests, t.duration, tp.price
+          FROM Tour AS t
+          LEFT JOIN Tour_Price AS tp 
+            ON t.tour_id = tp.tour_id AND tp.age_group = 'adultPrice'
+          WHERE t.status = 'active'
+          ORDER BY tp.price ASC
+          OFFSET 0 ROWS
+          FETCH NEXT 10 ROWS ONLY
+        )
+        SELECT 
+          ts.tour_id, ts.name, ts.destination, ts.start_date, ts.max_guests, ts.duration, ts.price,
+          (SELECT TOP 1 image_url 
+            FROM Tour_image ti 
+            WHERE ti.tour_id = ts.tour_id 
+            ORDER BY image_id ASC
+          ) AS cover_image,
+          CASE 
+            WHEN EXISTS (
+              SELECT 1 FROM Favorite_Tour ft 
+              WHERE ft.tour_id = ts.tour_id AND ft.cus_id = @cusId
+            ) THEN 1 
+            ELSE 0 
+          END AS is_favorite,
+          (SELECT ft.fav_id 
+            FROM Favorite_Tour ft 
+            WHERE ft.tour_id = ts.tour_id AND ft.cus_id = @cusId
+          ) AS fav_id
+        FROM TOUR_SUBSET ts
+        `;
+    } else {
+        query = `
+           WITH TOUR_SUBSET AS (
+            SELECT 
+              t.tour_id, t.name, t.destination, t.start_date, t.max_guests, t.duration, tp.price
             FROM Tour AS t
             LEFT JOIN Tour_Price AS tp 
               ON t.tour_id = tp.tour_id AND tp.age_group = 'adultPrice'
-            LEFT JOIN (
-              SELECT tour_id, MIN(image_url) AS image_url
-              FROM Tour_image
-              GROUP BY tour_id
-            ) ti 
-              ON t.tour_id = ti.tour_id
             WHERE t.status = 'active'
             ORDER BY tp.price ASC
             OFFSET 0 ROWS
             FETCH NEXT 10 ROWS ONLY
-        `);
+          )
+          SELECT 
+            ts.tour_id, ts.name, ts.destination, ts.start_date, ts.max_guests, ts.duration, ts.price,
+            (SELECT TOP 1 image_url 
+            FROM Tour_image ti 
+            WHERE ti.tour_id = ts.tour_id 
+            ORDER BY image_id ASC
+            ) AS cover_image
+          FROM TOUR_SUBSET ts
+        `;
+    }
+
+    const result = await pool.request()
+      .input('cusId', sql.NVarChar, cusId || null) // Truyền cusId hoặc null
+      .query(query);
+
+
+    // const result = await pool.request()
+    // .query(`SELECT 
+    //           t.tour_id, t.name, t.destination, t.start_date, t.max_guests, t.duration, tp.price,
+    //           ti.image_url AS cover_image
+    //         FROM Tour AS t
+    //         LEFT JOIN Tour_Price AS tp 
+    //           ON t.tour_id = tp.tour_id AND tp.age_group = 'adultPrice'
+    //         LEFT JOIN (
+    //           SELECT tour_id, MIN(image_url) AS image_url
+    //           FROM Tour_image
+    //           GROUP BY tour_id
+    //         ) ti 
+    //           ON t.tour_id = ti.tour_id
+    //         WHERE t.status = 'active'
+    //         ORDER BY tp.price ASC
+    //         OFFSET 0 ROWS
+    //         FETCH NEXT 10 ROWS ONLY
+    //     `);
         const toursMap = {};
         result.recordset.forEach((row) => {
           if (!toursMap[row.tour_id]) {
@@ -132,7 +241,11 @@ const getTourOutstanding = async (req, res) => {
               max_guests: row.max_guests,
               duration: row.duration,
               price: row.price, //price không có 's'
-              cover_image: row.cover_image || 'uploads\\default.jpg'
+              cover_image: row.cover_image || 'uploads\\default.jpg',
+              ...(cusId && {
+              is_favorite: row.is_favorite === 1, // Chỉ thêm nếu có cusId
+              fav_id: row.fav_id || null // Chỉ thêm nếu có cusId
+          })
             };
           }
         }
