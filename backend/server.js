@@ -12,6 +12,7 @@ const authRoutes = require("./routes/authRoutes");
 const customerRoutes = require("./routes/customerRoutes");
 const adminRoutes = require('./routes/adminRoutes'); // NKBao đã thêm
 const paymentRoutes = require('./routes/paymentRoutes'); // VNPay payment routes
+const bookingRoutes = require('./routes/bookingRoutes'); // Booking routes
 
 require("dotenv").config();
 const PORT = process.env.PORT || 3001;
@@ -42,6 +43,7 @@ app.use("/auth", authRoutes);
 app.use("/customers", customerRoutes);
 app.use("/api/admin", adminRoutes); // NKBao đã thêm
 app.use("/api/payment", paymentRoutes); // VNPay payment routes
+app.use("/api/booking", bookingRoutes); // Booking routes
 app.use("/tourPrice", tourPriceRoutes);
 
 app.use("/tour-price", tourPriceRoutes);

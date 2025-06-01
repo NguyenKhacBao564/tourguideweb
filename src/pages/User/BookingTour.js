@@ -40,16 +40,6 @@ function BookingTour(props) {
     const navigate = useNavigate();
     
     console.log("BookingTour component rendered");
-    const currentTour = {
-    name: "Du lịch Đà Lạt - Samten Hills - Puppy Farm - Langbiang - Gallery La Chocotea - Thác Bobla",
-    start: "TP. HCM",
-    code: "43210",
-    date: "24/03/2025",
-    priceAdult: 4129000,
-    priceChild: 1990000,
-    priceBaby: 0,
-    image: "https://i.imgur.com/e2UnpdB.jpg"
-    };
 
      // Cuộn về đầu trang và reset trạng thái khi tourId thay đổi
     
@@ -133,7 +123,7 @@ function BookingTour(props) {
 
    
     const handleBookNow = () => {
-        navigate('/user/booking-info', { state: { tour: currentTour } });
+        navigate('/user/booking-info', { state: { tour: tour, tourId: tourId } });
     };
 
     return (

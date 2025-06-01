@@ -18,6 +18,13 @@ const PaymentResult = () => {
         const message = searchParams.get('message');
         const orderId = searchParams.get('orderId');
 
+        console.log('🔍 PaymentResult received parameters:', {
+          success,
+          message,
+          orderId,
+          allParams: Object.fromEntries(searchParams)
+        });
+
         if (success === 'true') {
           // Thanh toán thành công - lấy thông tin chi tiết
           if (orderId) {
@@ -63,6 +70,7 @@ const PaymentResult = () => {
       }
     };
 
+    console.log('🚀 PaymentResult component mounted, processing payment result...');
     processPaymentResult();
   }, [searchParams]);
 
@@ -246,16 +254,7 @@ const PaymentResult = () => {
                   Về trang chủ
                 </Button>
                 
-                {paymentResult?.success ? (
-                  <Button 
-                    variant="success" 
-                    size="lg"
-                    onClick={() => navigate('/user/booking-info')}
-                  >
-                    <i className="fas fa-list me-2"></i>
-                    Xem booking
-                  </Button>
-                ) : (
+                {!paymentResult?.success && (
                   <Button 
                     variant="warning" 
                     size="lg"

@@ -56,22 +56,25 @@ router.post('/create-payment-url', async (req, res) => {
 // Xử lý VNPay return URL (GET)
 router.get('/vnpay-return', async (req, res) => {
   try {
-    console.log('VNPay return params:', req.query);
+    console.log('📝 VNPay return params received:', req.query);
     
     const result = await PaymentService.handleVNPayReturn(req.query);
+    console.log('✅ VNPay return result:', result);
     
     // Redirect về frontend với kết quả
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
     const redirectUrl = `${frontendUrl}/payment/result?success=${result.success}&message=${encodeURIComponent(result.message)}&orderId=${result.orderId || ''}`;
     
+    console.log('🔄 Redirecting to:', redirectUrl);
     res.redirect(redirectUrl);
   } catch (error) {
-    console.error('Error handling VNPay return:', error);
+    console.error('❌ Error handling VNPay return:', error);
     
     // Redirect về frontend với lỗi
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
     const redirectUrl = `${frontendUrl}/payment/result?success=false&message=${encodeURIComponent(error.message || 'Lỗi xử lý kết quả thanh toán')}`;
     
+    console.log('🔄 Error redirect to:', redirectUrl);
     res.redirect(redirectUrl);
   }
 });
@@ -120,13 +123,21 @@ router.get('/payment-info/:orderId', async (req, res) => {
 // Tạo thanh toán MoMo
 router.post('/create-momo-payment', async (req, res) => {
   try {
-    const { bookingId, amount, customerInfo, tourInfo, phoneNumber } = req.body;
+    const { bookingId, amount, customerInfo, tourInfo, phoneNumber, tour_id, cus_id } = req.body;
     
     // Validate input
     if (!bookingId || !amount || !customerInfo || !tourInfo) {
       return res.status(400).json({
         success: false,
         message: 'Thiếu thông tin bắt buộc'
+      });
+    }
+
+    // Validate tour_id và cus_id
+    if (!tour_id || !cus_id) {
+      return res.status(400).json({
+        success: false,
+        message: 'tour_id và cus_id là bắt buộc'
       });
     }
 
@@ -142,7 +153,9 @@ router.post('/create-momo-payment', async (req, res) => {
       amount,
       customerInfo,
       tourInfo,
-      phoneNumber: phoneNumber || customerInfo.phone
+      phoneNumber: phoneNumber || customerInfo.phone,
+      tour_id,
+      cus_id
     });
 
     res.json(result);

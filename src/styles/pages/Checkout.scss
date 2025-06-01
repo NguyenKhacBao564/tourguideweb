@@ -51,3 +51,38 @@
     }
   }
 }
+
+// Checkout Page Styles
+@import '../variables'; // Import variables
+
+// Main container spacing to avoid NavBar overlap
+.checkout-container {
+  padding-top: calc(#{$navbar-height} + 2rem) !important;
+}
+
+// Back button styles for checkout
+.back-button-checkout {
+  color: #222 !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #1a237e !important;
+  }
+}
+
+// Responsive styles for checkout
+@media (max-width: 768px) {
+  .checkout-container {
+    padding-top: calc(#{$navbar-height} + 1rem) !important;
+  }
+  
+  .back-button-checkout {
+    font-size: 14px;
+  }
+}

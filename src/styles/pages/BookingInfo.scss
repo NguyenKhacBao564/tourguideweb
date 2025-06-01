@@ -1,4 +1,27 @@
 // BookingInfo Page Styles
+@import '../variables'; // Import variables
+
+// Main container spacing to avoid NavBar overlap
+.booking-info-container {
+  padding-top: calc(#{$navbar-height} + 2rem) !important;
+}
+
+// Breadcrumb/Back button styles
+.back-button {
+  color: #6b7280 !important;
+  text-decoration: none !important;
+  font-size: 14px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #1a237e !important;
+  }
+}
+
 .booking-card {
   border: none;
   border-radius: 12px;
@@ -250,10 +273,11 @@
 // Booking summary styles
 .booking-summary {
   position: sticky;
-  top: 2rem;
+  top: calc(#{$navbar-height} + 1rem);
   border: none;
   border-radius: 12px;
   overflow: hidden;
+  z-index: 999; // Thấp hơn NavBar (z-index: 1000) để không đè lên khi cuộn
 
   .summary-header {
     background: #f3f4f6;
@@ -411,6 +435,10 @@
 
 // Responsive design
 @media (max-width: 768px) {
+  .booking-info-container {
+    padding-top: calc(#{$navbar-height} + 1rem) !important;
+  }
+
   .booking-card .card-body {
     padding: 1rem;
   }
@@ -428,6 +456,7 @@
   .booking-summary {
     position: static;
     margin-top: 2rem;
+    top: auto; // Reset sticky position on mobile
   }
 
   .price-total {

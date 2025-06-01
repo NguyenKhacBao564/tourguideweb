@@ -39,6 +39,8 @@ import PaymentDemo from "./pages/Payment/PaymentDemo";
 import MoMoTestPage from "./pages/Payment/MoMoTestPage";
 import FindTour from "./pages/User/FindTour";
 import TourFavourite from "./pages/User/TourFavourite";
+import AboutUs from './pages/User/AboutUs';
+import AdminAccounts from "./pages/Admin/Accounts/AdminAccounts";
 
 function App() {
   return (
@@ -71,6 +73,7 @@ function App() {
           <Route path="/sale" element={<p>sale</p>} />
           <Route path="/support" element={<p>support</p>} />
           <Route path="/unauthorized" element={<Unauthorized />} />
+          <Route path="/about-us" element={<AboutUs />} />
           <Route path="*" element={<NotFound/>} />
 
           {/* Business Employee Routes */}
@@ -116,6 +119,7 @@ function App() {
               <Route path="tourManagement" element={<TourManagement />} />
               <Route path="branchManagement" element={<BranchManagement />} />
               <Route path="branchManagement/:id" element={<BranchInfo />} />
+              <Route path="accounts" element={<AdminAccounts />} />
           </Route>
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="*" element={<NotFound />} />

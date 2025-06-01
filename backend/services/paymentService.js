@@ -54,31 +54,34 @@ class PaymentService {
   // Tạo thanh toán MoMo
   static async createMoMoPayment(bookingData) {
     try {
-      const { bookingId, amount, customerInfo, tourInfo, phoneNumber } = bookingData;
+      const { bookingId, amount, customerInfo, tourInfo, phoneNumber, tour_id, cus_id } = bookingData;
       
       console.log('🔄 Creating MoMo payment...');
-      console.log('Booking data:', { bookingId, amount, phoneNumber: phoneNumber ? '***masked***' : 'missing' });
+      console.log('Booking data:', { bookingId, amount, tour_id, cus_id, phoneNumber: phoneNumber ? '***masked***' : 'missing' });
       
       // Validate required fields
       if (!phoneNumber) {
         throw new Error('Số điện thoại là bắt buộc cho thanh toán MoMo');
       }
 
+      if (!tour_id || !cus_id) {
+        throw new Error('tour_id và cus_id là bắt buộc');
+      }
+
       // Generate order ID and external ID
       const orderId = MoMoUtils.generateOrderId();
       const orderInfo = `Thanh toan tour ${tourInfo.name} - Khach hang ${customerInfo.name}`;
       
-      // For test environment, we'll simulate the MoMo payment process
-      // In production, you would call the actual MoMo API
-      
-      // Save payment info to database (with simplified booking creation)
+      // Save payment info to database (with proper booking creation)
       const paymentId = await this.savePaymentInfoWithBooking({
         orderId,
         bookingId,
         amount,
         paymentMethod: 'MOMO',
         customerInfo,
-        tourInfo
+        tourInfo,
+        tour_id,
+        cus_id
       });
 
       // Call real MoMo API to create payment
@@ -91,7 +94,9 @@ class PaymentService {
           bookingId,
           customerName: customerInfo.name,
           customerEmail: customerInfo.email,
-          tourName: tourInfo.name
+          tourName: tourInfo.name,
+          tour_id,
+          cus_id
         })
       });
       
@@ -129,22 +134,26 @@ class PaymentService {
       await transaction.begin();
       console.log('✅ Transaction started');
       
-      const { orderId, bookingId, amount, paymentMethod, customerInfo, tourInfo } = paymentData;
+      const { orderId, bookingId, amount, paymentMethod, customerInfo, tourInfo, tour_id, cus_id } = paymentData;
       
-      // Try to create a minimal booking record first
+      // Try to create a proper booking record first
       try {
         const bookingQuery = `
-          INSERT INTO Booking (booking_id) 
-          SELECT @bookingId
+          INSERT INTO Booking (booking_id, cus_id, tour_id, booking_date, total_price, status) 
+          SELECT @bookingId, @cus_id, @tour_id, GETDATE(), @amount, 'pending'
           WHERE NOT EXISTS (SELECT 1 FROM Booking WHERE booking_id = @bookingId)
         `;
         
         const bookingRequest = new sql.Request(transaction);
         bookingRequest.input('bookingId', sql.VarChar(20), bookingId);
+        bookingRequest.input('cus_id', sql.Int, cus_id);
+        bookingRequest.input('tour_id', sql.Int, tour_id);
+        bookingRequest.input('amount', sql.Decimal(18, 2), amount);
         await bookingRequest.query(bookingQuery);
-        console.log('✅ Minimal booking record created/verified');
+        console.log('✅ Booking record created/verified with full data');
       } catch (bookingError) {
-        console.log('⚠️ Could not create booking record, continuing without foreign key...');
+        console.log('⚠️ Could not create booking record:', bookingError.message);
+        console.log('Continuing with payment creation only...');
       }
       
       // Insert vào bảng Payments
@@ -165,7 +174,9 @@ class PaymentService {
         customer_email: customerInfo.email,
         tour_name: tourInfo.name,
         tour_description: tourInfo.description || '',
-        participants: tourInfo.participants || 1
+        participants: tourInfo.participants || 1,
+        tour_id,
+        cus_id
       });
       
       console.log('📝 Executing payment SQL query...');

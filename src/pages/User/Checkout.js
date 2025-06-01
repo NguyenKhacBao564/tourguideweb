@@ -1,14 +1,16 @@
-import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Card, Button, Row, Col, Form, Alert, Spinner, Modal } from "react-bootstrap";
-import { FaChevronDown, FaCalendarAlt, FaMapMarkerAlt, FaBus, FaCreditCard, FaQrcode, FaMobileAlt, FaUniversity } from "react-icons/fa";
+import React, { useState, useEffect, useContext } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Container, Row, Col, Card, Form, Button, Modal, Alert, Spinner } from 'react-bootstrap';
+import { FaChevronDown, FaCalendarAlt, FaMapMarkerAlt, FaBus, FaCreditCard, FaMobileAlt, FaUniversity, FaQrcode, FaCheckCircle, FaExternalLinkAlt } from 'react-icons/fa';
 import NavBar from '../../layouts/Navbar';
+import '../../styles/pages/Checkout.scss';
 import { createPaymentUrl, createMoMoPayment, formatCurrency, validatePaymentData } from '../../api/paymentAPI';
-import "../../styles/pages/Checkout.scss";
+import { AuthContext } from '../../context/AuthContext';
 
 const Checkout = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
   
   // State cho thanh toán
   const [loading, setLoading] = useState(false);
@@ -71,9 +73,12 @@ const Checkout = () => {
           startDate: tour.startDate || '2024-03-20',
           endDate: tour.endDate || '2024-03-24',
           participants: passengers.length || 1,
-          duration: `${tour.startDate} - ${tour.endDate}`
+          duration: `${tour.startDate} - ${tour.endDate}`,
+          tour_id: tour.tour_id
         },
-        phoneNumber: contact.phone
+        phoneNumber: contact.phone,
+        tour_id: tour.tour_id,
+        cus_id: user?.id
       };
 
       // Validate dữ liệu
@@ -204,8 +209,8 @@ const Checkout = () => {
   return (
     <div style={{background: '#f7f8fa', minHeight: '100vh'}}>
       <NavBar />
-      <div className="container py-4">
-        <a href="/" style={{color: '#222', fontWeight: 500, textDecoration: 'none', fontSize: 16}}>&larr; Quay lại trang chủ</a>
+      <div className="container py-4 checkout-container">
+        <a href="/" className="back-button-checkout">&larr; Quay lại trang chủ</a>
         <h2 className="text-center mb-4" style={{fontWeight: 700, color: "#1a237e", letterSpacing: 1}}>THANH TOÁN</h2>
         <Row>
           <Col md={7}>

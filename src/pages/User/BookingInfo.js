@@ -6,6 +6,7 @@ import { FaMapMarkerAlt, FaCalendarAlt, FaUser, FaUsers, FaBaby } from "react-ic
 import NavBar from '../../layouts/Navbar';
 import "../../styles/pages/BookingInfo.scss";
 import { AuthContext } from '../../context/AuthContext';
+import { createBooking, createBookingDetail } from '../../api/bookingAPI';
 
 const defaultPassenger = (type) => ({
   type, // 'adult', 'child', 'baby'
@@ -19,18 +20,12 @@ const BookingInfo = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   
-  // Lấy dữ liệu tour từ location.state hoặc context
-  const tour = location.state?.tour || {
-    name: "Du lịch Đà Lạt - Samten Hills - Puppy Farm - Langbiang - Gallery La Chocotea - Thác Bobla",
-    start: "TP. HCM",
-    code: "43210",
-    date: "24/03/2025",
-    returnDate: "24/03/2025",
-    priceAdult: 4390000,
-    priceChild: 3990000,
-    priceBaby: 0,
-    image: "https://via.placeholder.com/300x200"
-  };
+  // Lấy dữ liệu tour từ location.state
+  const tour = location.state?.tour || {};
+  const tourId = location.state?.tourId || '';
+  
+  console.log('Tour data received:', tour);
+  console.log('Tour ID received:', tourId);
 
   // State cho form
   const [contact, setContact] = useState({ 
@@ -40,18 +35,31 @@ const BookingInfo = () => {
     address: "" 
   });
   const [adults, setAdults] = useState(1);
-  const [children, setChildren] = useState(1);
+  const [children, setChildren] = useState(0);
   const [babies, setBabies] = useState(0);
   const [passengers, setPassengers] = useState([
-    { ...defaultPassenger("adult") },
-    { ...defaultPassenger("child") }
+    { ...defaultPassenger("adult") }
   ]);
-  const [payment, setPayment] = useState("bank");
+  const [payment, setPayment] = useState("vnpay");
   const [agree, setAgree] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Tính tổng tiền
-  const total = adults * tour.priceAdult + children * tour.priceChild + babies * tour.priceBaby;
+  // Tính tổng tiền - sử dụng giá từ tour thực tế
+  const getPrice = (type) => {
+    switch(type) {
+      case 'adult':
+        return tour.adultPrice || 0;
+      case 'child':
+        return tour.childPrice || 0;
+      case 'baby':
+        return tour.infantPrice || 0;
+      default:
+        return 0;
+    }
+  };
+
+  const total = adults * getPrice('adult') + children * getPrice('child') + babies * getPrice('baby');
 
   // Xử lý tăng/giảm số lượng hành khách
   const handleChangeCount = (type, delta) => {
@@ -74,47 +82,109 @@ const BookingInfo = () => {
     });
   };
 
-  // Xử lý submit
-  const handleSubmit = (e) => {
+  // Xử lý submit - tạo booking và booking details
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitted(true);
+    setIsLoading(true);
 
-    // Kiểm tra contact
-    if (
-      !contact.fullname.trim() ||
-      !contact.phone.trim() ||
-      !contact.email.trim() ||
-      !contact.address.trim()
-    ) {
-      return;
-    }
-
-    // Kiểm tra từng passenger
-    for (let p of passengers) {
-      if (!p.fullname.trim() || !p.gender.trim() || !p.dob.trim()) {
+    try {
+      // Kiểm tra contact
+      if (
+        !contact.fullname.trim() ||
+        !contact.phone.trim() ||
+        !contact.email.trim() ||
+        !contact.address.trim()
+      ) {
+        alert('Vui lòng điền đầy đủ thông tin liên lạc!');
+        setIsLoading(false);
         return;
       }
-    }
 
-    if (!agree) {
-      alert("Bạn phải đồng ý với các điều khoản!");
-      return;
-    }
-
-    // Tạo booking code
-    const bookingCode = `${Date.now().toString().slice(-8)}VPHXB`;
-
-    navigate("/checkout", {
-      state: {
-        contact,
-        passengers,
-        tour,
-        total,
-        payment,
-        bookingCode,
-        bookingDate: new Date().toLocaleString('vi-VN')
+      // Kiểm tra từng passenger
+      for (let p of passengers) {
+        if (!p.fullname.trim() || !p.gender.trim() || !p.dob.trim()) {
+          alert('Vui lòng điền đầy đủ thông tin hành khách!');
+          setIsLoading(false);
+          return;
+        }
       }
-    });
+
+      if (!agree) {
+        alert("Bạn phải đồng ý với các điều khoản!");
+        setIsLoading(false);
+        return;
+      }
+
+      // Sử dụng user.id thay vì user.cus_id
+      const customerId = user?.id;
+      if (!customerId) {
+        alert('Không thể xác định thông tin khách hàng. Vui lòng thử lại!');
+        setIsLoading(false);
+        return;
+      }
+
+      // Bước 1: Tạo booking
+      console.log('Creating booking for:', { tourId, customerId });
+      const bookingResponse = await createBooking(tourId, customerId);
+      const bookingId = bookingResponse.booking_id;
+      
+      console.log('Booking created with ID:', bookingId);
+
+      // Bước 2: Tạo booking details
+      const bookingDetails = [];
+      
+      if (adults > 0) {
+        bookingDetails.push({
+          age_group: 'adultPrice',
+          quantity: adults,
+          price_per_person: getPrice('adult')
+        });
+      }
+      
+      if (children > 0) {
+        bookingDetails.push({
+          age_group: 'childPrice',
+          quantity: children,
+          price_per_person: getPrice('child')
+        });
+      }
+      
+      if (babies > 0) {
+        bookingDetails.push({
+          age_group: 'infantPrice',
+          quantity: babies,
+          price_per_person: getPrice('baby')
+        });
+      }
+
+      console.log('Creating booking details:', { bookingId, tourId, bookingDetails });
+      const detailResponse = await createBookingDetail(bookingId, tourId, bookingDetails);
+      
+      console.log('Booking details created successfully');
+
+      // Điều hướng đến trang thanh toán
+      navigate("/checkout", {
+        state: {
+          contact,
+          passengers,
+          tour,
+          total,
+          payment,
+          bookingId,
+          bookingDate: new Date().toLocaleString('vi-VN'),
+          adults,
+          children,
+          babies
+        }
+      });
+
+    } catch (error) {
+      console.error('Error during booking process:', error);
+      alert('Có lỗi xảy ra khi đặt tour: ' + error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Auto-fill contact info from user context
@@ -132,10 +202,10 @@ const BookingInfo = () => {
   return (
     <div style={{background: '#f7f8fa', minHeight: '100vh'}}>
       <NavBar />
-      <div className="container py-4">
+      <div className="container py-4 booking-info-container">
         {/* Breadcrumb */}
         <div className="mb-3">
-          <a href="/" style={{color: '#666', textDecoration: 'none', fontSize: 14}}>
+          <a href="/" className="back-button">
             ← Quay lại
           </a>
         </div>
@@ -408,15 +478,6 @@ const BookingInfo = () => {
                   <div className="payment-options">
                     <Form.Check
                       type="radio"
-                      id="payment-bank"
-                      name="payment"
-                      label="Chuyển khoản"
-                      checked={payment === "bank"}
-                      onChange={() => setPayment("bank")}
-                      className="payment-option mb-3"
-                    />
-                    <Form.Check
-                      type="radio"
                       id="payment-vnpay"
                       name="payment"
                       label={
@@ -508,13 +569,13 @@ const BookingInfo = () => {
               <Card.Body>
                 <div className="tour-summary mb-3">
                   <div className="tour-image mb-3">
-                    <img src={tour.image} alt={tour.name} className="img-fluid rounded" />
+                    <img src={tour.image || "https://via.placeholder.com/300x200"} alt={tour.name} className="img-fluid rounded" />
                   </div>
-                  <h6 className="tour-name">{tour.name}</h6>
+                  <h6 className="tour-name">{tour.name || 'Tên tour'}</h6>
                   <div className="tour-details">
                     <div className="detail-item">
                       <span className="detail-label">Mã tour:</span>
-                      <span className="detail-value text-danger fw-bold">{tour.code}</span>
+                      <span className="detail-value text-danger fw-bold">{tour.tour_id || tour.code || 'N/A'}</span>
                     </div>
                   </div>
                 </div>
@@ -526,21 +587,21 @@ const BookingInfo = () => {
                       <FaCalendarAlt className="info-icon" />
                       <div>
                         <div className="info-label">Ngày đi:</div>
-                        <div className="info-value">{tour.date}</div>
+                        <div className="info-value">{tour.startDate || tour.date || 'N/A'}</div>
                       </div>
                     </Col>
                     <Col xs={6} className="info-item">
                       <FaCalendarAlt className="info-icon" />
                       <div>
                         <div className="info-label">Ngày về:</div>
-                        <div className="info-value">{tour.returnDate}</div>
+                        <div className="info-value">{tour.endDate || tour.returnDate || 'N/A'}</div>
                       </div>
                     </Col>
                     <Col xs={6} className="info-item">
                       <FaMapMarkerAlt className="info-icon" />
                       <div>
                         <div className="info-label">Nơi khởi hành:</div>
-                        <div className="info-value">{tour.start}</div>
+                        <div className="info-value">{tour.departureLocation || tour.start || 'N/A'}</div>
                       </div>
                     </Col>
                     <Col xs={6} className="info-item">
@@ -557,15 +618,15 @@ const BookingInfo = () => {
                   <div className="price-breakdown">
                     <div className="price-item">
                       <span>Người lớn</span>
-                      <span>{adults} x {tour.priceAdult.toLocaleString()} đ</span>
+                      <span>{adults} x {getPrice('adult').toLocaleString()} đ</span>
                     </div>
                     <div className="price-item">
                       <span>Trẻ em</span>
-                      <span>{children} x {tour.priceChild.toLocaleString()} đ</span>
+                      <span>{children} x {getPrice('child').toLocaleString()} đ</span>
                     </div>
                     <div className="price-item">
                       <span>Em bé</span>
-                      <span>{babies} x {tour.priceBaby.toLocaleString()} đ</span>
+                      <span>{babies} x {getPrice('baby').toLocaleString()} đ</span>
                     </div>
                   </div>
                 </div>
@@ -581,9 +642,9 @@ const BookingInfo = () => {
                   size="lg" 
                   className="w-100 book-now-btn"
                   onClick={handleSubmit}
-                  disabled={!agree}
+                  disabled={!agree || isLoading}
                 >
-                  Đặt ngay
+                  {isLoading ? 'Đang xử lý...' : 'Đặt ngay'}
                 </Button>
               </Card.Body>
             </Card>
