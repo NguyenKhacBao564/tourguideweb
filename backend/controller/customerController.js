@@ -27,21 +27,31 @@ const getAvatar = async (req, res) => {
 
 const updateCustomer = async (req, res) => {
     try{
-    console.log("req.body: ", req.body);
-    const cusId = req.params.id;
-    const {name, phone, address, image} = req.body;
+        console.log("req.body: ", req.body);
+        const cusId = req.params.id;
+        const { name, phone, address } = req.body;
 
-    const imagePath = req.file.path;
-    console.log("imagePath: ", imagePath);
-    const pool = await getPool();
-    const result = await pool.request()
+        const pool = await getPool();
+        let query = `
+        UPDATE Customer 
+        SET fullname = @name, phone = @phone, address = @address
+        `;
+        const request = pool.request()
         .input("cusId", sql.NVarChar, cusId)
         .input("name", sql.NVarChar, name)
         .input("phone", sql.NVarChar, phone)
-        .input("address", sql.NVarChar, address)
-        .input("image", sql.NVarChar, imagePath)
-        .query("UPDATE Customer SET fullname = @name, phone = @phone, address = @address, pi_url = @image WHERE cus_id = @cusId");
-    
+        .input("address", sql.NVarChar, address);
+        
+        // Nếu có file ảnh mới, thêm trường pi_url vào query
+        if (req.file) {
+            const imagePath = req.file.path;
+            query += `, pi_url = @image`;
+            request.input("image", sql.NVarChar, imagePath);
+            console.log("imagePath: ", imagePath);
+        }
+        query += ` WHERE cus_id = @cusId`;
+        const result = await request.query(query);
+
         res.json(result.recordset);
     }catch(error){
         res.status(500).json({message: "Lỗi server", error});

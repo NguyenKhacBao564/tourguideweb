@@ -24,6 +24,7 @@ const customerSupportRoutes = require("./routes/customerSupportRoutes");
 const consultantSupportRoutes = require("./routes/consultantSupportRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
+const favoriteTourRoutes = require("./routes/favoriteTourRoutes");
 
 app.use(cors({
   origin: 'http://localhost:3000', // Domain của frontend
@@ -45,7 +46,7 @@ app.use("/api/admin", adminRoutes); // NKBao đã thêm
 app.use("/api/payment", paymentRoutes); // VNPay payment routes
 app.use("/api/booking", bookingRoutes); // Booking routes
 app.use("/tourPrice", tourPriceRoutes);
-
+app.use("/favoriteTours", favoriteTourRoutes)
 app.use("/tour-price", tourPriceRoutes);
 app.use("/schedule", scheduleRoutes);
 

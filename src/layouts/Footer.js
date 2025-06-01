@@ -55,7 +55,9 @@ function Footer() {
             Đồ án nhóm
           </Col>
           <Col xs={12} md={{span: 3}} > 
-            <FaGithub size={30} style={{ margin: "0" }} />
+            <a href="https://github.com/DUYBEGINER/tour-booking-web.git" target="_blank" rel="link github">
+              <FaGithub size={30} style={{ margin: "0" , cursor: "pointer"}} />
+            </a>
             {/* <span className={styles.circle} style={{ backgroundColor: "#33C3F0" }}></span>
             <span className={styles.circle} style={{ backgroundColor: "#E44D93" }}></span>
             <span className={styles.circle} style={{ backgroundColor: "#F0473C" }}></span> */}

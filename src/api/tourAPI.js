@@ -21,10 +21,25 @@ export const getTourById = async (id) => {
   }
 };
 
-// Lấy danh sách tour nổi bật giá thấp nhất
-export const getTourOutstanding = async () => {
+
+export const getTourByFilter = async (filter) => {
   try {
-    const response = await axios.get(`${API_URL}/tours/outstanding`);
+    const response = await axios.get(`${API_URL}/tours/tourfilter`, {
+      params: filter
+    });
+    console.log("Response from getTourByFilter: ", filter);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Lỗi khi lấy danh sách tour theo bộ lọc");
+  }
+}
+
+// Lấy danh sách tour nổi bật giá thấp nhất
+export const getTourOutstanding = async (cusId=null) => {
+  try {
+    const response = await axios.get(`${API_URL}/tours/outstanding`, {
+      params: { cusId: cusId }
+    });
     return response.data;
   }catch(error){
     throw new Error(error.response?.data?.message || "Lỗi khi lấy danh sách tour");
@@ -32,10 +47,11 @@ export const getTourOutstanding = async () => {
 }
 
 // Lấy danh sách tour theo tỉnh
-export const getTourByProvince = async (province, limit=10) => {
+export const getTourByProvince = async (province, limit=10, cusId=null) => {
   try {
+    console.log("Fetching tours for province:", province, "with limit:", limit, "and customer ID:", cusId);
     const response = await axios.get(`${API_URL}/tours/province/${province}`, {
-      params: { limit }
+      params: { limit: limit, cusId: cusId }
     });
     return response.data;
   }catch(error){

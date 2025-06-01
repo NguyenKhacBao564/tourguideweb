@@ -33,6 +33,11 @@ function ReviewFilter(props) {
       return;
     }
 
+    if (!user) {
+      alert('Bạn cần đăng nhập để gửi đánh giá!');
+      return;
+    }
+
     const newReview = {
       review_id: generateId(),
       cus_id: user.id,

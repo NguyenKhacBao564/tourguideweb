@@ -57,6 +57,11 @@ function App() {
           <Route path="/payment/demo" element={<PaymentDemo />}/>
           <Route path="/payment/momo-test" element={<MoMoTestPage />}/>
           <Route path="/tourFavourite" element={<TourFavourite/>}/>
+          <Route path="/tourFavorite" element={
+            <ProtectedRoute allowedRoles={["customer"]}>
+              <TourFavourite/>
+            </ProtectedRoute>
+          }/>
           <Route path="/contact" element={
             <ProtectedRoute allowedRoles={["customer"]}>
               <Contact />

@@ -83,7 +83,9 @@
     border-bottom: 1px solid #ddd;
     width: 100%;
     transition: all 0.3s ease;
-
+    -webkit-appearance: none; // Xóa giao diện mặc định của dropdown trên Safari
+    -moz-appearance: none; // Xóa giao diện mặc định của dropdown trên Firefox
+    appearance: none; // Xóa giao diện mặc định của dropdown
     &:focus {
         border-bottom: 1px solid #1a1a1a;
         &::placeholder {

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock, faCar, faUsers, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FaCalendarAlt } from "react-icons/fa";
@@ -6,9 +6,52 @@ import {formatDate} from "../../../feature/formatDate";
 import { API_URL } from "../../../utils/API_Port";
 import "./TourCard.scss";
 import { useNavigate } from 'react-router';
+import {addFavoriteTour, deleteFavoriteTour} from '../../../api/favoriteTourAPI';
+import generateId from '../../../feature/GenerateId';
+import {AuthContext} from '../../../context/AuthContext';
+
 function TourCard(props) {
-    const [tourFavourite, settourFavourite] = useState(false);
-    const navigate = useNavigate();
+    const { onFavoriteChange } = props;
+    const { user } = useContext(AuthContext);
+    // const [tourFavorite, setTourFavorite] = useState(false);
+    const { tour_id, is_favorite, fav_id } = props;
+    // const [isFavorite, setIsFavorite] = React.useState(is_favorite || false);
+    const isFavorite = props.is_favorite;
+    const [currentFavId, setCurrentFavId] = React.useState(fav_id || null);
+    const navigate = useNavigate();    
+    
+    const handleToggleFavorite = async () => {
+        try {
+            if (!user) {
+                console.log("User is not logged in. Redirecting to login page...");
+                navigate('/login', { state: { returnUrl: '/tourFavourite' } });
+                return;
+            }
+
+            if (isFavorite) {
+                // Xóa tour khỏi danh sách yêu thích
+                await deleteFavoriteTour(fav_id);
+                // setIsFavorite(false);
+                setCurrentFavId(null);
+                console.log("Tour removed from favorites");
+            } else {
+                // Thêm tour vào danh sách yêu thích
+                const newFavId = generateId();
+                await addFavoriteTour(newFavId, user.id, tour_id);
+                // setIsFavorite(true);
+                setCurrentFavId(newFavId);
+                console.log("Tour added to favorites");
+            }
+           
+            // Gọi callback để cập nhật danh sách tour yêu thích
+                if (onFavoriteChange) {
+                    onFavoriteChange();
+                }
+        } catch (error) {
+        console.error("Error toggling favorite status:", error);
+        }
+  };
+
     const handleBooking = () => {
         // Truyền id qua query parameter
         console.log("click đặt tour")
@@ -26,7 +69,7 @@ function TourCard(props) {
                 {/* Biểu tượng khuyến mãi
                 <div className="tour-card__discount">-20%</div> */}
                 {/* Nút yêu thích */}
-                <button className={`tour-card__favorite ${tourFavourite ? "filled" : ""}`} onClick={() => settourFavourite(!tourFavourite)}>
+                <button className={`tour-card__favorite ${isFavorite ? "filled" : ""}`} onClick={handleToggleFavorite}>
                     <FontAwesomeIcon icon={faHeart} />
                 </button>
 

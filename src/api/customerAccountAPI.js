@@ -16,7 +16,11 @@ export const updateCustomer = async (id, data) => {
         formData.append("name", data.name);
         formData.append("phone", data.phone);
         formData.append("address", data.address);
-        formData.append("image", data.image);
+        
+        // Chỉ append image nếu có file ảnh mới
+        if (data.image) {
+            formData.append("image", data.image);
+        }
         
         const response = await axios.put(`${API_URL}/customers/update/${id}`, formData, {
             withCredentials: true,
