@@ -13,6 +13,7 @@ function Login() {
   const [success, setSuccess] = useState(null);
   const [isChecked, setIsChecked] = useState(false);
   
+  console.log("error: ", error)
   const onChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };

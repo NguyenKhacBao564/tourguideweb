@@ -12,9 +12,9 @@ const AuthBase = ({
   errorCode,
   success, 
   handleSubmit,
-  showError
 }) => {
-  // const [showError, setShowError] = useState(false);
+
+  const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   
 
@@ -28,8 +28,18 @@ const AuthBase = ({
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [success]);
+    if (error) {
+      setShowError(true);
+      // Tự động ẩn thông báo lỗi sau 1 giây
+      const timer = setTimeout(() => {
+        setShowError(false);
+      }, 1000);   
+      return () => clearTimeout(timer);
+    }
+  }, [success, error]);
 
+  console.log("error: ", error)
+  console.log("errorCode: ", errorCode)
   
 
 

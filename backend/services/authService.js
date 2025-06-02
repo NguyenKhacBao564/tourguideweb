@@ -88,6 +88,7 @@ const getUserInfor = async (userId, role) => {
         branch_id: user.branch_id,
       };
     }
+    
   } catch (error) {
     console.error("Lỗi khi lấy thông tin user:", error.message);
     throw new Error(error.message || "Lỗi server");
@@ -141,7 +142,7 @@ const loginUser = async (email, password) => {
 
     if(!user){
       console.log("Không tìm thấy user trong cả hai bảng!");
-      return {error: ERROR_MESSAGES.AUTH.LOGIN_FAILED}
+      return {error: ERROR_MESSAGES.AUTH.LOGIN_FAILED }
     }
 
     if (user) {

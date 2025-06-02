@@ -64,7 +64,7 @@ export const TourProvider = ({ children }) => {
       setIsLoading(true);
       const result = await addTour(tourData);
       
-      setTours((prevTours) => [...prevTours, tourData]);
+      // setTours((prevTours) => [...prevTours, tourData]);
       setError(null);
       return result;
     } catch (err) {

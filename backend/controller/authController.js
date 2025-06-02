@@ -1,5 +1,6 @@
 const {loginUser, registerUser, getUserInfor} = require("../services/authService");
 const ERROR_MESSAGES = require("../utils/errorConstants");
+const { generateAccessToken } = require("../middlewares/jwt");
 
 const login = async (req, res) => {
     try{
@@ -21,6 +22,7 @@ const login = async (req, res) => {
             httpOnly: true,
             sameSite: 'Lax',
             maxAge: 7 * 24 * 60 * 60 * 1000,
+            path: '/',
         });
         //Trả về thông tin người dùng
         console.log("Thông tin người dùng:", userInfor);
@@ -37,10 +39,6 @@ const login = async (req, res) => {
     }
 };
 
-const googleLogin = async (req, res) => {
-    // Xử lý đăng nhập với Google
-    
-}
 
 const register = async (req, res) => {
     try{
@@ -61,6 +59,7 @@ const register = async (req, res) => {
             httpOnly: true,
             sameSite: 'Lax',
             maxAge: 7 * 24 * 60 * 60 * 1000,
+            path: '/',
         });
         // Nếu không có lỗi, trả về thông tin người dùng
         return res.status(201).json({
@@ -81,6 +80,7 @@ const logout = async (req, res) => {
     res.clearCookie('jwt', {
         httpOnly: true,
         sameSite: 'Lax',
+        path: '/',
     });
     res.json({ message: 'Đăng xuất thành công' });
 }
@@ -89,9 +89,10 @@ const logout = async (req, res) => {
 const getUser = async (req, res) => {
     try {
         const { userId, role } = req.user; // Lấy từ authMiddleware
+        
         console.log("user after midleware: ", req.user)
         const user = await getUserInfor(userId, role);
-        
+        console.log("user after getUserInfor: ", user)
         return res.status(200).json({
             user: user,
             message: "Lấy thông tin người dùng thành công",
@@ -106,5 +107,5 @@ const getUser = async (req, res) => {
 
 
 module.exports ={
-    login, register,logout, getUser
+    login, register, logout, getUser
 }

@@ -13,9 +13,11 @@ export const loginUser = async (email, password) => {
     return response.data;
   } catch (error) {
     // Lấy mã lỗi và thông báo từ response
+    console.log("error auth api: ", error.response.data)
     if (error.response && error.response.data) {
       const err = new Error(error.response.data.message || 'Có lỗi xảy ra khi đăng nhập');
       err.code = error.response.data.code || 'UNKNOWN_ERROR';
+      console.log("err: ", err.code)
       throw err;
     } else {
       const err = new Error('Không thể kết nối đến máy chủ');

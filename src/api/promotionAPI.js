@@ -1,9 +1,11 @@
 import axios from 'axios';
 import { API_URL } from '../utils/API_Port';
 
-export const getPromotionList = async () => {
+export const getPromotionList = async (filters = {}) => {
     try {
-        const response = await axios.get(`${API_URL}/promotions`);
+        const response = await axios.get(`${API_URL}/promotions`, { 
+            params: filters,    // Gửi status, code, promo_name, v.v.
+        });
         return response.data;
     } catch (error) {
         console.error("Error fetching promotions:", error);

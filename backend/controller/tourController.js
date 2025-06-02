@@ -55,8 +55,8 @@ const getTourByProvince = async (req, res) => {
   const province = req.params.province;
   const limit = parseInt(req.query.limit) || 10; // Giới hạn số lượng tour trả về, mặc định là 10
   const cusId = req.query.cusId; // Lấy cusId từ query params nếu có
-  console.log("Get tours by province with param    efffefffs:", req.query);
-  console.log("Province:", province, "Limit:", limit);
+  // console.log("Get tours by province with param    efffefffs:", req.query);
+  // console.log("Province:", province, "Limit:", limit);
 
   try {
     const pool = await getPool();
@@ -311,7 +311,7 @@ const createTour =  async (req, res) => {
         .input("max_guests", sql.Int, max_guests)
         .input("transport", sql.NVarChar, transport)
         .input("created_at", sql.DateTime, createdAt)
-        .input("status", sql.NVarChar, "active")
+        .input("status", sql.NVarChar, "pending")
         .query(`
           INSERT INTO Tour (tour_id, branch_id, name, duration, destination, departure_location, start_date, end_date, description, max_guests, transport, created_at, status)
           VALUES (@tour_id, @branch_id, @name, @duration, @destination, @departure_location, @start_date, @end_date, @description, @max_guests, @transport, @created_at, @status)
@@ -482,7 +482,7 @@ const getTourById = async (req, res) => {
         infantPrice: infantPrice
       };
       await transaction.commit();
-      console.log("tourResult: ", tourWithPrice);
+      // console.log("tourResult: ", tourWithPrice);
       res.status(200).json(tourWithPrice);
     } catch (error) {
        if (transaction) {
@@ -544,7 +544,6 @@ const blockBatchTour = async (req, res) => {
     }
     return res.status(500).json({ error: error.message });
   }
-
 }
 
 
