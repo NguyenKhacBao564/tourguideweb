@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
     // Tránh redirect loop: Không điều hướng nếu đã ở đúng trang hoặc ở trang InforUser
     const roleRoutes = {
       customer: "/",
-      Support: "/support",
+      Support: "/consultantemployee",
       Sales: "/businessemployee/customer",
       Admin: "/admin/dashboard",
     };
