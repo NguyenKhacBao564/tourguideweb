@@ -9,6 +9,7 @@ import "../../styles/pages/BookingInfo.scss";
 import { AuthContext } from '../../context/AuthContext';
 import { createBooking, createBookingDetail } from '../../api/bookingAPI';
 import { applyPromotionToBooking } from '../../api/promotionAPI';
+import { formatDate } from "../../feature/formatDate";
 
 const defaultPassenger = (type) => ({
   type, // 'adult', 'child', 'baby'
@@ -633,27 +634,27 @@ const BookingInfo = () => {
                       <FaCalendarAlt className="info-icon" />
                       <div>
                         <div className="info-label">Ngày đi:</div>
-                        <div className="info-value">{tour.startDate || tour.date || 'N/A'}</div>
+                        <div className="info-value">{formatDate(tour.start_date) || formatDate(tour.date) || 'N/A'}</div>
                       </div>
                     </Col>
                     <Col xs={6} className="info-item">
                       <FaCalendarAlt className="info-icon" />
                       <div>
                         <div className="info-label">Ngày về:</div>
-                        <div className="info-value">{tour.endDate || tour.returnDate || 'N/A'}</div>
+                        <div className="info-value">{formatDate(tour.end_date) || formatDate(tour.returnDate) || 'N/A'}</div>
                       </div>
                     </Col>
                     <Col xs={6} className="info-item">
                       <FaMapMarkerAlt className="info-icon" />
                       <div>
                         <div className="info-label">Nơi khởi hành:</div>
-                        <div className="info-value">{tour.departureLocation || tour.start || 'N/A'}</div>
+                        <div className="info-value">{tour.departure_location || tour.start || 'N/A'}</div>
                       </div>
                     </Col>
                     <Col xs={6} className="info-item">
                       <FaMapMarkerAlt className="info-icon" />
                       <div>
-                        <div className="info-label">Xe khách</div>
+                        <div className="info-label">{tour.transport || 'Xe khách'}</div>
                       </div>
                     </Col>
                   </Row>

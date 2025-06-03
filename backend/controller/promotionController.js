@@ -117,14 +117,14 @@ const createPromotion = async (req, res) => {
         const pool = await getPool();
         await pool.request()
             .input('promo_id', sql.VarChar, promo_id)
-            .input('description', sql.NVarChar, promo_name)
+            .input('promo_name', sql.NVarChar, promo_name)
             .input('code', sql.VarChar, code)
             .input('discount_percentage', sql.Decimal(5, 2), discount_percentage)
             .input('start_date', sql.Date, start_date)
             .input('end_date', sql.Date, end_date)
             .input('max_use', sql.Int, max_use)
             .input('status', sql.VarChar, status)
-            .query("INSERT INTO Promotion (promo_id, description, code, discount_percentage, start_date, end_date, max_use, status) VALUES (@promo_id, @description, @code, @discount_percentage, @start_date, @end_date, @max_use, @status)");
+            .query("INSERT INTO Promotion (promo_id, promo_name, code, discount_percentage, start_date, end_date, max_use, status) VALUES (@promo_id, @promo_name, @code, @discount_percentage, @start_date, @end_date, @max_use, @status)");
         return res.status(201).json({ message: "Khuyến mãi đã được thêm thành công" });
     } catch (error) {
         return res.status(500).json({ error: error.message  });
@@ -181,13 +181,13 @@ const updatePromotion = async (req, res) => {
         const pool = await getPool();
         const result = await pool.request()
             .input('promotionId', sql.VarChar, promotionId)
-            .input('description', sql.NVarChar, promo_name)
+            .input('promo_name', sql.NVarChar, promo_name)
             .input('code', sql.VarChar, code)
             .input('discount_percentage', sql.Decimal(5, 2), discount_percentage)
             .input('start_date', sql.Date, start_date)
             .input('end_date', sql.Date, end_date)
             .input('max_use', sql.Int, max_use)
-            .query("UPDATE Promotion SET description = @description, code = @code, discount_percentage = @discount_percentage, start_date = @start_date, end_date = @end_date, max_use = @max_use WHERE promo_id = @promotionId");
+            .query("UPDATE Promotion SET promo_name = @promo_name, code = @code, discount_percentage = @discount_percentage, start_date = @start_date, end_date = @end_date, max_use = @max_use WHERE promo_id = @promotionId");
         return res.status(200).json({ message: "Khuyến mãi đã được cập nhật thành công" });
     } catch (error) {
         return res.status(500).json({ error: error.message });
@@ -203,7 +203,7 @@ const checkPromoCode = async (req, res) => {
     const result = await pool.request()
       .input("code", sql.VarChar, code)
       .query(`
-        SELECT promo_id, code, description, discount_percentage, start_date, end_date, max_use, status
+        SELECT promo_id, code, promo_name, discount_percentage, start_date, end_date, max_use, status
         FROM Promotion 
         WHERE code = @code AND status = 'active'
       `);
@@ -259,7 +259,7 @@ const checkPromoCode = async (req, res) => {
       data: {
         promo_id: promotion.promo_id,
         code: promotion.code,
-        description: promotion.description,
+        description: promotion.promo_name,
         discount_percentage: promotion.discount_percentage,
         remaining_uses: promotion.max_use - usedCount
       }
