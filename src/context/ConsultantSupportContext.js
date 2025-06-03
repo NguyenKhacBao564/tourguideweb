@@ -1,9 +1,9 @@
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, useCallback } from "react";
 import {
     fetchSupportRequests,
-    updateRequestStatus,
     sendResponse,
 } from "../api/consultantSupportAPI";
+import { v4 as uuidv4 } from 'uuid'; // Thêm thư viện uuid để tạo response_id
 
 const ConsultantSupportContext = createContext();
 
@@ -13,7 +13,7 @@ export const ConsultantSupportProvider = ({ children }) => {
     const [error, setError] = useState(null);
 
     // Lấy danh sách yêu cầu hỗ trợ
-    const handleFetchSupportRequests = async () => {
+    const handleFetchSupportRequests = useCallback(async () => {
         setLoading(true);
         try {
             const data = await fetchSupportRequests();
@@ -25,36 +25,31 @@ export const ConsultantSupportProvider = ({ children }) => {
         } finally {
             setLoading(false);
         }
-    };
-
-    // Cập nhật trạng thái yêu cầu hỗ trợ
-    const handleUpdateRequestStatus = async (requestId, newStatus) => {
-        try {
-            const data = await updateRequestStatus(requestId, newStatus);
-            setSupportRequests((prevRequests) =>
-                prevRequests.map((request) =>
-                    request.request_id === requestId ? { ...request, status: newStatus } : request
-                )
-            );
-            return data;
-        } catch (err) {
-            throw new Error(err.message || "Không thể cập nhật trạng thái yêu cầu. Vui lòng thử lại.");
-        }
-    };
+    }, []); // Empty dependency array since this function doesn't depend on any props or state
 
     // Gửi phản hồi cho yêu cầu hỗ trợ và lưu vào bảng Customer_Support_Response
     const handleSendResponse = async (requestId, employeeId, responseMessage) => {
         try {
+            // Kiểm tra dữ liệu đầu vào
+            if (!requestId || !employeeId || !responseMessage) {
+                throw new Error("Thiếu thông tin: requestId, employeeId, hoặc responseMessage");
+            }
+            const responseId = `RES${uuidv4().replace(/-/g, '').slice(0, 15)}`; // Tạo response_id duy nhất
             const responseData = {
+                response_id: responseId, // Thêm response_id
                 request_id: requestId,
                 emp_id: employeeId,
                 re_message: responseMessage,
-                date: new Date().toISOString(),
+                day: new Date().toISOString(),
             };
             const data = await sendResponse(responseData);
 
-            // Cập nhật trạng thái yêu cầu thành "RESOLVED" sau khi phản hồi
-            await handleUpdateRequestStatus(requestId, "RESOLVED");
+            // Cập nhật state local để phản ánh trạng thái RESOLVED
+            setSupportRequests((prevRequests) =>
+                prevRequests.map((request) =>
+                    request.request_id === requestId ? { ...request, status: "RESOLVED" } : request
+                )
+            );
 
             return data;
         } catch (err) {
@@ -67,7 +62,6 @@ export const ConsultantSupportProvider = ({ children }) => {
             value={{
                 supportRequests,
                 fetchSupportRequests: handleFetchSupportRequests,
-                updateRequestStatus: handleUpdateRequestStatus,
                 sendResponse: handleSendResponse,
                 loading,
                 error,

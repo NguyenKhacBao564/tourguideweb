@@ -11,42 +11,42 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  
+
   // Hàm kiểm tra và điều hướng theo role
   const checkRole = (role, currentPath) => {
     // Tránh redirect loop: Không điều hướng nếu đã ở đúng trang hoặc ở trang InforUser
     const roleRoutes = {
       customer: "/",
-      Support: "/support",
+      Support: "/consultantemployee/chatbot",
       Sales: "/businessemployee/customer",
       Admin: "/admin/dashboard",
     };
-    
+
     // Các trang không cần chuyển hướng về trang chính của role
     const exemptPages = ["/thongtin"];
-    
+
     // Nếu đang ở trang được miễn trừ (như trang thông tin cá nhân), không chuyển hướng
     if (exemptPages.some(page => currentPath.includes(page))) {
       return;
     }
-    
+
     const targetRoute = roleRoutes[role];
     if (targetRoute && currentPath !== targetRoute) {
-        navigate(targetRoute, { replace: true });
+      navigate(targetRoute, { replace: true });
     }
   };
 
   // Trong AuthContext.js
-const fetchUser = async (token) => {
-  try {
-    const response = await getUserData(token);
-    const userData = response.user;   
-    console.log("userData: ", userData)
-    return userData;
-  } catch (error) {
-    throw error;
-  }
-};
+  const fetchUser = async (token) => {
+    try {
+      const response = await getUserData(token);
+      const userData = response.user;
+      console.log("userData: ", userData)
+      return userData;
+    } catch (error) {
+      throw error;
+    }
+  };
 
   //Kiểm tra token và gửi request đến server để lấy thông tin user  
   // Kiểm tra token khi khởi động

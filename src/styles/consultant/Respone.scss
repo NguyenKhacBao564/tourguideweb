@@ -3,64 +3,35 @@
     display: block; // Đảm bảo container hiển thị
 }
 
+h2 {
+    font-family: Inter;
+    font-weight: bold;
+    font-size: 22px;
+    gap: 20px;
+}
+
+.table-header {
+    display: flex;
+    gap: 20px; // Giảm khoảng cách giữa hai span
+    align-items: center;
+    margin-bottom: 20px;
+
+    span {
+        font-family: "Inter";   
+        font-size: 14px;
+        color: #333; // Màu chữ cố định
+    }
+}
+.table-header .active-tab {
+    color: #1814F3;
+}
+
 .support-request-table {
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     display: block; // Đảm bảo phần bảng hiển thị
-
-    h2 {
-        font-size: 18px;
-        margin: 0 0 15px 0;
-    }
-
-    .table-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-
-        .input-group {
-            position: relative;
-            width: 300px;
-
-            input {
-                width: 100%;
-                padding: 8px 32px 8px 12px;
-                border: 1px solid #d9d9d9;
-                border-radius: 4px;
-                font-size: 14px;
-
-                &:focus {
-                    outline: none;
-                    border-color: #1890ff;
-                }
-            }
-
-            .input-group-icon {
-                position: absolute;
-                right: 8px;
-                top: 50%;
-                transform: translateY(-50%);
-                color: #666;
-            }
-        }
-
-        .table-header-links {
-            display: flex;
-            gap: 20px;
-
-            span {
-                font-size: 14px;
-                cursor: pointer;
-
-                &:hover {
-                    color: #1890ff;
-                }
-            }
-        }
-    }
 
     table {
         width: 100%;
@@ -76,9 +47,9 @@
         }
 
         th {
-            font-weight: 600;
-            color: #6c757d;
-            background-color: #f8f9fa;
+            font-size: 15px;
+            color: #000000;
+            background-color: #ffffff;
         }
 
         td img.avatar {
@@ -90,7 +61,7 @@
         }
 
         .respond-btn {
-            background-color: #1890ff;
+            background-color: #5179EF;
             color: white;
             border: none;
             padding: 6px 12px;
@@ -99,7 +70,7 @@
             font-size: 14px;
 
             &:hover {
-                background-color: #40a9ff;
+                background-color: #1890ff;
             }
         }
     }
@@ -171,3 +142,14 @@
         }
     }
 }
+
+.responded-btn {
+    background-color: #bdbdbd;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: default;
+}
+
