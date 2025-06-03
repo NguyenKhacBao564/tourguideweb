@@ -1,11 +1,7 @@
 import React, { useContext, useState } from 'react';
 import FormInput from '../../components/Common/FormInput/FormInput';
 import AuthBase from '../../components/Common/Auth/AuthBase';
-<<<<<<< HEAD
-import AuthInputs from '../../utils/AuthInput';
-=======
 import authInputs from '../../utils/AuthInput';
->>>>>>> ab9d584044d83c2ca774631a0c69c23f727f757f
 import { AuthContext } from '../../context/AuthContext';
 
 function Login() {
@@ -16,12 +12,8 @@ function Login() {
   const [errorCode, setErrorCode] = useState(null);
   const [success, setSuccess] = useState(null);
   const [isChecked, setIsChecked] = useState(false);
-<<<<<<< HEAD
 
-=======
-  
   console.log("error: ", error)
->>>>>>> ab9d584044d83c2ca774631a0c69c23f727f757f
   const onChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
@@ -58,7 +50,7 @@ function Login() {
       handleSubmit={handleSubmit}
     >
       {/* Form inputs specific to login */}
-      {AuthInputs.login.map(input => (
+      {authInputs.login.map(input => (
         <FormInput
           key={input.id}
           {...input}

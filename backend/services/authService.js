@@ -158,60 +158,84 @@ const loginUser = async (email, password) => {
 
 // Hàm đăng ký
 const registerUser = async (fullname, email, password, phone, date_of_birth) => {
-    if (!fullname || !email || !password || !phone || !date_of_birth) {
-      return {error: ERROR_MESSAGES.AUTH.REGISTRATION_FAILED}
+    try {
+        console.log("Bắt đầu quá trình đăng ký với dữ liệu:", { fullname, email, phone, date_of_birth });
+        
+        if (!fullname || !email || !password || !phone || !date_of_birth) {
+            console.log("Thiếu thông tin bắt buộc:", { fullname, email, phone, date_of_birth });
+            return {error: ERROR_MESSAGES.AUTH.REGISTRATION_FAILED}
+        }
+
+        console.log("Đang kết nối database...");
+        const pool = await getPool();
+        console.log("Kết nối database thành công");
+
+        //CODE KIỂM TRA EMAIL NÀY CHƯA TỐI ƯU SẼ SỬA LẠI SAU!!!!!
+        // Kiểm tra email đã tồn tại trong bảng customer
+        console.log("Đang kiểm tra email trong bảng Customer...")
+        const emailCheck = await pool
+            .request()
+            .input("email", sql.VarChar, email)
+            .query("SELECT cus_id FROM Customer WHERE email = @email");
+
+        if (emailCheck.recordset.length > 0) {
+            console.log("Email đã tồn tại trong bảng Customer");
+            return {error: ERROR_MESSAGES.AUTH.REGISTRATION_FAILED}
+        }
+
+        // Kiểm tra email đã tồn tại trong bảng employee
+        console.log("Đang kiểm tra email trong bảng Employee...")
+        const emailCheckEmp = await pool
+            .request()
+            .input("email", sql.VarChar, email)
+            .query("SELECT emp_id FROM Employee WHERE email = @email");
+        if (emailCheckEmp.recordset.length > 0) {
+            console.log("Email đã tồn tại trong bảng Employee");
+            return {error: ERROR_MESSAGES.AUTH.REGISTRATION_FAILED}
+        }
+
+        // Tạo cus_id mới bằng uuid
+        const cusID = uuidv4().replace(/-/g, "").slice(0, 10);
+        console.log("Đã tạo cusID:", cusID);
+
+        // Băm mật khẩu
+        console.log("Đang băm mật khẩu...");
+        const hashedPassword = await hashPassword(password);
+        console.log("Băm mật khẩu thành công");
+
+        console.log("Đang thêm customer mới...");
+        //Thêm customer mới
+        const insertResult = await pool
+            .request()
+            .input("cusID", sql.VarChar, cusID)
+            .input("fullname", sql.NVarChar, fullname)
+            .input("email", sql.NVarChar, email)
+            .input("password", sql.VarBinary, hashedPassword)
+            .input("phone", sql.NVarChar, phone)
+            .input("birthday", sql.Date, date_of_birth)
+            .query(
+                "INSERT INTO Customer (cus_id, fullname, email, password, phone, birthday, cus_status) VALUES (@cusID, @fullname, @email, @password, @phone, @birthday, 'active')"
+            );
+        console.log("Thêm customer thành công:", insertResult);
+
+        console.log("Đang lấy thông tin user...");
+        const userInfor = await getUserInfor(cusID, "customer");
+        console.log("Lấy thông tin user thành công:", userInfor);
+
+        console.log("Đang tạo token...");
+        const token = generateAccessToken({ userId: cusID, role: "customer" });
+        console.log("Tạo token thành công");
+
+        return {
+            token: token,
+            userInfor: userInfor,
+            message: "Đăng ký thành công",
+        };
+    } catch (error) {
+        console.error("Lỗi chi tiết trong quá trình đăng ký:", error);
+        console.error("Stack trace:", error.stack);
+        return {error: ERROR_MESSAGES.API.SERVER_ERROR};
     }
-
-    const pool = await getPool();
-    //CODE KIỂM TRA EMAIL NÀY CHƯA TỐI ƯU SẼ SỬA LẠI SAU!!!!!
-    // Kiểm tra email đã tồn tại trong bảng customer
-    console.log("Đang kiểm tra email trong bảng Customer...")
-    const emailCheck = await pool
-      .request()
-      .input("email", sql.VarChar, email)
-      .query("SELECT cus_id FROM Customer WHERE email = @email");
-
-    if (emailCheck.recordset.length > 0) {
-      return {error: ERROR_MESSAGES.AUTH.REGISTRATION_FAILED}
-    }
-
-    // Kiểm tra email đã tồn tại trong bảng employee
-    console.log("Đang kiểm tra email trong bảng Employee...")
-    const emailCheckEmp = await pool
-      .request()
-      .input("email", sql.VarChar, email)
-      .query("SELECT emp_id FROM Employee WHERE email = @email");
-    if (emailCheckEmp.recordset.length > 0) {
-      return {error: ERROR_MESSAGES.AUTH.REGISTRATION_FAILED}
-    }
-
-    // Tạo emp_id mới bằng uuid
-    const cusID = uuidv4().replace(/-/g, "").slice(0, 10); // Lấy 10 ký tự đầu của UUID
-    const status = "active";
-    // Băm mật khẩu
-    const hashedPassword = await hashPassword(password);
-    //Thêm customer mới
-    await pool
-      .request()
-      .input("cusID", sql.VarChar, cusID) // Sử dụng VarChar vì UUID là chuỗi
-      .input("fullname", sql.NVarChar, fullname)
-      .input("email", sql.NVarChar, email)
-      .input("password", sql.VarBinary, hashedPassword)
-      .input("phone", sql.NVarChar, phone)
-      .input("date_of_birth", sql.Date, date_of_birth) // Thêm ngày sinh
-      .input("cus_status", sql.NVarChar, status)
-      .query(
-        "INSERT INTO Customer (cus_id, fullname, email, password, phone, date_of_birth, cus_status) VALUES (@cusID, @fullname, @email, @password, @phone, @date_of_birth, 'active')"
-      );
-  
-    const userInfor = await getUserInfor(cusID, "customer");
-    const token = generateAccessToken({ userId: cusID, role: "customer" });   // Tạo token cho người dùng
-   
-    return {
-      token: token,
-      userInfor: userInfor,
-      message: "Đăng ký thành công",
-    };
 };
 
 module.exports = { loginUser, registerUser, getUserInfor };

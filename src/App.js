@@ -124,7 +124,7 @@ function App() {
               <ConsultantEmployee />
             </ProtectedRoute>
           }>
-            <Route path="chatbot" element={<Chatbot />} />
+            {/* <Route path="chatbot" element={<Chatbot />} /> */}
             <Route path="request-support" element={<ResponeSupport />} />
             <Route path="request-support/:id" element={<ResponeDetail />} />
           </Route>

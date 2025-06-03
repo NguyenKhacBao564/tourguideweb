@@ -98,7 +98,27 @@ function ResponeSupport() {
                                     </td>
                                     <td>#{request.cus_id}</td>
                                     <td>{request.subject || 'Không có thông tin'}</td>
-                                    <td>{new Date(request.created_at).toLocaleString() || 'Không có thông tin'}</td>
+                                    <td>{(() => {
+                                        let raw = request.created_at;
+                                        console.log('Raw created_at from backend:', raw);
+                                        // Nếu là dạng "YYYY-MM-DD HH:mm:ss", thay ' ' bằng 'T' (không cần thêm Z vì dữ liệu trả về đã chuẩn rồi)
+                                        if (raw && raw.includes(' ') && !raw.endsWith('Z') && !raw.includes('T')) raw = raw.replace(' ', 'T');
+                                        const date = raw ? new Date(raw) : null;
+
+                                        if (!date || isNaN(date.getTime())) {
+                                            return 'Không có thông tin';
+                                        }
+
+                                        // Lấy các thành phần theo giờ UTC
+                                        const hours = date.getUTCHours().toString().padStart(2, '0');
+                                        const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+                                        const seconds = date.getUTCSeconds().toString().padStart(2, '0');
+                                        const day = date.getUTCDate().toString().padStart(2, '0');
+                                        const month = (date.getUTCMonth() + 1).toString().padStart(2, '0'); // Tháng bắt đầu từ 0
+                                        const year = date.getUTCFullYear();
+
+                                        return `${hours}:${minutes}:${seconds} ${day}/${month}/${year}`;
+                                    })()}</td>
                                     <td>{request.message || 'Không có nội dung'}</td>
                                     <td>
                                         {activeTab === 'PENDING' && (

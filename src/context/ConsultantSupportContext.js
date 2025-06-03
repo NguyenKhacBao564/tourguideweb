@@ -28,31 +28,38 @@ export const ConsultantSupportProvider = ({ children }) => {
     }, []); // Empty dependency array since this function doesn't depend on any props or state
 
     // Gửi phản hồi cho yêu cầu hỗ trợ và lưu vào bảng Customer_Support_Response
-    const handleSendResponse = async (requestId, employeeId, responseMessage) => {
+    const handleSendResponse = async (responseDataFromFrontend) => {
         try {
-            // Kiểm tra dữ liệu đầu vào
-            if (!requestId || !employeeId || !responseMessage) {
-                throw new Error("Thiếu thông tin: requestId, employeeId, hoặc responseMessage");
+            // Kiểm tra dữ liệu đầu vào từ đối tượng nhận được
+            const { request_id, emp_id, re_message } = responseDataFromFrontend;
+            if (!request_id || !emp_id || !re_message) {
+                throw new Error("Thiếu thông tin: request_id, emp_id, hoặc re_message");
             }
-            const responseId = `RES${uuidv4().replace(/-/g, '').slice(0, 15)}`; // Tạo response_id duy nhất
-            const responseData = {
-                response_id: responseId, // Thêm response_id
-                request_id: requestId,
-                emp_id: employeeId,
-                re_message: responseMessage,
-                day: new Date().toISOString(),
+
+            // Tạo response_id duy nhất (có thể tạo ở backend nếu muốn, nhưng giữ ở đây cũng được)
+            const responseId = `RES${uuidv4().replace(/-/g, '').slice(0, 15)}`;
+
+            // Tạo payload đầy đủ để gửi đến backend API
+            const payload = {
+                ...responseDataFromFrontend,
+                response_id: responseId,
+                day: new Date(responseDataFromFrontend.day).toISOString(),
             };
-            const data = await sendResponse(responseData);
+
+            console.log("Sending response payload to backend:", payload);
+
+            const data = await sendResponse(payload);
 
             // Cập nhật state local để phản ánh trạng thái RESOLVED
             setSupportRequests((prevRequests) =>
                 prevRequests.map((request) =>
-                    request.request_id === requestId ? { ...request, status: "RESOLVED" } : request
+                    request.request_id === payload.request_id ? { ...request, status: "Resolved" } : request
                 )
             );
 
             return data;
         } catch (err) {
+            console.error("Error in handleSendResponse (context):", err);
             throw new Error(err.message || "Không thể gửi phản hồi. Vui lòng thử lại.");
         }
     };

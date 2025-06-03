@@ -21,7 +21,7 @@ export const AdminSideBar = [
 ];
 
 export const ConsultantEmployeeSideBar = [
-  { label: "ChatBot AI", icon: <FaUserLarge />, link: "/consultantemployee/chatbot" },
+  /*{ label: "ChatBot AI", icon: <FaUserLarge />, link: "/consultantemployee/chatbot" },*/
   { label: "Yêu cầu hỗ trợ", icon: <BiCalendarCheck />, link: "/consultantemployee/request-support" },
   { label: "Đăng xuất", icon: <IoLogOutSharp />, link: "/logout", isLogout: true },
 ];
