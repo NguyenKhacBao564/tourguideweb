@@ -1,11 +1,16 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import FormInput from '../../components/Common/FormInput/FormInput';
 import AuthBase from '../../components/Common/Auth/AuthBase';
+<<<<<<< HEAD
 import AuthInputs from '../../utils/AuthInput';
+=======
+import authInputs from '../../utils/AuthInput';
+>>>>>>> ab9d584044d83c2ca774631a0c69c23f727f757f
 import { AuthContext } from '../../context/AuthContext';
 
 function Register() {
   const { regist } = useContext(AuthContext);
+<<<<<<< HEAD
 
   const [values, setValues] = useState({
     username: '',
@@ -13,10 +18,48 @@ function Register() {
     email: '',
     password: '',
     confirmPassword: ''
+=======
+  
+  const [values, setValues] = useState({ 
+    username: '', 
+    phone: '', 
+    email: '', 
+    date_of_birth: '',
+    password: '', 
+    confirmPassword: '' 
+>>>>>>> ab9d584044d83c2ca774631a0c69c23f727f757f
   });
   const [error, setError] = useState(null);
   const [errorCode, setErrorCode] = useState(null);
   const [success, setSuccess] = useState(null);
+<<<<<<< HEAD
+=======
+  const [showError, setShowError] = useState(false); // Thêm trạng thái showError
+
+  // Hàm tính tuổi từ ngày sinh
+  const calculateAge = (dob) => {
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
+  // Effect để tự động ẩn thông báo lỗi
+    useEffect(() => {
+      if (error) {
+        setShowError(true);
+        const timer = setTimeout(() => {
+          setShowError(false);
+          setError(null); // Reset error after showing
+        }, 1000);
+        return () => clearTimeout(timer);
+      }
+    }, [error]);
+>>>>>>> ab9d584044d83c2ca774631a0c69c23f727f757f
 
   const onChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -30,12 +73,27 @@ function Register() {
       setError("Mật khẩu xác nhận không khớp!");
       return;
     }
+<<<<<<< HEAD
+=======
+    
+    // Kiểm tra tuổi
+    if (values.date_of_birth) {
+      const age = calculateAge(values.date_of_birth);
+      if (age < 18) {
+        setError("Bạn phải trên 18 tuổi để đăng ký!");
+        return;
+      }
+    } else {
+      setError("Vui lòng nhập ngày sinh!");
+      return;
+    }
+>>>>>>> ab9d584044d83c2ca774631a0c69c23f727f757f
 
     try {
       //Reset lại các state
       setError(null);
       setErrorCode(null);
-      await regist(values.username, values.email, values.password, values.phone);
+      await regist(values.username, values.email, values.password, values.phone, values.date_of_birth);
       setSuccess("Đăng ký thành công! Chuyển hướng về trang chủ.");
       // setValues({ username: '', phone: '', email: '', password: '', confirmPassword: '' });
     } catch (error) {
@@ -53,6 +111,7 @@ function Register() {
       errorCode={errorCode}
       success={success}
       handleSubmit={handleSubmit}
+      showError={showError} // Truyền trạng thái showError vào AuthBase
     >
       {/* Form inputs specific to register */}
       {AuthInputs.register.map(input => (

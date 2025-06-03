@@ -66,7 +66,11 @@ function FormInput(props) {
                     </span>
                 )}
             </div>
-            <div className={styles.errorField}>{hasErrorNotify && !isValid && focused && <p className={styles.errorText}>{errorMessage[errorType]}</p>}</div>
+            {hasErrorNotify && !isValid && focused && (
+                <div className={styles.errorField}>
+                    <p className={styles.errorText}>{errorMessage[errorType]}</p>
+                </div>
+            )}
         </div>
     );
 }

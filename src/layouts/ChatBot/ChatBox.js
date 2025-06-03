@@ -16,6 +16,7 @@ const ChatBox = () => {
   const [messages, setMessages] = useState([]);
 
   const tour_info = (tourlist) => {
+<<<<<<< HEAD
     let tour_infor_form = "";
     tourlist.forEach((tour, index) => {
       tour_infor_form = tour_infor_form + `\n\n### ** ${index + 1}.` + tour.name + '**' +
@@ -23,6 +24,23 @@ const ChatBox = () => {
         '\n\n**Ngày kết thúc:** ' + tour.end_date +
         '\n\n**Thời gian:** ' + tour.duration +
         '\n\n**Giá:** ' + tour.prices +
+=======
+      let tour_infor_form = "";
+      tourlist.forEach((tour,index) =>{
+        const formatDate = (dateStr) => {
+          const date = new Date(dateStr);
+          const day = String(date.getUTCDate()).padStart(2, '0');
+          const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+          const year = date.getUTCFullYear();
+          return `${day}/${month}/${year}`;
+        };
+        tour_infor_form = tour_infor_form + `\n\n### ${index + 1}.` + tour.name +
+        `\n\n**Ngày khởi hành:** ${formatDate(tour.start_date)}` +
+        `\n\n**Ngày kết thúc:** ${formatDate(tour.end_date)}` +
+        '\n\n**Thời gian:** ' + tour.duration + " ngày" +
+        '\n\n**Điểm đến:** ' + tour.destination +
+        '\n\n**Giá:** ' + tour.prices + " VNĐ" +
+>>>>>>> ab9d584044d83c2ca774631a0c69c23f727f757f
         '\n\n'
     })
     return tour_infor_form;
@@ -36,7 +54,7 @@ const ChatBox = () => {
     setInput("");
     try {
       // Gửi câu hỏi đến backend
-      const response = await axios.post('http://localhost:5000/chat/chatbot', { query: input });
+      const response = await axios.post('http://localhost:3001/chat/chatbot', { query: input });
       var botMessage = response.data.response;
 
       // console.log("response:", response.data);
@@ -46,8 +64,20 @@ const ChatBox = () => {
         botMessage += tour_info(tourlist);
       }
 
+<<<<<<< HEAD
       console.log("response:", response.data);
       setMessages([...newMessages, { bot: botMessage }]);
+=======
+      const greetings = ["Xin chào","xin chào", "Chào", "Hello", "Hi", "Chào bạn", "Chào bạn nhé"];
+    
+      if (greetings.includes(input.trim())) {
+        botMessage = "Xin chào! Tôi là trợ lý ảo của công ty du lịch TourGuide. Bạn cần hỗ trợ gì?";
+      }
+      
+      
+      // console.log("response:", response.data);
+      setMessages([...newMessages, {bot: botMessage}]);
+>>>>>>> ab9d584044d83c2ca774631a0c69c23f727f757f
       setInput("");
       setIsLoading(false);
       // setTimeout(() => {

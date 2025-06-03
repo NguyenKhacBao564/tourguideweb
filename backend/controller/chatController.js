@@ -7,48 +7,55 @@ const PYTHON_API_URL = 'http://localhost:8000/chat';
 
 const getTourByChat = async (location, datetime, price) =>{
     console.log("location: ", location);
-    console.log("datetime: ", datetime);
+   
     console.log("price: ", price.replace(/\.|,/g, ''));
     try{
-    let formattedDatetime = null;
-    if (datetime) {
-      const date = new Date(datetime);
-      if (!isNaN(date)) {
-        formattedDatetime = date.toISOString().split('T')[0]; // YYYY-MM-DD
-      } else {
-        throw new Error('Invalid datetime format');
+      let formattedDatetime = null;
+      const currentYear = new Date().getFullYear(); // Lấy năm hiện tại (2025)
+      if (datetime) {
+          const date = new Date(datetime);
+          if (!isNaN(date)) {
+              // Kiểm tra năm của datetime
+              if (date.getFullYear() !== currentYear) {
+                  // Đặt lại năm thành năm hiện tại
+                  date.setFullYear(currentYear);
+              }
+              formattedDatetime = date.toISOString().split('T')[0]; // YYYY-MM-DD
+          } else {
+              throw new Error('Invalid datetime format');
+          }
       }
-    }
-    const pool = await getPool();
-    const result = await pool.request()
-    .input('location', sql.NVarChar, location)
-    .input('datetime', sql.Date, formattedDatetime)
-    .input('price', sql.Decimal(15, 2), price.replace(/\.|,/g, ''))
-    .query(`SELECT t.tour_id, t.name, t.destination,t.start_date,t.end_date,t.duration, tp.price, tp.age_group
-        FROM Tour AS t
-        LEFT JOIN Tour_Price AS tp 
-        ON t.tour_id = tp.tour_id WHERE t.status = 'active' 
-        AND tp.age_group = 'adultPrice'
-        AND t.destination LIKE @location
-        AND t.start_date >= @datetime
-        AND tp.price <= @price
-        `);
-
-      // Nhóm dữ liệu theo tour_id
-    const toursMap = [];
-    result.recordset.forEach((row) => {
-        toursMap.push({
-          tour_id: row.tour_id,
-          name: row.name,
-          destination: row.destination,
-          start_date: row.start_date,
-          end_date: row.end_date,
-          duration: row.duration,
-          prices: row.price,
-        })
-    });
-    // const tours = Object.values(toursMap);
-    return toursMap
+      const pool = await getPool();
+      const result = await pool.request()
+      .input('location', sql.NVarChar, location)
+      .input('datetime', sql.Date, formattedDatetime)
+      .input('price', sql.Decimal(15, 2), price.replace(/\.|,/g, ''))
+      .query(`SELECT t.tour_id, t.name, t.destination,t.start_date,t.end_date,t.duration, tp.price, tp.age_group
+          FROM Tour AS t
+          LEFT JOIN Tour_Price AS tp 
+          ON t.tour_id = tp.tour_id WHERE t.status = 'active' 
+          AND tp.age_group = 'adultPrice'
+          AND (t.destination LIKE '%' + @location + '%' OR t.name LIKE '%' + @location + '%')
+          AND t.start_date >= @datetime
+          AND tp.price <= @price
+          `);
+      console.log("datetime: ", datetime);
+      console.log("SQL Query:", result.query);
+        // Nhóm dữ liệu theo tour_id
+      const toursMap = [];
+      result.recordset.forEach((row) => {
+          toursMap.push({
+            tour_id: row.tour_id,
+            name: row.name,
+            destination: row.destination,
+            start_date: row.start_date,
+            end_date: row.end_date,
+            duration: row.duration,
+            prices: row.price,
+          })
+      });
+      // const tours = Object.values(toursMap);
+      return toursMap
     } catch (error) {
         console.error('Error querying tours:', error.message);
         throw error;
@@ -66,7 +73,7 @@ const getRespondChat = async (req, res) => {
 
     // Gọi API của chatbot Python
     const chatbotResponse = await axios.post(PYTHON_API_URL , { query });
-    const context = chatbotResponse.data.response;
+    var context = chatbotResponse.data.response;
     const response_infor = chatbotResponse.data
     console.log(response_infor);
     console.log('respond:', context);
@@ -74,6 +81,9 @@ const getRespondChat = async (req, res) => {
       try{
         const tourList = await getTourByChat(response_infor.location, response_infor.time, response_infor.price)
         console.log("tourList: ", tourList);
+        if (tourList.length === 0){
+          return res.json({ response: "Xin lỗi, hiện tại không có tour nào phù hợp với yêu cầu của bạn. Vui lòng chọn tour khác hoặc gọi đến số hotline: 0919xxxxx để được tư vấn ạ." });
+        }
         return res.json({ response: context , tourlist: tourList });
       }catch (error) {
         console.error('Error:', error.message);
@@ -81,26 +91,7 @@ const getRespondChat = async (req, res) => {
       }
 
     }
-    // console.log("location: ", respond_infor.location)
 
-    // Nếu không tìm thấy FAQ, trả về ngay thông báo
-    // if (context.startsWith('Xin lỗi')) {
-    //   return res.json({ response: context });
-    // }
-
-    // // Gọi Gemini để tạo câu trả lời tự nhiên
-    // const prompt = `
-    //   Bạn là một trợ lý ảo tư vấn du lịch thân thiện và chuyên nghiệp. 
-    //   Dựa trên thông tin tour du lịch được cung cấp trong context dưới đây, 
-    //   hãy trả lời câu hỏi của người dùng một cách tự nhiên, ngắn gọn, và đúng trọng tâm. 
-    //   Chỉ sử dụng thông tin từ context, không thêm chi tiết ngoài thông tin đã cho. 
-    //   Nếu phù hợp, hãy mời người dùng hỏi thêm để nhận hỗ trợ chi tiết hơn.
-
-    //   Context:
-    //   ${context}
-    // `;
-    // const result = await model.generateContent(prompt);
-    // const responseText = result.response.text();
 
     return res.json({ response: context });
   } catch (error) {

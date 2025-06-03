@@ -1,8 +1,8 @@
 import React, { createContext, useState, useEffect } from "react";
-import { getTour, addTour, updateTour, blockTour, getTourByProvince, getTourOutstanding} from "../api/tourAPI";
+import { getTour, addTour, updateTour, blockTour, blockBatchTour, getTourByProvince, getTourOutstanding} from "../api/tourAPI";
 import { getItinerary } from "../api/scheduleAPI";
 import { getTourImages } from "../api/imageAPI";
-
+import { sortToursByAvailability } from "../utils/tourFilterHelpers";
 // Tạo Context
 export const TourContext = createContext();
 
@@ -12,13 +12,11 @@ export const TourProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Lấy danh sách tour khi component mount
-  useEffect(() => {
-    console.log("tour context use effect run!")
-    const fetchTours = async () => {
+
+ const fetchTours = async (filter={}) => {
       setIsLoading(true);
       try {
-        const data = await getTour();
+        const data = await getTour(filter);
         setTours(data);
         setError(null);
       } catch (err) {
@@ -26,7 +24,11 @@ export const TourProvider = ({ children }) => {
       } finally {
         setIsLoading(false);
       }
-    };
+  };
+
+  // Lấy danh sách tour khi component mount
+  useEffect(() => {
+    console.log("tour context use effect run!")
     fetchTours();
   }, []);
 
@@ -44,13 +46,27 @@ export const TourProvider = ({ children }) => {
     }
   };
 
+  //Khóa nhiều tour
+  const handleBlockBatchTour = async (ids) => {
+    try {
+      setIsLoading(true);
+      await blockBatchTour(ids);
+      setTours((prevTours) => prevTours.filter((tour) => !ids.includes(tour.tour_id)));
+      setError(null);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Thêm tour mới
   const handleAddTour = async (tourData) => {
     try {
       setIsLoading(true);
       const result = await addTour(tourData);
       
-      setTours((prevTours) => [...prevTours, tourData]);
+      // setTours((prevTours) => [...prevTours, tourData]);
       setError(null);
       return result;
     } catch (err) {
@@ -84,10 +100,10 @@ export const TourProvider = ({ children }) => {
     }
   };
 
-  const handleGetTourByProvince = async (province) => {
+  const handleGetTourByProvince = async (province, limit, cusId) => {
     try {
       setIsLoading(true);
-      const result = await getTourByProvince(province);
+      const result = await getTourByProvince(province, limit, cusId);
       setError(null);
       return result;
     } catch (err) {
@@ -98,10 +114,10 @@ export const TourProvider = ({ children }) => {
     }
   };
 
-  const handleGetTourOutstanding = async () => {
+  const handleGetTourOutstanding = async (cusID) => {
     try {
       setIsLoading(true);
-      const result = await getTourOutstanding();
+      const result = await getTourOutstanding(cusID);
       setError(null);
       return result;
     } catch (err) {
@@ -134,10 +150,12 @@ export const TourProvider = ({ children }) => {
     tours,
     isLoading,
     error,
+    fetchTours,
     addTour: handleAddTour,
     updateTour: handleUpdateTour,
     getItinerary: handleGetItinerary,
     blockTour: handleBlockTour,
+    blockBatchTour: handleBlockBatchTour,
     getImages: handleGetImages,
     getTourByProvince: handleGetTourByProvince,
     getTourOutstanding: handleGetTourOutstanding,

@@ -9,9 +9,9 @@ import { useLocation } from "react-router-dom";
 import { API_URL } from '../utils/API_Port';
 import Spinner from 'react-bootstrap/Spinner';
 
-function Navbar() {
+function Navbar({ pageRef }) {
     const { user, loading } = useContext(AuthContext);
-
+    console.log("Navbar user:", user);
     // State to manage the open/close state of the navbar (mobile view)
     const [isOpen, setIsOpen] = useState(false);
     
@@ -24,32 +24,41 @@ function Navbar() {
     useEffect(() => {
     // Function to handle scroll event and change navbar style
         const handleScroll = () => {
-            if (window.scrollY > 0) {
-                setIsScrolled(true);
+           if (pageRef?.current) {
+                // Kiểm tra vị trí cuộn của .bookingPage
+                if (pageRef.current.scrollTop > 0) {
+                    setIsScrolled(true);
+                } else {
+                    setIsScrolled(false);
+                }
             } else {
+                // Dự phòng cho các trang khác sử dụng window.scrollY
+                if (window.scrollY > 0) {
+                setIsScrolled(true);
+                } else {
                 setIsScrolled(false);
-            }
+                }
+      }
         };
-
-        window.addEventListener("scroll", handleScroll);
+        // Thêm sự kiện cuộn cho .bookingPage hoặc window
+        const scrollElement = pageRef?.current || window;
+        scrollElement.addEventListener("scroll", handleScroll);
         
         return () => {
             window.removeEventListener("scroll", handleScroll);
         }
-   
-    },[]);
+    },[pageRef]);
 
 
     return (
         <div className={`navbar ${isScrolled ? "scrolled" : ""} ${!isHomePage ? "not-home" : ""}`}>
             <div className="navbar-content">
-                <h1 className="logo">Tour Guide</h1>
+                <h1 className="logo"><Link to="/">Tour Guide</Link></h1>
                 <ul className={`nav-links ${isOpen ? "active" : ""}`}>
                     <li className="btn--close" onClick={() => setIsOpen(!isOpen)}><FaTimes /></li>
                     <li><a href="#">About us</a></li>
-                    <li><a href="#">Popular Destination</a></li>
                     <li><Link to="/contact">Contact Us</Link></li>
-                    <li><a href="#">Help</a></li>
+                    <li><Link to="/tourFavorite">Tour Yêu thích</Link></li>
                     {!user && loading ? (
                         <li className="auth-loading">
                             <Spinner animation="border" size="sm" role="status">

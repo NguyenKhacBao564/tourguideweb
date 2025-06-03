@@ -1,4 +1,4 @@
-import { useState, useContext, useMemo, useCallback } from "react";
+import { useState, useContext, useEffect,useMemo, useCallback } from "react";
 import { Container } from "react-bootstrap";
 import { Row } from "react-bootstrap";
 import TourFilterEmployee from "../../components/Employee/Filter/TourFilterEmployee";
@@ -6,35 +6,36 @@ import DataTable from "../../components/Common/DataTable/DataTable";
 import { TourContext } from "../../context/TourContext";
 import StatusFilterEmployee from "../../components/Employee/StatusFilter_Employee/StatusFilterEmployee";
 import { useNavigate } from "react-router-dom";
-import { getOccupancyFilters } from "../../utils/tourFilterHelpers";
+import { getOccupancyFilters, sortToursByAvailability} from "../../utils/tourFilterHelpers";
 
-import { 
-  filterToursByStatus, 
-  filterToursBySearchTerm, 
-  sortToursByAvailability, 
-  combineFilters, 
-  FILTER_KEYS 
-} from "../../utils/tourFilterHelpers";
 
 const TourManagementEmp = () => {
   const navigate = useNavigate();
-  const { tours, isLoading, error, blockTour } = useContext(TourContext);
+  const { tours, isLoading, error, fetchTours, blockTour, blockBatchTour } = useContext(TourContext);
   console.log('tours', tours);
   // Các trạng thái lọc và sắp xếp
-  const [statusFilter, setStatusFilter] = useState(FILTER_KEYS.ALL);
-  const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState(null);
-  const [selectedTour, setSelectedTour] = useState([]);
+  const [selectedTour, setSelectedTour] = useState([]); // Mảng chứa các tour đã chọn
   const occupancyFilters = useCallback(getOccupancyFilters(), []);
-
+  const [filters, setFilters] = useState({
+          status: 'all',
+          search: '',
+  });
   
+
+  useEffect(() => {
+    console.log("TourManagementEmp useEffect run");
+    fetchTours(filters);
+  }, [filters]);
+
   // Columns cho bảng
   const columns = [
     { key: 'tour_id', label: 'Mã tour' },
     { key: 'name', label: 'Tên tour' },
-    { key: 'max_guests', label: 'Chổ trống' },
+    { key: 'max_guests', label: 'Số chổ trống' },
     { key: 'start_date', label: 'Ngày khởi hành' },
     { key: 'end_date', label: 'Ngày trở về' },
+    { key: 'status', label: 'Trạng thái' },
   ];
 
   // Định nghĩa các hành động (button) cho mỗi cột trong bảng
@@ -57,79 +58,66 @@ const TourManagementEmp = () => {
       label: 'Chi tiết',
       variant: 'success',
       onClick: (id, tourDetail) => {
-        // Ensure price fields are properly formatted as strings
-        const formattedTour = {
-          ...tourDetail,
-        };
-        
         navigate("/businessemployee/managetour/addtour", {
-          state: { tourDetail: formattedTour }
+          state: { tourDetail: tourDetail }
         });
       },
     },
   ];
 
-  // Xử lý lọc và sắp xếp dữ liệu
-  const filteredAndSortedTours = useMemo(() => {
-    // Kết hợp các bộ lọc
-    const combinedFilter = combineFilters(
-      filterToursByStatus(statusFilter),
-      filterToursBySearchTerm(searchTerm)
-    );
-    // Áp dụng bộ lọc
-    let result = tours.filter(combinedFilter); 
-    // Áp dụng sắp xếp nếu có
-    if (sortOrder) {
-      result = [...result].sort(sortToursByAvailability(sortOrder));
-    } 
-    return result;
-  }, [tours, statusFilter, searchTerm, sortOrder]);
 
-  // Handlers for filters
-  const handleStatusFilterChange = (filter) => {
-    setStatusFilter(filter);
-  };
-  
-  const handleSearch = (term) => {
-    setSearchTerm(term);
+
+  // Sắp xếp tours bằng useMemo
+  const sortedTours = useMemo(() => {
+    if (!tours || tours.length === 0) return [];
+    let result = [...tours];
+
+    if (sortOrder) {
+      console.log("Sorting tours by availability with order:", sortOrder);
+      result = result.sort(sortToursByAvailability(sortOrder));
+    }
+    return result;
+  }, [tours, sortOrder]);
+
+  // Xử lý thay đổi bộ lọc
+  const handleFilterChange = (newFilters) => {
+      setFilters((prev) => ({ ...prev, ...newFilters }));
   };
   
   const handleSort = (order) => {
+    // if (order === sortOrder) return; // Không thay đổi nếu cùng thứ tự
     setSortOrder(order);
   };
   
-  const handleDeleteSelected = async (ids) => {
-    if (window.confirm(`Bạn có chắc chắn muốn xóa ${ids.length} tour đã chọn không?`)) {
+  const handleBlockSelected = async (ids) => {
+    if (window.confirm(`Bạn có chắc chắn muốn xóa ${ids.length} tour đã chọn không batch?`)) {
       try {
-        // Xóa lần lượt các tour đã chọn
-        for (const id of ids) {
-          await blockTour(id);
-        }
+        await blockBatchTour(ids);
         setSelectedTour([]);
-      } catch (err) {
-        console.error('Lỗi khi khóa tour:', err);
+      } catch (error) {
+        console.error('Lỗi khi khóa tour:', error);
       }
     }
   };
 
   return (
-    <Container fluid className="tour-management">
+    <Container fluid>
       <Row>
         <TourFilterEmployee 
-          onSearch={handleSearch}
+          onSearch={handleFilterChange}
           onSort={handleSort}
-          onDeleteSelected={handleDeleteSelected}
+          onBlockSelected={handleBlockSelected}
           selectedItems={selectedTour}
           searchPlaceholder="Tìm kiếm theo tên hoặc mã tour"
           occupancyFilters={occupancyFilters}
         />
       </Row>
       <Row>
-        <StatusFilterEmployee onFilterChange={handleStatusFilterChange}/>
+        <StatusFilterEmployee onFilterChange={handleFilterChange} />
       </Row>
       <Row>
         <DataTable 
-          data={filteredAndSortedTours}
+          data={sortedTours}
           columns={columns}
           actions={actions}
           onFilter={() => true} // Filters are applied before passing to DataTable

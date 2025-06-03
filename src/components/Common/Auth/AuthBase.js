@@ -11,22 +11,12 @@ const AuthBase = ({
   error, 
   errorCode,
   success, 
-  handleSubmit
+  handleSubmit,
 }) => {
+
   const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   
-  // Effect để xử lý hiển thị và tự động ẩn thông báo lỗi
-  useEffect(() => {
-    if (error) {
-      setShowError(true);
-      // Tự động ẩn thông báo lỗi sau 1 giây
-      const timer = setTimeout(() => {
-        setShowError(false);
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [error]);
 
   // Effect để xử lý hiển thị và tự động ẩn thông báo thành công
   useEffect(() => {
@@ -38,7 +28,20 @@ const AuthBase = ({
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [success]);
+    if (error) {
+      setShowError(true);
+      // Tự động ẩn thông báo lỗi sau 1 giây
+      const timer = setTimeout(() => {
+        setShowError(false);
+      }, 1000);   
+      return () => clearTimeout(timer);
+    }
+  }, [success, error]);
+
+  console.log("error: ", error)
+  console.log("errorCode: ", errorCode)
+  
+
 
   return (
     <div className="auth">
@@ -71,11 +74,11 @@ const AuthBase = ({
             )}
           </div>
           
-          <form onSubmit={handleSubmit} className="auth__form grid">
+          <form onSubmit={handleSubmit} className="auth__form grid" autocomplete="on">
             {children}
             
-            <span className="auth__separator">Hoặc</span>
-            <SocialLogin />
+            {/* <span className="auth__separator">Hoặc</span>
+            <SocialLogin /> */}
             <div className="auth__switch-message">
               {isRegister 
                 ? <p>Đã có tài khoản? <Link to="/login"><span className="auth__link">Đăng nhập ngay</span></Link></p> 

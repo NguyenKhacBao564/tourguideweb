@@ -1,28 +1,82 @@
-import React from 'react';
+import React, {useState, useContext} from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock, faCar, faUsers, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FaCalendarAlt } from "react-icons/fa";
+import {formatDate} from "../../../feature/formatDate";
+import { API_URL } from "../../../utils/API_Port";
 import "./TourCard.scss";
+import { useNavigate } from 'react-router';
+import {addFavoriteTour, deleteFavoriteTour} from '../../../api/favoriteTourAPI';
+import generateId from '../../../feature/GenerateId';
+import {AuthContext} from '../../../context/AuthContext';
 
 function TourCard(props) {
-
-    const adultPrice = Number(props.price? props.price : (props.prices.length > 0) ? props.prices.find(price => price.age_group === 'adultPrice').price : 0).toLocaleString('vi-VN');
+    const { onFavoriteChange } = props;
+    const { user } = useContext(AuthContext);
+    // const [tourFavorite, setTourFavorite] = useState(false);
+    const { tour_id, is_favorite, fav_id } = props;
+    // const [isFavorite, setIsFavorite] = React.useState(is_favorite || false);
+    const isFavorite = props.is_favorite;
+    const [currentFavId, setCurrentFavId] = React.useState(fav_id || null);
+    const navigate = useNavigate();    
     
+    const handleToggleFavorite = async () => {
+        try {
+            if (!user) {
+                console.log("User is not logged in. Redirecting to login page...");
+                navigate('/login', { state: { returnUrl: '/tourFavourite' } });
+                return;
+            }
+
+            if (isFavorite) {
+                // Xóa tour khỏi danh sách yêu thích
+                await deleteFavoriteTour(fav_id);
+                // setIsFavorite(false);
+                setCurrentFavId(null);
+                console.log("Tour removed from favorites");
+            } else {
+                // Thêm tour vào danh sách yêu thích
+                const newFavId = generateId();
+                await addFavoriteTour(newFavId, user.id, tour_id);
+                // setIsFavorite(true);
+                setCurrentFavId(newFavId);
+                console.log("Tour added to favorites");
+            }
+           
+            // Gọi callback để cập nhật danh sách tour yêu thích
+            if (onFavoriteChange) {
+                onFavoriteChange();
+            }
+        } catch (error) {
+        console.error("Error toggling favorite status:", error);
+        }
+  };
+
+    const handleBooking = () => {
+        // Truyền id qua query parameter
+        console.log("click đặt tour")
+        const tourId = props.tour_id; // Giả định props có id, nếu không cần điều chỉnh
+        // window.location.href = `/booking?id=${tourId}`;
+        navigate(`/booking?id=${tourId}`);
+    };
+
+    const adultPrice = Number(props.price).toLocaleString('vi-VN');
+
     // console.log(props.prices);
     return (
-        <div className="tour-card">
+        <div className="tour-card" >
             <div className="tour-card__image-container">
-                {/* Biểu tượng khuyến mãi */}
-                <div className="tour-card__discount">-20%</div>
+                {/* Biểu tượng khuyến mãi
+                <div className="tour-card__discount">-20%</div> */}
                 {/* Nút yêu thích */}
-                <button className="tour-card__favorite">
+                <button className={`tour-card__favorite ${isFavorite ? "filled" : ""}`} onClick={handleToggleFavorite}>
                     <FontAwesomeIcon icon={faHeart} />
                 </button>
 
                 {/* Hình ảnh */}
                 <img
-                    src="https://images.pexels.com/photos/1658967/pexels-photo-1658967.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                    alt="Phú Yên"
+                    src={`${API_URL}/${props.cover_image}`}
+                    alt="Tour"
                     className="tour-card__img"
                 />
             </div>
@@ -42,12 +96,12 @@ function TourCard(props) {
                     </li>
                     <li>
                         <p>
-                            <FontAwesomeIcon icon={faUsers} /> Số lượng khách: {props.max_guests}
+                            <FontAwesomeIcon icon={faUsers} /> Chỗ còn trống: {props.max_guests - props.booked_slots}/{props.max_guests}
                         </p>
                     </li>
                     <li>
                         <p>
-                            <FaCalendarAlt /> Ngày khởi hành: 25/09/2025
+                            <FaCalendarAlt /> Ngày khởi hành: {formatDate(props.start_date)}
                         </p>
                     </li>
                 </ul>
@@ -56,7 +110,7 @@ function TourCard(props) {
                         <p>Giá từ:</p>
                         <p id="price">{adultPrice} đ</p>
                     </div>
-                    <button className="book-btn">Đặt ngay</button>
+                    <button className="book-btn" onClick={() => handleBooking()}>Đặt ngay</button>
                 </div>
             </div>
         </div>

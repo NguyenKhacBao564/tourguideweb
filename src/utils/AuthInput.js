@@ -39,6 +39,18 @@ const AuthInputs = {
         },
         {
             id: 4,
+            name: "date_of_birth",
+            type: "date",
+            placeholder: "Ngày sinh",
+            errorMessage: {
+                Default: "Ngày sinh không được để trống",
+                Constraint: "Ngày sinh không hợp lệ"},
+            label: "Ngày sinh",
+            required: true,
+            usepattern: false,
+        },
+        {
+            id: 5,
             name: "password",
             type: "password",
             placeholder: "Nhập mật khẩu",
@@ -50,7 +62,7 @@ const AuthInputs = {
             usepattern: true,
         },
         {
-            id: 5,
+            id: 6,
             name: "confirmPassword",
             type: "password",
             placeholder: "Nhập lại mật khẩu",

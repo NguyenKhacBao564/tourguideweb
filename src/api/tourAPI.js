@@ -2,9 +2,11 @@ import axios from "axios";
 import { API_URL } from "../utils/API_Port";
 
 // Lấy danh sách tour
-export const getTour = async () => {
+export const getTour = async (filter = {}) => {
   try {
-    const response = await axios.get(`${API_URL}/tours`);
+    const response = await axios.get(`${API_URL}/tours`, {
+      params: filter,
+    });
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || "Lỗi khi lấy danh sách tour");
@@ -21,10 +23,25 @@ export const getTourById = async (id) => {
   }
 };
 
-// Lấy danh sách tour nổi bật giá thấp nhất
-export const getTourOutstanding = async () => {
+
+export const getTourByFilter = async (filter) => {
   try {
-    const response = await axios.get(`${API_URL}/tours/outstanding`);
+    const response = await axios.get(`${API_URL}/tours/tourfilter`, {
+      params: filter
+    });
+    console.log("Response from getTourByFilter: ", filter);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Lỗi khi lấy danh sách tour theo bộ lọc");
+  }
+}
+
+// Lấy danh sách tour nổi bật giá thấp nhất
+export const getTourOutstanding = async (cusId=null) => {
+  try {
+    const response = await axios.get(`${API_URL}/tours/outstanding`, {
+      params: { cusId: cusId }
+    });
     return response.data;
   }catch(error){
     throw new Error(error.response?.data?.message || "Lỗi khi lấy danh sách tour");
@@ -32,9 +49,12 @@ export const getTourOutstanding = async () => {
 }
 
 // Lấy danh sách tour theo tỉnh
-export const getTourByProvince = async (province) => {
+export const getTourByProvince = async (province, limit=10, cusId=null) => {
   try {
-    const response = await axios.get(`${API_URL}/tours/province/${province}`);
+    console.log("Fetching tours for province:", province, "with limit:", limit, "and customer ID:", cusId);
+    const response = await axios.get(`${API_URL}/tours/province/${province}`, {
+      params: { limit: limit, cusId: cusId }
+    });
     return response.data;
   }catch(error){
     throw new Error(error.response?.data?.message || "Lỗi khi lấy danh sách tour theo tỉnh");
@@ -128,10 +148,20 @@ export const updateTour = async (tourData, tourId) => {
 // Khóa tour
 export const blockTour = async (id) => {
   try {
-    const response = await axios.put(`${API_URL}/tours/${id}`);
+    const response = await axios.put(`${API_URL}/tours/block/${id}`);
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || "Lỗi khi khóa tour");
+  }
+}
+
+//Khóa nhiều tour
+export const blockBatchTour = async (ids) => {
+  try {
+    const response = await axios.put(`${API_URL}/tours/block_batch`, { tour_ids: ids });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Lỗi khi khóa nhiều tour");
   }
 }
 

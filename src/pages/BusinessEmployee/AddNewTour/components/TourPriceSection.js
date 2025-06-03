@@ -9,9 +9,9 @@ const TourPriceSection = ({ prices, onChange }) => {
   const infantPrice = prices.find(item => item.age_group === 'infantPrice')?.price || '0';
 
   return (
-    <Container className="price-section mt-4 mb-3">
+    <Container fluid className="price-section mt-4 mb-3">
       <h5>Chọn Giá:</h5>
-      <Row>
+      <Row >
         <PriceSection
           adultPrice={adultPrice}
           childPrice={childPrice}

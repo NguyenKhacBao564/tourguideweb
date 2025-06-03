@@ -3,9 +3,12 @@
     gap: 20px;
     align-items: center;
     .filter__dropdownbtn{
+        p{
+            flex-basis: 20%;
+        }
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 5px;
         flex-basis: 30%;
 
     }

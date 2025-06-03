@@ -1,3 +1,4 @@
+// src/components/Common/DataTable/DataTable.js
 import React, { useState, useEffect, useContext} from 'react';
 import { Table, Container, Button } from "react-bootstrap";
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
@@ -24,7 +25,7 @@ function DataTable(
     },
     selectedItems = [],
     onSelectChange = () => {},
-    idKey = 'id',
+    idKey = 'id', // Khóa duy nhất của mỗi mục (thay đổi tùy vào dữ liệu)
   }
 ) {
 
@@ -87,6 +88,10 @@ function DataTable(
     // if (column.format) {
     //   return column.format(value, item);
     // }
+    if(column.key === 'max_guests') {
+      const available = item.max_guests - (item.booked_slots || 0);
+      return `${available}`;
+    }
     if (column.key.includes('date') || column.key.includes('created_at')) {
       return formatDate(value);
     }
@@ -102,7 +107,7 @@ function DataTable(
 
   return (
     <Container className="table-wrapper mt-2">
-      <Table hover responsive borderless className="tour-management__table">
+      <Table hover responsive borderless className="tour-management__table" >
         <thead className="bg-light">
           <tr>
             <th>
@@ -151,19 +156,19 @@ function DataTable(
                   <td key={column.key}>{renderColumnValue(item, column)}</td>
                 ))}
                 {actions.length > 0 && (
-                   <td style={{display: 'flex', justifyContent: 'center'}}>
-                  {actions.map((action, index) => (
-                   <ButtonGroup key={index} className="me-2" aria-label="Actions">
-                       <Button
-                         key={index}
-                         variant={action.variant}
-                         size="sm"
-                         onClick={() => action.onClick(item[idKey], item)}
-                       >
-                         {action.label}
-                       </Button>
-                   </ButtonGroup>
-                    ))}
+                   <td className="text-center">
+                    {actions.map((action, index) => (
+                    <ButtonGroup key={index} className="me-2" aria-label="Actions" >
+                        <Button
+                          key={index}
+                          variant={action.variant}
+                          size="sm"
+                          onClick={() => action.onClick(item[idKey], item)}
+                        >
+                          {action.label}
+                        </Button>
+                    </ButtonGroup>
+                      ))}
                  </td>
                 )}
               </tr>

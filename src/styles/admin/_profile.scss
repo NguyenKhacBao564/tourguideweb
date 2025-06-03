@@ -1,5 +1,6 @@
 @import '../admin/_variables';
 
+
 .profile-page {
   padding: $spacing-lg 0;
   
@@ -193,12 +194,21 @@
         }
 
         &.save-button {
-          background-color: $primary-color;
-          border: none;
-          color: white;
-
+          background-color: white;
+          border: 1px solid $primary-color;
+          color: $primary-color;
+          transition: background 0.2s, color 0.2s;
+        }
+        &.save-button.changed {
           &:hover {
-            background-color: adjust-color($primary-color, $lightness: -10%);
+            background-color: $primary-color;
+            color: white;
+          }
+        }
+        &.save-button:not(.changed) {
+          &:hover {
+            background-color: white;
+            color: $primary-color;
           }
         }
       }

@@ -8,12 +8,12 @@ import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import { GoPlus } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
-// import { getOccupancyFilters } from "../../../utils/tourFilterHelpers";
+
 
 function TourFilterEmployee({ 
   onSearch, 
   onSort, 
-  onDeleteSelected, 
+  onBlockSelected, 
   selectedItems = [],
   searchPlaceholder = "Tìm kiếm theo tên tour",
   occupancyFilters,
@@ -26,19 +26,19 @@ function TourFilterEmployee({
     const handleSearch = (value) => {
         
         if (onSearch) {
-            onSearch(value);
+            onSearch({search: value});
         }
     };
     
     const handleSort = (sortKey) => {
-        if (onSort) {
+        if (onSort) { 
             onSort(sortKey);
         }
     };
     
     const handleDeleteSelected = () => {
-        if (onDeleteSelected && selectedItems.length > 0) {
-            onDeleteSelected(selectedItems);
+        if (onBlockSelected && selectedItems.length > 0) {
+            onBlockSelected(selectedItems);
         }
     };
 
@@ -46,13 +46,14 @@ function TourFilterEmployee({
         <div>
             <div className="filter__area">
                 <div className="filter__dropdownbtn">
-                    <span>Lọc</span>
+                    <p>Sắp xếp</p>
                     <DropDownButton 
-                        title="Bộ lọc" 
+                        title="Tất cả" 
                         dropitem={occupancyFilters.map(filter => ({
                             name: filter.label,
-                            onClick: () => handleSort(filter.key)
+                            key: filter.key,
                         }))}
+                        onChange={handleSort}
                     />
                 </div>
                 <div className="filter__search">
