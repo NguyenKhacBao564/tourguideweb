@@ -180,7 +180,7 @@ function BookingTour(props) {
                             <Row>
                                 {!isLoading ? (
                                     <div className="main-image-container"><img
-                                        //src={`${API_URL}/${images[imageIndex].image_url}`}
+                                        src={`${API_URL}/${images[imageIndex].image_url}`}
                                         alt="Main Tour"
                                         className="main-image"
                                     /></div>
@@ -198,7 +198,7 @@ function BookingTour(props) {
                                     images.map((image, index) => (
                                         <img
                                         key={index}
-                                        //src={`${API_URL}/${image.image_url}`}
+                                        src={`${API_URL}/${image.image_url}`}
                                         alt={image.alt}
                                         onClick={() => setImageIndex(index)}
                                         className="thumbnail-image img-fluid rounded m-1"

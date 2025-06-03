@@ -51,12 +51,21 @@ const getBranch = async ()=>{
 const updateTourStatus = async () => {
   try {
     const pool = await getPool();
+
+    // Cập nhật tour sắp khởi hành
+    await pool.request().query(`
+      UPDATE Tour
+      SET status = 'upcoming'
+      WHERE start_date > GETDATE()
+        AND start_date <= DATEADD(DAY, 7, GETDATE())
+        AND status NOT IN ('inactive', 'reject');
+    `);
     
     // Cập nhật tour đang diễn ra
     await pool.request().query(`
       UPDATE Tour
       SET status = 'ongoing'
-      WHERE start_date <= GETDATE() AND end_date >= GETDATE() AND status = 'approved'
+      WHERE start_date <= GETDATE() AND end_date >= GETDATE() AND status = 'upcoming'
     `);
     
     // Cập nhật tour đã kết thúc
@@ -400,7 +409,7 @@ const getEmployeeById = async (emp_id) => {
 
 // Lấy danh sách tour theo trạng thái và phân trang
 const getToursByStatusAndPage = async ( page, pageSize) => {
-  const status = 'active'; // Trạng thái tour mặc định là 'active'
+  const status = 'pending'; // Trạng thái tour mặc định là 'active'
   try {
     const pool = await getPool();
     const offset = (page - 1) * pageSize;
@@ -441,7 +450,7 @@ const approveTourById = async (tourId) => {
       .input('tourId', sql.NVarChar, tourId)
       .query(`
         UPDATE Tour
-        SET status = 'approved'
+        SET status = 'active'
         WHERE tour_id = @tourId
       `);
     if (result.rowsAffected[0] === 0) {
@@ -462,7 +471,7 @@ const rejectTourById = async (tourId) => {
       .input('tourId', sql.NVarChar, tourId)
       .query(`
         UPDATE Tour
-        SET status = 'rejected'
+        SET status = 'reject'
         WHERE tour_id = @tourId
       `);
     if (result.rowsAffected[0] === 0) {

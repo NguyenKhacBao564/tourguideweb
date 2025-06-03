@@ -57,11 +57,12 @@ const BranchInfo = () => {
   
   // Mapping labels tiếng Việt cho các trạng thái (khai báo trước)
   const statusLabels = {
-    active: "Chờ duyệt",
-    approved: "Đã duyệt", 
+    pending: "Chờ duyệt",
+    active: "Đã duyệt",
+    upcoming: "Sắp diễn ra", 
     ongoing: "Đang diễn ra",
     completed: "Đã hoàn thành",
-    rejected: "Bị từ chối"
+    reject: "Bị từ chối"
   };
   
   // Chuẩn bị dữ liệu cho tour stats pie chart
@@ -69,11 +70,12 @@ const BranchInfo = () => {
   
   // Loại bỏ total và pending, chỉ lấy các trạng thái cần thiết
   const filteredTourStats = {
-    active: tourStats.active || 0,       // Tour đang chờ duyệt
-    approved: tourStats.approved || 0,   // Tour đã duyệt
+    pending: tourStats.pending || 0,       // Tour đang chờ duyệt
+    active: tourStats.active || 0,   // Tour đã duyệt
+    upcoming: tourStats.upcoming || 0,     // Tour sắp diễn ra
     ongoing: tourStats.ongoing || 0,     // Tour đang diễn ra
     completed: tourStats.completed || 0, // Tour đã hoàn thành
-    rejected: tourStats.rejected || 0    // Tour bị từ chối
+    reject: tourStats.reject || 0    // Tour bị từ chối
   };
   
   // Tạo entries chỉ với các trạng thái có giá trị > 0
