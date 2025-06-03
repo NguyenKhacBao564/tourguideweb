@@ -47,7 +47,6 @@ function Navbar({ pageRef }) {
         return () => {
             window.removeEventListener("scroll", handleScroll);
         }
-   
     },[pageRef]);
 
 
@@ -58,7 +57,6 @@ function Navbar({ pageRef }) {
                 <ul className={`nav-links ${isOpen ? "active" : ""}`}>
                     <li className="btn--close" onClick={() => setIsOpen(!isOpen)}><FaTimes /></li>
                     <li><a href="#">About us</a></li>
-                    <li><a href="#">Popular Destination</a></li>
                     <li><Link to="/contact">Contact Us</Link></li>
                     <li><Link to="/tourFavorite">Tour Yêu thích</Link></li>
                     {!user && loading ? (

@@ -44,9 +44,9 @@ function TourCard(props) {
             }
            
             // Gọi callback để cập nhật danh sách tour yêu thích
-                if (onFavoriteChange) {
-                    onFavoriteChange();
-                }
+            if (onFavoriteChange) {
+                onFavoriteChange();
+            }
         } catch (error) {
         console.error("Error toggling favorite status:", error);
         }
@@ -96,7 +96,7 @@ function TourCard(props) {
                     </li>
                     <li>
                         <p>
-                            <FontAwesomeIcon icon={faUsers} /> Số lượng khách: {props.max_guests}
+                            <FontAwesomeIcon icon={faUsers} /> Chỗ còn trống: {props.max_guests - props.booked_slots}/{props.max_guests}
                         </p>
                     </li>
                     <li>

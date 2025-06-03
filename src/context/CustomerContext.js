@@ -8,17 +8,20 @@ export const CustomerProvider = ({children}) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+
+    const fetchCustomerAccount = async (filter='') => {
+        try{
+            const data = await getCustomerAccount(filter);
+            setCustomerAccount(data);
+            setLoading(false);
+        } catch (error) {
+            setError(error);
+            setLoading(false);
+        }
+    };
+
+
     useEffect(() => {
-        const fetchCustomerAccount = async () => {
-            try{
-                const data = await getCustomerAccount();
-                setCustomerAccount(data);
-                setLoading(false);
-            } catch (error) {
-                setError(error);
-                setLoading(false);
-            }
-        };
         fetchCustomerAccount();
     }, []);
 
@@ -85,6 +88,7 @@ export const CustomerProvider = ({children}) => {
         customerAccount,
         loading,
         error,
+        fetchCustomerAccount,
         blockCustomer: handleBlockCustomer,
         blockBatchCustomer: handleBlockBatchCustomer,
         deleteCustomer: handleDeleteCustomer,

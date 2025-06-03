@@ -46,23 +46,6 @@ function PromotionManager(props) {
         }
     };
 
-    // useEffect(() => { 
-    //     const fetchPromotions = async () => {
-    //         setIsLoading(true);
-    //         try {
-    //             const data = await getPromotionList();
-    //             setPromotions(data);
-    //         } catch (error) {
-    //             console.error("Error fetching promotions:", error);
-    //             setError(error.message);
-    //         } finally {
-    //             setIsLoading(false);
-    //         }
-    //     };
-    //     fetchPromotions();
-    // }, []);
-
-
     // Gọi API khi bộ lọc thay đổi
     useEffect(() => {
         console.log("Filters changed effect run");

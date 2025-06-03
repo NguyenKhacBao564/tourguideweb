@@ -2,9 +2,11 @@ import axios from "axios";
 import { API_URL } from "../utils/API_Port";
 
 // Lấy danh sách tour
-export const getTour = async () => {
+export const getTour = async (filter = {}) => {
   try {
-    const response = await axios.get(`${API_URL}/tours`);
+    const response = await axios.get(`${API_URL}/tours`, {
+      params: filter,
+    });
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || "Lỗi khi lấy danh sách tour");

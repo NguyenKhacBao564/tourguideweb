@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect} from 'react';
+import React, { useRef, useState, useEffect, useContext} from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import "../../styles/pages/BookingTour.scss";
 import Card from 'react-bootstrap/Card';
@@ -21,8 +21,10 @@ import { formatPrice } from '../../feature/formatPrice';
 import { useNavigate } from 'react-router-dom';
 import { getStatsResults } from '../../api/reviewAPI';
 import { getTourByProvince } from '../../api/tourAPI';
+import { AuthContext } from '../../context/AuthContext';
 
 function BookingTour(props) {
+    const { user, loading } = useContext(AuthContext);
     const bookingPageRef = useRef(null); // Tạo ref cho .bookingPage để sử dụng trong Navbar
     const relatedToursRef = useRef(null);
     const [searchParams] = useSearchParams(); // Sử dụng useSearchParams để lấy query parameters
@@ -36,24 +38,11 @@ function BookingTour(props) {
     const [tours, setTours] = useState([]); // Lưu trữ danh sách tour liên quan
     const [isLoadingRelatedTours, setIsLoadingRelatedTours] = useState(false); // Loading cho tour liên quan
     const [schedules, setSchedules] = useState([]);
-    const [stats, setStats] = useState({});
+    const [stats, setStats] = useState({}); // Lưu trữ thống kê đánh giá của tour
     const navigate = useNavigate();
     
-    console.log("BookingTour component rendered");
-    const currentTour = {
-    name: "Du lịch Đà Lạt - Samten Hills - Puppy Farm - Langbiang - Gallery La Chocotea - Thác Bobla",
-    start: "TP. HCM",
-    code: "43210",
-    date: "24/03/2025",
-    priceAdult: 4129000,
-    priceChild: 1990000,
-    priceBaby: 0,
-    image: "https://i.imgur.com/e2UnpdB.jpg"
-    };
 
-     // Cuộn về đầu trang và reset trạng thái khi tourId thay đổi
-    
- // Redirect if no tourId is provided
+     // Chuyển hướng về trang không được phép nếu không có tourId
     useEffect(() => {
         if (!tourId) {
             navigate('/unauthorized', { replace: true }); // Redirect to tours list page
@@ -69,69 +58,118 @@ function BookingTour(props) {
         setImageIndex(0);
     }, [tourId, navigate]);
 
+
+    console.log("BookingTour component rendered");
+    const currentTour = {
+        name: tour.name,
+        start: tour.start_date,
+        code: "43210",
+        date: "24/03/2025",
+        priceAdult: 4129000,
+        priceChild: 1990000,
+        priceBaby: 0,
+        image: "https://i.imgur.com/e2UnpdB.jpg"
+    };
+
+     // Cuộn về đầu trang và reset trạng thái khi tourId thay đổi
+    
+    //  //Hàm để lấy danh sách tour liên quan 
+    // const fetchRelatedTours = async () => {
+    //     console.log("Fetching related tours for tourId:", tourId);
+    //     // console.log("userID", user.id);
+    //     if (!tour.destination) return; // Kiểm tra tour.province
+    //     setIsLoadingRelatedTours(true);
+    //     try {
+    //         const relatedTours = await getTourByProvince(tour.destination, 8, user.id ); // Lấy tối đa 8 tour
+    //         const filteredTours = relatedTours.filter(t => t.tour_id !== tourId);
+    //         setTours(filteredTours); // Loại bỏ tour hiện tại
+    //         console.log("Related tours fetched:", filteredTours);
+    //     } catch (error) {
+    //         console.error("Error fetching related tours:", error);
+    //     } finally {
+    //         setIsLoadingRelatedTours(false);
+    //     }
+    // };
+    // Hàm lấy danh sách tour liên quan
+    const fetchRelatedTours = async (destination) => {
+        if (!destination || loading || !user?.id) return; // Kiểm tra destination và user.id
+        setIsLoadingRelatedTours(true);
+        try {
+        const relatedTours = await getTourByProvince(destination, 8, user.id);
+        const filteredTours = relatedTours.filter((t) => t.tour_id !== tourId);
+        setTours(filteredTours);
+        console.log("Related tours fetched:", filteredTours);
+        } catch (error) {
+        console.error("Error fetching related tours:", error);
+        } finally {
+        setIsLoadingRelatedTours(false);
+        }
+    };
+
+
+   
+
     useEffect(() => {
         const fetchTour = async () => {
             setIsLoading(true);
-            
-            console.log("is loading...")
-            const tourData = await getTourById(tourId);
-            const scheduleData = await getItinerary(tourId);
-            const imageData = await getTourImages(tourId);
-            const statsData = await getStatsResults(tourId);
+            try {
+                const [tourData, scheduleData, imageData, statsData] = await Promise.all([
+                getTourById(tourId).catch((err) => {
+                    console.error("Error fetching tour:", err);
+                    return null;
+                }),
+                getItinerary(tourId).catch((err) => {
+                    console.error("Error fetching itinerary:", err);
+                    return [];
+                }),
+                getTourImages(tourId).catch((err) => {
+                    console.error("Error fetching images:", err);
+                    return [];
+                }),
+                getStatsResults(tourId).catch((err) => {
+                    console.error("Error fetching stats:", err);
+                    return { total_reviews: 0, average_rating: 0 };
+                }),
+                ]);
 
-            console.log("Image data:", imageData); // Kiểm tra dữ liệu hình ảnh
-            setTour(tourData);
-            setSchedules(scheduleData);
-            setImages(imageData);
-            setStats(statsData);
-            console.log("Schedule data:", scheduleData); // Kiểm tra dữ liệu lịch trình
-            console.log("get data success...")
-            setIsLoading(false);
-        };
-        fetchTour();
-        
-    }, [tourId]);
-
-    // Intersection Observer để tải 8 tour liên quan
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                if (entries[0].isIntersecting && tours.length === 0) {
-                    const fetchRelatedTours = async () => {
-                        if (!tour.destination) return; // Kiểm tra tour.province
-                        setIsLoadingRelatedTours(true);
-                        try {
-                            const relatedTours = await getTourByProvince(tour.destination, 8); // Lấy tối đa 8 tour
-                            const filteredTours = relatedTours.filter(t => t.tour_id !== tourId);
-                            setTours(filteredTours); // Loại bỏ tour hiện tại
-                            console.log("Related tours fetched:", filteredTours);
-                        } catch (error) {
-                            console.error("Error fetching related tours:", error);
-                        } finally {
-                            setIsLoadingRelatedTours(false);
-                        }
-                    };
-                    fetchRelatedTours();
+                if (!tourData) {
+                throw new Error("Không thể tải thông tin tour");
                 }
-            },
-            { threshold: 0.1 }
-        );
 
-        if (relatedToursRef.current) {
-            observer.observe(relatedToursRef.current);
-        }
-
-        return () => {
-            if (relatedToursRef.current) {
-                observer.unobserve(relatedToursRef.current);
+                setTour(tourData);
+                setSchedules(scheduleData);
+                setImages(imageData);
+                setStats(statsData);
+                console.log("Tour data:", tourData);
+                console.log("Schedule data:", scheduleData);
+                console.log("Image data:", imageData);
+                console.log("Stats data:", statsData);
+            } catch (error) {
+                console.error("Error in fetchTour:", error);
+                navigate("/unauthorized", { replace: true }); // Chuyển hướng nếu lỗi
+            } finally {
+                setIsLoading(false);
             }
         };
-    }, [tourId, tour.destination, tours.length]);
-    
+        fetchTour();
+    }, [tourId]);
+
+    // Lấy tour liên quan khi tour.destination thay đổi
+    useEffect(() => {
+        if (tour?.destination) {
+        fetchRelatedTours(tour.destination);
+        }
+    }, [tour?.destination, user?.id, loading]);
+
+    const onChangeFavoriteTour = async () => {
+        console.log("Cập nhật danh sách tour yêu thích");
+        if (tour?.destination) {
+            await fetchRelatedTours(tour.destination);
+        }
+    };
 
     console.log("Tour data:", tour); // Kiểm tra dữ liệu tour
 
-   
     const handleBookNow = () => {
         navigate('/user/booking-info', { state: { tour: currentTour } });
     };
@@ -207,7 +245,7 @@ function BookingTour(props) {
                         <ul>
                             <li>Giá tour không bao gồm chi phí ăn uống cá nhân</li>
                             <li>Nếu hủy hoặc chuyển sang các tuyến du lịch khác trước ngày khởi hành 20: Không mất chi phí.</li>
-                            <li>Nếu chương trình du lịch bị hủy bỏ hoặc thay đổi bởi một trong hai bên vì một lý do bất khả kháng như hỏa hoạn, thời tiết, tai nạn, thiên tai, chiến tranh, dịch bệnh, hoãn, dời, hủy chuyến hoặc thay đổi khác của các phương tiện vận chuyển công cộng hoặc các sự kiện bất khả kháng khác theo quy định pháp luật …), thì Vietravel sẽ không chịu bất kỳ nghĩa vụ bồi hoàn các tổn thất đã xảy ra và không chịu bất kỳ trách nhiệm pháp lý nào.</li>
+                            <li>Nếu chương trình du lịch bị hủy bỏ hoặc thay đổi bởi một trong hai bên vì một lý do bất khả kháng như hỏa hoạn, thời tiết, tai nạn, thiên tai, chiến tranh, dịch bệnh, hoãn, dời, hủy chuyến hoặc thay đổi khác của các phương tiện vận chuyển công cộng hoặc các sự kiện bất khả kháng khác theo quy định pháp luật …), thì Tour Guidee sẽ không chịu bất kỳ nghĩa vụ bồi hoàn các tổn thất đã xảy ra và không chịu bất kỳ trách nhiệm pháp lý nào.</li>
                         </ul>
 
                         <hr className="my-4"></hr>
@@ -238,7 +276,9 @@ function BookingTour(props) {
                                     </Button>
                                 </Card.Text>
                                 <Card.Text>
-                                    <Button variant="custom-secondary" className="mb-2 w-100"><RiShareForwardLine /> Liên Hệ Tư Vấn</Button>
+                                    <Button variant="custom-secondary" className="mb-2 w-100" onClick={() => navigate("/contact")}>
+                                        <RiShareForwardLine /> Liên Hệ Tư Vấn
+                                    </Button>
                                 </Card.Text>
                             </Card.Body>
                         </Card>
@@ -256,7 +296,7 @@ function BookingTour(props) {
                             <Row className="custom-row g-3" xs={1} sm={2} md={3} xl={3} xxl={4}>
                                 {tours.map((tour) => (
                                     <Col key={tour.tour_id} className="custom-col">
-                                        <TourCard {...tour} />
+                                        <TourCard {...tour} onFavoriteChange={onChangeFavoriteTour}/>
                                     </Col>
                                 ))}
                             </Row>
@@ -267,12 +307,7 @@ function BookingTour(props) {
                     </Container>
                 </div>
             </Container>
-            
-            {/* <Container className="tour-relevant" >
-                <h3 className="section-title">Các tour liên quan</h3>
-                <TourList tours={tours}/>
-            </Container> */}
-            
+             
             <Footer />
         </div>
     );

@@ -1,15 +1,77 @@
 const {sql, getPool} = require("../config/db");
 
+// const getCustomer = async (req, res) => {
+//     try{
+//         const pool = await getPool();
+//         const { name } = req.query; // Lấy tham số name từ query string
+//         console.log("Name filter: ", name);
+
+//         let query = "SELECT * FROM Customer WHERE cus_status='active'";
+//         if (name) {
+//             query += " AND promo_name LIKE @name";
+//             pool.request().input("name", sql.NVarChar, `%${name}%`);
+//         }
+//         const result = await pool.request().query(query);
+//         console.log("Query result:", result);
+//         res.json(result.recordset);
+        
+//     }
+//     catch(error){   
+//         res.status(500).json({message: "Lỗi server", error});
+//     }
+// }
+
 const getCustomer = async (req, res) => {
-    try{
-        const pool = await getPool();
-        const result = await pool.request().query("SELECT * FROM Customer WHERE cus_status='active'");
-        res.json(result.recordset);
+    let pool;
+    try {
+        pool = await getPool();
+        const { name } = req.query; // Lấy tham số name từ query string
+        console.log("Name filter:", name);
+
+        let query = "SELECT * FROM Customer WHERE cus_status = 'active'";
+        const request = pool.request(); // Tạo request mới
+
+        if (name) {
+            query += " AND fullname LIKE @fullname";
+            request.input("fullname", sql.NVarChar, `%${name}%`); // Chỉ gắn tham số nếu dùng
+        }
+
+        const result = await request.query(query); // Thực thi query
+        // console.log("Query result:", result);
+        return res.json(result.recordset);
+    } catch (error) {
+        console.error("Error fetching customers:", error);
+        return res.status(500).json({ message: "Lỗi server", error: error.message });
     }
-    catch(error){   
-        res.status(500).json({message: "Lỗi server", error});
-    }
-}
+};
+
+// const getCustomer = async (req, res) => {
+//     let pool;
+//     try {
+//         pool = await getPool();
+//         const { name } = req.query; // Lấy tham số name từ query string
+//         console.log("Name filter:", name);
+
+//         let query = "SELECT * FROM Customer WHERE cus_status = 'active'";
+//         const request = pool.request(); // Tạo request mới
+
+//         if (name) {
+//             query += " AND name LIKE @name";
+//             request.input("name", sql.NVarChar, `%${name}%`); // Chỉ gắn tham số nếu dùng
+//         }
+
+//         const result = await request.query(query); // Thực thi query
+//         console.log("Query result:", result);
+//         return res.json(result.recordset);
+//     } catch (error) {
+//         console.error("Error fetching customers:", error);
+//         return res.status(500).json({ message: "Lỗi server", error: error.message });
+//     }
+// };
+
+
+
+
 
 const getAvatar = async (req, res) => {
     const cusId = req.params.id;

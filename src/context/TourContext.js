@@ -2,7 +2,7 @@ import React, { createContext, useState, useEffect } from "react";
 import { getTour, addTour, updateTour, blockTour, blockBatchTour, getTourByProvince, getTourOutstanding} from "../api/tourAPI";
 import { getItinerary } from "../api/scheduleAPI";
 import { getTourImages } from "../api/imageAPI";
-
+import { sortToursByAvailability } from "../utils/tourFilterHelpers";
 // Tạo Context
 export const TourContext = createContext();
 
@@ -12,13 +12,11 @@ export const TourProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Lấy danh sách tour khi component mount
-  useEffect(() => {
-    console.log("tour context use effect run!")
-    const fetchTours = async () => {
+
+ const fetchTours = async (filter={}) => {
       setIsLoading(true);
       try {
-        const data = await getTour();
+        const data = await getTour(filter);
         setTours(data);
         setError(null);
       } catch (err) {
@@ -26,7 +24,11 @@ export const TourProvider = ({ children }) => {
       } finally {
         setIsLoading(false);
       }
-    };
+  };
+
+  // Lấy danh sách tour khi component mount
+  useEffect(() => {
+    console.log("tour context use effect run!")
     fetchTours();
   }, []);
 
@@ -148,6 +150,7 @@ export const TourProvider = ({ children }) => {
     tours,
     isLoading,
     error,
+    fetchTours,
     addTour: handleAddTour,
     updateTour: handleUpdateTour,
     getItinerary: handleGetItinerary,

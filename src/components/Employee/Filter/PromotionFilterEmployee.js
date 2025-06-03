@@ -8,9 +8,7 @@ import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import DropDownButton from '../../Common/DropDown/DropDownButton';
 import { GoPlus } from "react-icons/go";
-
 import { useNavigate } from "react-router-dom";
-
 
 
 function PromotionFilterEmployee({

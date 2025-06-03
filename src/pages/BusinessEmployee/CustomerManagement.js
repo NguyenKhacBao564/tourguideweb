@@ -8,18 +8,22 @@ import { filterCustomerBySearchTerm } from '../../utils/customerFilterHelper';
 
 import { CustomerContext } from '../../context/CustomerContext';
 function CustomerManagement(props) {
-    const {customerAccount, loading, error, blockCustomer, blockBatchCustomer} = useContext(CustomerContext);
+    const {customerAccount, loading, error, blockCustomer, fetchCustomerAccount,  blockBatchCustomer} = useContext(CustomerContext);
 
    const [searchTerm, setSearchTerm] = useState("");
    const [selectedUsers, setSelectedUser] = useState([]);
 
    const handleSearch = (value) => {
-    setSearchTerm(value);
+      // setSearchTerm(value);
+      console.log("Search value:", value);
+      fetchCustomerAccount({name: value});
    }
    
-   const filteredCustomers = useMemo(() => {
-    return customerAccount.filter(filterCustomerBySearchTerm(searchTerm));
-   }, [customerAccount, searchTerm]);
+
+   
+  //  const filteredCustomers = useMemo(() => {
+  //   return customerAccount.filter(filterCustomerBySearchTerm(searchTerm));
+  //  }, [customerAccount, searchTerm]);
 
    
    const handleDeleteSelected = async (ids) => {
@@ -37,6 +41,10 @@ function CustomerManagement(props) {
     }
   };
   
+  //  const handleSearch = (searchText) => {
+  //       setSearchTerm(searchText);
+  //   };
+
   // Columns cho bảng
   const columns = [
     { key: 'cus_id', label: 'Mã khách hàng' },
@@ -77,7 +85,7 @@ function CustomerManagement(props) {
       </Row>
       <Row>
         <DataTable 
-          data={filteredCustomers}
+          data={customerAccount}
           onSearch={handleSearch}
           columns={columns}
           actions={actions}

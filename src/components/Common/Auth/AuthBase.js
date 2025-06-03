@@ -77,8 +77,8 @@ const AuthBase = ({
           <form onSubmit={handleSubmit} className="auth__form grid" autocomplete="on">
             {children}
             
-            <span className="auth__separator">Hoặc</span>
-            <SocialLogin />
+            {/* <span className="auth__separator">Hoặc</span>
+            <SocialLogin /> */}
             <div className="auth__switch-message">
               {isRegister 
                 ? <p>Đã có tài khoản? <Link to="/login"><span className="auth__link">Đăng nhập ngay</span></Link></p> 

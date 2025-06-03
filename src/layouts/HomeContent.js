@@ -49,13 +49,13 @@ function Maincontent() {
       }
     };
 
-    const handleChangeFavoriteTour = async () => {
-      // Cập nhật danh sách tour yêu thích
-      console.log("Cập nhật danh sách tour yêu thích HOME CONTENT");
-      await fetchTours();
-      console.log("Đã cập nhật danh sách tour yêu thích");
-      // window.location.reload()
-    };
+  const handleChangeFavoriteTour = async () => {
+    // Cập nhật danh sách tour yêu thích
+    console.log("Cập nhật danh sách tour yêu thích HOME CONTENT");
+    await fetchTours();
+    console.log("Đã cập nhật danh sách tour yêu thích");
+    // window.location.reload()
+  };
 
 
   useEffect(() => {

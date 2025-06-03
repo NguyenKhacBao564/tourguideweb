@@ -88,6 +88,10 @@ function DataTable(
     // if (column.format) {
     //   return column.format(value, item);
     // }
+    if(column.key === 'max_guests') {
+      const available = item.max_guests - (item.booked_slots || 0);
+      return `${available}`;
+    }
     if (column.key.includes('date') || column.key.includes('created_at')) {
       return formatDate(value);
     }
