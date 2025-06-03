@@ -48,7 +48,7 @@ function CustomerManagement(props) {
     { key: 'fullname', label: 'Tên khách hàng' },
     { key: 'email', label: 'Email' },
     { key: 'phone', label: 'Số điện thoại' },
-    { key: 'date_of_birth', label: 'Ngày sinh' }
+    { key: 'birthday', label: 'Ngày sinh' }
   ];
   const actions = [
     {

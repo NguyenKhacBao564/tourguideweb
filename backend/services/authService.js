@@ -63,7 +63,7 @@ const getUserInfor = async (userId, role) => {
         email: user.email,
         phone: user.phone,
         role: "customer",
-        date_of_birth: user.date_of_birth,
+        birthday: user.birthday,
         address: user.address,
         avatar: user.pi_url,
       };
@@ -157,8 +157,8 @@ const loginUser = async (email, password) => {
 
 
 // Hàm đăng ký
-const registerUser = async (fullname, email, password, phone, date_of_birth) => {
-    if (!fullname || !email || !password || !phone || !date_of_birth) {
+const registerUser = async (fullname, email, password, phone, birthday) => {
+    if (!fullname || !email || !password || !phone || !birthday) {
       return {error: ERROR_MESSAGES.AUTH.REGISTRATION_FAILED}
     }
 
@@ -198,10 +198,10 @@ const registerUser = async (fullname, email, password, phone, date_of_birth) => 
       .input("email", sql.NVarChar, email)
       .input("password", sql.VarBinary, hashedPassword)
       .input("phone", sql.NVarChar, phone)
-      .input("date_of_birth", sql.Date, date_of_birth) // Thêm ngày sinh
+      .input("birthday", sql.Date, birthday) // Thêm ngày sinh
       .input("cus_status", sql.NVarChar, status)
       .query(
-        "INSERT INTO Customer (cus_id, fullname, email, password, phone, date_of_birth, cus_status) VALUES (@cusID, @fullname, @email, @password, @phone, @date_of_birth, 'active')"
+        "INSERT INTO Customer (cus_id, fullname, email, password, phone, birthday, cus_status) VALUES (@cusID, @fullname, @email, @password, @phone, @birthday, 'active')"
       );
   
     const userInfor = await getUserInfor(cusID, "customer");

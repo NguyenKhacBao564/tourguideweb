@@ -120,8 +120,8 @@ export const AuthProvider = ({ children }) => {
     return authenticateUser(loginUser, email, password);
   };
 
-  const regist = async (fullname, email, password, phone, date_of_birth) => {
-    return authenticateUser(registerUser, fullname, email, password, phone, date_of_birth );
+  const regist = async (fullname, email, password, phone, birthday) => {
+    return authenticateUser(registerUser, fullname, email, password, phone, birthday );
   };
 
 
