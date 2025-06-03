@@ -19,7 +19,7 @@ function AddNewPromotion(props) {
         promo_id: '',
         promo_name: '',
         code: '',
-        discount_percentage: '',
+        discount_percentage: 0,
         start_date: '',
         end_date: '',
         max_use: 0,

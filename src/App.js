@@ -18,14 +18,12 @@ import ConsultantEmployee from "./pages/ConsultantEmployee/ConsultantEmployee";
 import Chatbot from "./pages/ConsultantEmployee/ChatBot";
 import ResponeSupport from "./pages/ConsultantEmployee/ResponeSupport";
 import { TourProvider } from "./context/TourContext";
-// import { ConsultantSupportProvider } from "./context/ConsultantSupportContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./components/Unauthorized";
 import NotFound from "./pages/NotFound";
-// import AddNewPromotion from "./pages/BusinessEmployee/AddNewPromotion";
-//import UserManagement from "./pages/BusinessEmployee/UserManagement";
 import AddNewEmployee from "./pages/Admin/Employees/AddEmployee";
 import CustomerManagement from "./pages/BusinessEmployee/CustomerManagement";
+import InforCustomer from "./pages/BusinessEmployee/InforCustomer/InforCustomer";
 import BookingTour from "./pages/User/BookingTour";
 import BookingInfo from "./pages/User/BookingInfo";
 import { CustomerProvider } from "./context/CustomerContext";
@@ -35,6 +33,7 @@ import Checkout from "./pages/User/Checkout";
 import AddNewPromotion from "./pages/BusinessEmployee/AddNewPromotion/AddNewPromotion";
 import FindTour from "./pages/User/FindTour";
 import TourFavourite from "./pages/User/TourFavourite";
+
 
 function App() {
   return (
@@ -82,6 +81,13 @@ function App() {
                 <CustomerManagement />
               </CustomerProvider>
               } />
+
+            <Route path="customer/inforcustomer" element={
+              <CustomerProvider>
+                <InforCustomer />
+              </CustomerProvider>
+            } />
+
             <Route path="managetour" element={
                 <TourProvider>
                   <TourManagementEmp />

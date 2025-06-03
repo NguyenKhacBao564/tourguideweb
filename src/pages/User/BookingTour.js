@@ -48,7 +48,6 @@ function BookingTour(props) {
             navigate('/unauthorized', { replace: true }); // Redirect to tours list page
             return;
         }
-
         window.scrollTo(0, 0);
         setTours([]);
         setImages([]);
@@ -73,32 +72,15 @@ function BookingTour(props) {
 
      // Cuộn về đầu trang và reset trạng thái khi tourId thay đổi
     
-    //  //Hàm để lấy danh sách tour liên quan 
-    // const fetchRelatedTours = async () => {
-    //     console.log("Fetching related tours for tourId:", tourId);
-    //     // console.log("userID", user.id);
-    //     if (!tour.destination) return; // Kiểm tra tour.province
-    //     setIsLoadingRelatedTours(true);
-    //     try {
-    //         const relatedTours = await getTourByProvince(tour.destination, 8, user.id ); // Lấy tối đa 8 tour
-    //         const filteredTours = relatedTours.filter(t => t.tour_id !== tourId);
-    //         setTours(filteredTours); // Loại bỏ tour hiện tại
-    //         console.log("Related tours fetched:", filteredTours);
-    //     } catch (error) {
-    //         console.error("Error fetching related tours:", error);
-    //     } finally {
-    //         setIsLoadingRelatedTours(false);
-    //     }
-    // };
+   
     // Hàm lấy danh sách tour liên quan
     const fetchRelatedTours = async (destination) => {
-        if (!destination || loading || !user?.id) return; // Kiểm tra destination và user.id
         setIsLoadingRelatedTours(true);
         try {
-        const relatedTours = await getTourByProvince(destination, 8, user.id);
-        const filteredTours = relatedTours.filter((t) => t.tour_id !== tourId);
-        setTours(filteredTours);
-        console.log("Related tours fetched:", filteredTours);
+            const relatedTours = await getTourByProvince(destination, 8, (user?.id) || null); // Lấy tối đa 8 tour liên quan
+            const filteredTours = relatedTours.filter((t) => t.tour_id !== tourId);
+            setTours(filteredTours);
+            console.log("Related tours fetched:", filteredTours);
         } catch (error) {
         console.error("Error fetching related tours:", error);
         } finally {
@@ -157,7 +139,7 @@ function BookingTour(props) {
     // Lấy tour liên quan khi tour.destination thay đổi
     useEffect(() => {
         if (tour?.destination) {
-        fetchRelatedTours(tour.destination);
+            fetchRelatedTours(tour.destination);
         }
     }, [tour?.destination, user?.id, loading]);
 
@@ -170,9 +152,11 @@ function BookingTour(props) {
 
     console.log("Tour data:", tour); // Kiểm tra dữ liệu tour
 
+   
     const handleBookNow = () => {
         navigate('/user/booking-info', { state: { tour: currentTour } });
     };
+    
 
     return (
         <div className="bookingPage" ref={bookingPageRef}>

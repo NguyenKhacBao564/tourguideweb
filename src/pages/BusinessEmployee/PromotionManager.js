@@ -118,13 +118,13 @@ function PromotionManager(props) {
         <div>
            <Container fluid >
             <Row>
-                    <PromotionFilterEmployee
-                        selectedItems={selectedPromotions}
-                        onSelectChange={setSelectedPromotions}
-                        onBlockSelected={handleBlockSelected}
-                        onFilterChange={handleFilterChange}
-                        currentFilters={filters}
-                    />
+                <PromotionFilterEmployee
+                    selectedItems={selectedPromotions}
+                    onSelectChange={setSelectedPromotions}
+                    onBlockSelected={handleBlockSelected}
+                    onFilterChange={handleFilterChange}
+                    currentFilters={filters}
+                />
             </Row>
             <Row>
                 <DataTable

@@ -53,6 +53,7 @@ const TourManagementEmp = () => {
           }
         }
       },
+      condition: (item) => ['active', 'upcoming'].includes(item.status), // Chỉ cho phép khóa với status active hoặc upcoming
     },
     {
       label: 'Chi tiết',
@@ -62,6 +63,7 @@ const TourManagementEmp = () => {
           state: { tourDetail: tourDetail }
         });
       },
+      // condition: (item) => ['active', 'upcoming'].includes(item.status), // Chỉ cho phép sửa với status active hoặc upcoming
     },
   ];
 
