@@ -8,22 +8,26 @@ import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import DropDownButton from '../../Common/DropDown/DropDownButton';
 import { GoPlus } from "react-icons/go";
-
 import { useNavigate } from "react-router-dom";
-
 
 
 function PromotionFilterEmployee({
     searchPlaceholder = "Tìm kiếm theo mã khuyến mãi",
     selectedItems = [],
-    onBlockSelected
+    onBlockSelected,
+    onFilterChange,
 }) {
     const navigate = useNavigate();
+    console.log(" onFilterChange:", {
+        searchPlaceholder,
+    });
+
 
     const occupancyFilters = [
         { key: 'all', label: 'Tất cả' },
-        { key: 'occupied', label: 'Đang hoạt động' },
-        { key: 'available', label: 'Hết hạn' },
+        { key: 'active', label: 'Đang hoạt động' },
+        { key: 'scheduled', label: 'Đã lên lịch' },
+        { key: 'expired', label: 'Hết hạn' },
     ];
 
     const handleBlockSelected = () => {
@@ -32,18 +36,14 @@ function PromotionFilterEmployee({
         }
     }
 
-    const handleSort = (key) => {
-        console.log("Sort by: ", key);
-    }
-    const handleSearch = () => {
-        console.log("Delete selected items");
-    }
+    const handleFilterStatus = (key) => {
+        onFilterChange({ status: key });
+    };
 
+    const handleSearch = (searchValue) => {
+        onFilterChange({ search: searchValue });
+    };
 
-    // const selectedItems = () =>
-    // {
-    //     return " Đã chọn tour";
-    // }
 
     return (
         <div>
@@ -51,11 +51,12 @@ function PromotionFilterEmployee({
                 <div className="filter__dropdownbtn">
                     <span>Lọc</span>
                     <DropDownButton 
-                        title="Bộ lọc" 
+                        title="Tất cả" 
                         dropitem={occupancyFilters.map(filter => ({
                             name: filter.label,
-                            onClick: () => handleSort(filter.key)
+                            key: filter.key,
                         }))}
+                        onChange={handleFilterStatus}  
                     />
                 </div>
                 <div className="filter__search">

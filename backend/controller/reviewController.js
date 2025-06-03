@@ -26,7 +26,7 @@ const getAllReviewsByTourId = async (req, res) => {
                 WHERE r.tour_id = @tour_id
                 ORDER BY r.review_date
                 OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY`);
-        console.log("Reviews fetched:", result.recordset);
+        // console.log("Reviews fetched:", result.recordset);
         return res.status(200).json(result.recordset);
     } catch (error) {
         return res.status(500).json({error: error.message});
@@ -51,7 +51,7 @@ const getStatsResults = async (req, res) => {
             average_rating: 0
         };
        
-        console.log("Total reviews:", total_reviews, "Average rating:", average_rating);
+        // console.log("Total reviews:", total_reviews, "Average rating:", average_rating);
         return res.status(200).json({ 
             average_rating: parseFloat(average_rating) || 0, 
             total_reviews}
@@ -68,8 +68,8 @@ const getReviewById = async (req, res) => { }
 const addReview = async (req, res) => {
     try {
         const {review_id, tour_id, cus_id, rating, comment } = req.body;
-        console.log("Received review data:", req.body);
-        console.log("Adding review:", { review_id, tour_id, cus_id, rating, comment });
+        // console.log("Received review data:", req.body);
+        // console.log("Adding review:", { review_id, tour_id, cus_id, rating, comment });
         const pool = await getPool();
         const result = await pool.request()
             .input("review_id", sql.NVarChar, review_id)

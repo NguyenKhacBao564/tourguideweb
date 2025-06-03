@@ -5,21 +5,22 @@ import CustomerFilterEmployee from '../../components/Employee/Filter/CustomerFil
 import { TourProvider } from '../../context/TourContext';
 import DataTable from '../../components/Common/DataTable/DataTable';
 import { filterCustomerBySearchTerm } from '../../utils/customerFilterHelper';
-
+import { useNavigate } from 'react-router-dom';
 import { CustomerContext } from '../../context/CustomerContext';
+
 function CustomerManagement(props) {
-    const {customerAccount, loading, error, blockCustomer, blockBatchCustomer} = useContext(CustomerContext);
+    const navigate = useNavigate();
+    const {customerAccount, loading, error, blockCustomer, fetchCustomerAccount,  blockBatchCustomer} = useContext(CustomerContext);
+    console.log('customerAccount', customerAccount);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedUsers, setSelectedUser] = useState([]);
 
-   const [searchTerm, setSearchTerm] = useState("");
-   const [selectedUsers, setSelectedUser] = useState([]);
-
-   const handleSearch = (value) => {
-    setSearchTerm(value);
-   }
-   
-   const filteredCustomers = useMemo(() => {
-    return customerAccount.filter(filterCustomerBySearchTerm(searchTerm));
-   }, [customerAccount, searchTerm]);
+    const handleSearch = (value) => {
+        // setSearchTerm(value);
+        console.log("Search value:", value);
+        fetchCustomerAccount({name: value});
+    }
+    
 
    
    const handleDeleteSelected = async (ids) => {
@@ -37,13 +38,17 @@ function CustomerManagement(props) {
     }
   };
   
+  //  const handleSearch = (searchText) => {
+  //       setSearchTerm(searchText);
+  //   };
+
   // Columns cho bảng
   const columns = [
     { key: 'cus_id', label: 'Mã khách hàng' },
     { key: 'fullname', label: 'Tên khách hàng' },
     { key: 'email', label: 'Email' },
     { key: 'phone', label: 'Số điện thoại' },
-    {key: 'age', label: 'Tuổi'}
+    { key: 'date_of_birth', label: 'Ngày sinh' }
   ];
   const actions = [
     {
@@ -64,9 +69,11 @@ function CustomerManagement(props) {
     {
       label: 'Chi tiết',
       variant: 'success',
-      onClick: (id) => {
-        console.log(`Xem chi tiết tour ${id}`);
-      },
+      onClick: (id, customerInfor) => {            
+            navigate("/businessemployee/customer/inforcustomer", {
+            state: { customerInfor: customerInfor }
+            });
+        },
     },
   ];
    return (
@@ -77,7 +84,7 @@ function CustomerManagement(props) {
       </Row>
       <Row>
         <DataTable 
-          data={filteredCustomers}
+          data={customerAccount}
           onSearch={handleSearch}
           columns={columns}
           actions={actions}

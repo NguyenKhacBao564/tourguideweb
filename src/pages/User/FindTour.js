@@ -13,7 +13,7 @@ import {Link} from 'react-router-dom';
 function FindTour(props) {
     const location = useLocation();
     const findTourPageRef = useRef(null);
-
+    console.log("find tour render")
     const [tours, setTours] = useState([]);
     const [originalTours, setOriginalTours] = useState([]); // Lưu danh sách ban đầu
     const [countResults, setCountResults] = React.useState(0);

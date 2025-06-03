@@ -3,14 +3,19 @@ import { Button, ButtonGroup } from "react-bootstrap";
 import { getTourStatusFilters, FILTER_KEYS } from "../../../utils/tourFilterHelpers";
 
 function StatusFilterEmployee({ onFilterChange }) {
-  const [activeFilter, setActiveFilter] = useState(FILTER_KEYS.ALL);
+  const [activeFilter, setActiveFilter] = useState('all');
 
   // Get filters from utility function
-  const filters = getTourStatusFilters();
+  const filters =[
+    { key: 'all', label: "Tất cả" },
+    { key: 'Upcoming', label: "Sắp khởi hành" },
+    { key: 'Ongoing', label: "Đang khởi hành" },
+    { key: 'Completed', label: "Đã hoàn thành" }
+  ]
 
   const handleFilterClick = (filterKey) => {
     setActiveFilter(filterKey);
-    onFilterChange(filterKey);
+    onFilterChange({status: filterKey});
   };
 
   return (

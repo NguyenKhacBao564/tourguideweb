@@ -36,7 +36,7 @@ function TourCardHorizon(props) {
                         </Col>
                         <Col>
                             <span><FaCalendarAlt /> Ngày khởi hành: {formatDate(tour.start_date)}</span>
-                            <span><FontAwesomeIcon icon={faUsers} /> Chỗ trống: {tour.max_guests}</span>
+                            <span><FontAwesomeIcon icon={faUsers} /> Chỗ còn trống: {tour.max_guests - tour.booked_slots}</span>
                         </Col>
                     </Row>
                 </Container>
@@ -48,9 +48,9 @@ function TourCardHorizon(props) {
                 </div>
                   
                 <div className="tmp">
-                    <p className="review">
+                    {/* <p className="review">
                         (584 reviews)
-                    </p>   
+                    </p>    */}
                     <Button variant="primary" onClick={handleBooking}>
                         Xem chi tiết
                     </Button>

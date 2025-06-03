@@ -1,13 +1,21 @@
 import axios from "axios";
 import { API_URL } from "../utils/API_Port";
 
-export const getCustomerAccount = async () => {
-    const response = await axios.get(`${API_URL}/customers`,
-        { withCredentials: true } // Đảm bảo gửi cookie
-    );
+export const getCustomerAccount = async (filter) => {
+    const response = await axios.get(`${API_URL}/customers`,{
+        params: filter, // Add filter as query parameters
+        withCredentials: true // Ensure cookies are sent
+    });
     return response.data;
 }
 
+
+export const getCustomerById = async (id) => {
+    const response = await axios.get(`${API_URL}/customers/infor/${id}`, {
+        withCredentials: true // Ensure cookies are sent
+    });
+    return response.data;
+}
 export const updateCustomer = async (id, data) => {
     try{
         

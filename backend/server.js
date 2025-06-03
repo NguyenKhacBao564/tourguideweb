@@ -25,6 +25,7 @@ const consultantSupportRoutes = require("./routes/consultantSupportRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const favoriteTourRoutes = require("./routes/favoriteTourRoutes");
+const historyBookingRoutes = require("./routes/historyBookingRoutes");
 
 app.use(cors({
   origin: 'http://localhost:3000', // Domain của frontend
@@ -49,6 +50,7 @@ app.use("/tourPrice", tourPriceRoutes);
 app.use("/favoriteTours", favoriteTourRoutes)
 app.use("/tour-price", tourPriceRoutes);
 app.use("/schedule", scheduleRoutes);
+app.use("/historyBooking", historyBookingRoutes)
 
 app.use("/api", customerSupportRoutes); // Thêm route cho support
 app.use("/api", consultantSupportRoutes);

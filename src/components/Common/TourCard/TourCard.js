@@ -44,9 +44,9 @@ function TourCard(props) {
             }
            
             // Gọi callback để cập nhật danh sách tour yêu thích
-                if (onFavoriteChange) {
-                    onFavoriteChange();
-                }
+            if (onFavoriteChange) {
+                onFavoriteChange();
+            }
         } catch (error) {
         console.error("Error toggling favorite status:", error);
         }
@@ -56,8 +56,8 @@ function TourCard(props) {
         // Truyền id qua query parameter
         console.log("click đặt tour")
         const tourId = props.tour_id; // Giả định props có id, nếu không cần điều chỉnh
-        window.location.href = `/booking?id=${tourId}`;
-        // navigate(`/booking?id=${tourId}`);
+        // window.location.href = `/booking?id=${tourId}`;
+        navigate(`/booking?id=${tourId}`);
     };
 
     const adultPrice = Number(props.price).toLocaleString('vi-VN');
@@ -96,7 +96,7 @@ function TourCard(props) {
                     </li>
                     <li>
                         <p>
-                            <FontAwesomeIcon icon={faUsers} /> Số lượng khách: {props.max_guests}
+                            <FontAwesomeIcon icon={faUsers} /> Chỗ còn trống: {props.max_guests - props.booked_slots}/{props.max_guests}
                         </p>
                     </li>
                     <li>

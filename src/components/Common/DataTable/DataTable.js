@@ -88,6 +88,10 @@ function DataTable(
     // if (column.format) {
     //   return column.format(value, item);
     // }
+    if(column.key === 'max_guests') {
+      const available = item.max_guests - (item.booked_slots || 0);
+      return `${available}`;
+    }
     if (column.key.includes('date') || column.key.includes('created_at')) {
       return formatDate(value);
     }
@@ -153,20 +157,25 @@ function DataTable(
                 ))}
                 {actions.length > 0 && (
                    <td className="text-center">
-                    {actions.map((action, index) => (
-                    <ButtonGroup key={index} className="me-2" aria-label="Actions" >
-                        <Button
-                          key={index}
-                          variant={action.variant}
-                          size="sm"
-                          onClick={() => action.onClick(item[idKey], item)}
-                        >
-                          {action.label}
-                        </Button>
-                    </ButtonGroup>
-                      ))}
-                 </td>
-                )}
+                      {actions.map((action, index) => {
+                        // Kiểm tra điều kiện để hiển thị hoặc vô hiệu hóa nút
+                        const isActionEnabled = action.condition ? action.condition(item) : true;
+                        return (
+                            <ButtonGroup key={index} className="me-2" aria-label="Actions" >
+                              <Button
+                                key={index}
+                                variant={action.variant}
+                                size="sm"
+                                onClick={() => action.onClick(item[idKey], item)}
+                                disabled={!isActionEnabled} // Vô hiệu hóa nút nếu không thỏa mãn điều kiện
+                              >
+                                {action.label}
+                              </Button>
+                            </ButtonGroup>
+                        );
+                      })}
+                    </td>
+                  )}
               </tr>
               ))
           )}

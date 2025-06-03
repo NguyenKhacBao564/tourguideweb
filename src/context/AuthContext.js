@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  
+  console.log("AuthProvider user: ", user)
   // Hàm kiểm tra và điều hướng theo role
   const checkRole = (role, currentPath) => {
     console.log("🔄 checkRole called:", { role, currentPath });
@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       // const token = localStorage.getItem("token");
       try {
-        console.log('Gọi getUserData...');
+        console.log('Gọi getUserData... in window.location.pathname: ', window.location.pathname);
         // const decoded = jwtDecode(token);
         const data = await getUserData();
         if (data) {
@@ -77,12 +77,14 @@ export const AuthProvider = ({ children }) => {
         }
       setLoading(false);
     };
+    console.log('Gửi getUserData tại:', new Date().toISOString(), 'Cookies:', document.cookie);
     initializeAuth();
   }, []);
 
   // Hàm làm mới thông tin người dùng từ server
   const refreshUserData = async () => {
     setLoading(true);
+    console.log("Làm mới thông tin người dùng từ server...");
     try {
       const userData = await getUserData();
       setUser(userData.user);
@@ -108,7 +110,7 @@ export const AuthProvider = ({ children }) => {
       checkRole(userData.role, window.location.pathname);
       return userData;
     } catch (error) {
-      throw new Error(error.message || 'Thao tác thất bại');
+      throw error
     } finally {
       setLoading(false);
     }
@@ -126,8 +128,10 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     setLoading(true);
     try {
-      await logoutUser();
       setUser(null);
+      await logoutUser();
+      localStorage.clear();
+      sessionStorage.clear();
       console.log('Logout success');
       navigate('/login');
     } catch (error) {

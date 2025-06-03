@@ -12,9 +12,9 @@ const AuthBase = ({
   errorCode,
   success, 
   handleSubmit,
-  showError
 }) => {
-  // const [showError, setShowError] = useState(false);
+
+  const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   
 
@@ -28,8 +28,18 @@ const AuthBase = ({
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [success]);
+    if (error) {
+      setShowError(true);
+      // Tự động ẩn thông báo lỗi sau 1 giây
+      const timer = setTimeout(() => {
+        setShowError(false);
+      }, 1000);   
+      return () => clearTimeout(timer);
+    }
+  }, [success, error]);
 
+  console.log("error: ", error)
+  console.log("errorCode: ", errorCode)
   
 
 
@@ -67,8 +77,8 @@ const AuthBase = ({
           <form onSubmit={handleSubmit} className="auth__form grid" autocomplete="on">
             {children}
             
-            <span className="auth__separator">Hoặc</span>
-            <SocialLogin />
+            {/* <span className="auth__separator">Hoặc</span>
+            <SocialLogin /> */}
             <div className="auth__switch-message">
               {isRegister 
                 ? <p>Đã có tài khoản? <Link to="/login"><span className="auth__link">Đăng nhập ngay</span></Link></p> 

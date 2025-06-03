@@ -10,7 +10,6 @@ function DropDownButton(props) {
 
   const handleSelect = (name, key) => {
       setSelectedItem(name);
-      console.log(name);
       if (onChange) {
           onChange(key);
       }
