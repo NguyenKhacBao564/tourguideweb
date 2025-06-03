@@ -12,7 +12,7 @@ function Login() {
   const [errorCode, setErrorCode] = useState(null);
   const [success, setSuccess] = useState(null);
   const [isChecked, setIsChecked] = useState(false);
-  
+
   console.log("error: ", error)
   const onChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -20,20 +20,20 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!isChecked) {
       alert("Vui lòng đồng ý với chính sách trước khi tiếp tục.");
       return;
     }
-    
+
     try {
       //Reset lại các state
       setError(null);
       setErrorCode(null);
       const getUser = await login(values.email, values.password);
       console.log("getUser: ", getUser)
-      setSuccess("Đăng nhập thành công!");   
-    } catch(error) {
+      setSuccess("Đăng nhập thành công!");
+    } catch (error) {
       setSuccess(null);
       setErrorCode(error.code);
       setError(error.message);
@@ -42,35 +42,35 @@ function Login() {
   };
 
   return (
-    <AuthBase 
-      isRegister={false} 
-      error={error} 
+    <AuthBase
+      isRegister={false}
+      error={error}
       errorCode={errorCode}
-      success={success} 
+      success={success}
       handleSubmit={handleSubmit}
     >
       {/* Form inputs specific to login */}
       {authInputs.login.map(input => (
-        <FormInput 
-          key={input.id} 
-          {...input} 
-          value={values[input.name]} 
-          onChange={onChange} 
+        <FormInput
+          key={input.id}
+          {...input}
+          value={values[input.name]}
+          onChange={onChange}
         />
       ))}
-      
+
       <div className="checkbox-container">
         <label>
-          <input 
-            type="checkbox" 
-            checked={isChecked} 
-            onChange={() => setIsChecked(!isChecked)} 
+          <input
+            type="checkbox"
+            checked={isChecked}
+            onChange={() => setIsChecked(!isChecked)}
           />
           Đồng ý với điều khoản
         </label>
         <a href="#" className="forgotPassword">Quên mật khẩu</a>
       </div>
-      
+
       <button type="submit" className="btn--submit">Đăng nhập</button>
     </AuthBase>
   );

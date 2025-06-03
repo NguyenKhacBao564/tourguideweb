@@ -9,7 +9,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   console.log("AuthProvider render")
   // const [token, setToken] = useState();
-  
+
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
     // Tránh redirect loop: Không điều hướng nếu đã ở đúng trang hoặc ở trang InforUser
     const roleRoutes = {
       customer: "/",
-      Support: "/support",
+      Support: "/consultantemployee/request-support",
       Sales: "/businessemployee/customer",
       Admin: "/admin/dashboard",
     };
@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }) => {
       console.log("✅ Page is exempt, no redirect needed");
       return;
     }
-    
+
     const targetRoute = roleRoutes[role];
     console.log("🎯 Checking redirect:", { targetRoute, currentPath });
     
@@ -66,15 +66,15 @@ export const AuthProvider = ({ children }) => {
           console.log('Dữ liệu người dùng:', data.user);
           setUser(data.user);
           checkRole(data.user.role, window.location.pathname);
-          } else {
-            console.log('Không có token, đặt user là null');
-            setUser(null); // Đặt user là null nếu không có data (không có token)
-          }
-        } catch (error) {
-          console.error("Token không hợp lệ:", error);
-          // localStorage.removeItem("token");
-          setUser(null);
+        } else {
+          console.log('Không có token, đặt user là null');
+          setUser(null); // Đặt user là null nếu không có data (không có token)
         }
+      } catch (error) {
+        console.error("Token không hợp lệ:", error);
+        // localStorage.removeItem("token");
+        setUser(null);
+      }
       setLoading(false);
     };
     console.log('Gửi getUserData tại:', new Date().toISOString(), 'Cookies:', document.cookie);
@@ -99,7 +99,7 @@ export const AuthProvider = ({ children }) => {
 
   // Hàm xử lý đăng nhập/đăng ký (tái sử dụng logic)
   const authenticateUser = async (apiCall, ...args) => {
-   setLoading(true);
+    setLoading(true);
     try {
       const data = await apiCall(...args);
       console.log("data: ", data)

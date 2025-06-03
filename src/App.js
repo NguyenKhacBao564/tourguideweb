@@ -18,7 +18,9 @@ import InforUser from "./pages/User/InforUser";
 import ConsultantEmployee from "./pages/ConsultantEmployee/ConsultantEmployee";
 import Chatbot from "./pages/ConsultantEmployee/ChatBot";
 import ResponeSupport from "./pages/ConsultantEmployee/ResponeSupport";
+import ResponeDetail from "./pages/ConsultantEmployee/ResponeDetail";
 import { TourProvider } from "./context/TourContext";
+import { ConsultantSupportProvider } from "./context/ConsultantSupportContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./components/Unauthorized";
 import NotFound from "./pages/NotFound";
@@ -45,22 +47,24 @@ function App() {
   return (
     <div className="App">
       <ScrollToTop />
-        {/* <ConsultantSupportProvider> */}
+      <ConsultantSupportProvider>
         <Routes>
-          <Route path="/" element={<Page />}/>
-          <Route path="/checkout" element={<Checkout />}/>
-          <Route path="/booking" element={<BookingTour/>}/>
-          <Route path="/findtour" element={<FindTour/>}/>
-          <Route path="/user/booking-info" element={<BookingInfo/>}/>
+          <Route path="/" element={<Page />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/booking" element={<BookingTour />} />
+          <Route path="/findtour" element={<FindTour />} />
+          <Route path="/user/booking-info" element={<BookingInfo />} />
+
+
           <Route path="/payment/result" element={<PaymentResult />}/>
           <Route path="/payment/demo" element={<PaymentDemo />}/>
           <Route path="/payment/momo-test" element={<MoMoTestPage />}/>
-          <Route path="/tourFavourite" element={<TourFavourite/>}/>
+
           <Route path="/tourFavorite" element={
             <ProtectedRoute allowedRoles={["customer"]}>
-              <TourFavourite/>
+              <TourFavourite />
             </ProtectedRoute>
-          }/>
+          } />
           <Route path="/contact" element={
             <ProtectedRoute allowedRoles={["customer"]}>
               <Contact />
@@ -85,13 +89,13 @@ function App() {
             <ProtectedRoute allowedRoles={["Sales"]}>
               <BusinessEmployee />
             </ProtectedRoute>
-            }>
+          }>
 
             <Route path="customer" element={
               <CustomerProvider>
                 <CustomerManagement />
               </CustomerProvider>
-              } />
+            } />
 
             <Route path="customer/inforcustomer" element={
               <CustomerProvider>
@@ -100,27 +104,27 @@ function App() {
             } />
 
             <Route path="managetour" element={
-                <TourProvider>
-                  <TourManagementEmp />
-                </TourProvider>
-            }/>
+              <TourProvider>
+                <TourManagementEmp />
+              </TourProvider>
+            } />
 
             <Route path="managetour/addtour" element={
-              <TourProvider> 
+              <TourProvider>
                 <AddNewTour />
               </TourProvider>
-            }/>
+            } />
             <Route path="promotion/addpromotion" element={
-                <AddNewPromotion />
-            }/>
+              <AddNewPromotion />
+            } />
             <Route path="promotion" element={<PromotionManager />} />
-        </Route>
+          </Route>
 
-         {/* Admin Routes */}
-         <Route path="/admin" element={
-              <ProtectedRoute allowedRoles={["Admin"]}>
-                <MainLayout />
-              </ProtectedRoute>
+          {/* Admin Routes */}
+          <Route path="/admin" element={
+            <ProtectedRoute allowedRoles={["Admin"]}>
+              <MainLayout />
+            </ProtectedRoute>
           }>
               {/* <Route index element={<Dashboard />} /> */}
               <Route path="dashboard" element={<Dashboard />} />
@@ -141,10 +145,12 @@ function App() {
               <ConsultantEmployee />
             </ProtectedRoute>
           }>
-            <Route path="chatbot" element={<Chatbot />} />
+            {/* <Route path="chatbot" element={<Chatbot />} /> */}
             <Route path="request-support" element={<ResponeSupport />} />
+            <Route path="request-support/:id" element={<ResponeDetail />} />
           </Route>
         </Routes>
+      </ConsultantSupportProvider>
     </div >
   );
 }

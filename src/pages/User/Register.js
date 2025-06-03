@@ -6,14 +6,14 @@ import { AuthContext } from '../../context/AuthContext';
 
 function Register() {
   const { regist } = useContext(AuthContext);
-  
-  const [values, setValues] = useState({ 
-    username: '', 
-    phone: '', 
-    email: '', 
+
+  const [values, setValues] = useState({
+    username: '',
+    phone: '',
+    email: '',
     birthday: '',
-    password: '', 
-    confirmPassword: '' 
+    password: '',
+    confirmPassword: ''
   });
   const [error, setError] = useState(null);
   const [errorCode, setErrorCode] = useState(null);
@@ -33,16 +33,16 @@ function Register() {
   };
 
   // Effect để tự động ẩn thông báo lỗi
-    useEffect(() => {
-      if (error) {
-        setShowError(true);
-        const timer = setTimeout(() => {
-          setShowError(false);
-          setError(null); // Reset error after showing
-        }, 1000);
-        return () => clearTimeout(timer);
-      }
-    }, [error]);
+  useEffect(() => {
+    if (error) {
+      setShowError(true);
+      const timer = setTimeout(() => {
+        setShowError(false);
+        setError(null); // Reset error after showing
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
 
   const onChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
@@ -50,13 +50,13 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Kiểm tra mật khẩu xác nhận
     if (values.password !== values.confirmPassword) {
       setError("Mật khẩu xác nhận không khớp!");
       return;
     }
-    
+
     // Kiểm tra tuổi
     if (values.birthday) {
       const age = calculateAge(values.birthday);
@@ -85,25 +85,25 @@ function Register() {
   };
 
   return (
-    <AuthBase 
-      isRegister={true} 
+    <AuthBase
+      isRegister={true}
       error={error}
       errorCode={errorCode}
-      success={success} 
+      success={success}
       handleSubmit={handleSubmit}
       showError={showError} // Truyền trạng thái showError vào AuthBase
     >
       {/* Form inputs specific to register */}
       {authInputs.register.map(input => (
-        <FormInput 
-          key={input.id} 
-          {...input} 
-          value={values[input.name]} 
-          onChange={onChange} 
+        <FormInput
+          key={input.id}
+          {...input}
+          value={values[input.name]}
+          onChange={onChange}
           valueconfirm={input.name === "confirmPassword" ? values.password : ""}
         />
       ))}
-      
+
       <button type="submit" className="btn--submit">Đăng ký</button>
     </AuthBase>
   );

@@ -52,8 +52,8 @@ app.use("/tour-price", tourPriceRoutes);
 app.use("/schedule", scheduleRoutes);
 app.use("/historyBooking", historyBookingRoutes)
 
-app.use("/api", customerSupportRoutes); // Thêm route cho support
-app.use("/api", consultantSupportRoutes);
+app.use("/api/customer", customerSupportRoutes); // Thêm route cho support
+app.use("/api/consultant", consultantSupportRoutes);
 app.use("/reviews", reviewRoutes);
 app.listen(PORT, () => {
   console.log(`🚀 Server chạy tại http://localhost:${PORT}`);

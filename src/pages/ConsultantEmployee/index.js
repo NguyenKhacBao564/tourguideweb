@@ -1,7 +1,7 @@
-import Chatbot from "./ChatBot";
+/*import Chatbot from "./ChatBot";*/
 import ResponeSupport from "./ResponeSupport";
 
 export {
-    Chatbot,
-    ResponeSupport
+    /*Chatbot,*/
+    ResponeSupport,
 };

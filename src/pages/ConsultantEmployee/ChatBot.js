@@ -1,3 +1,4 @@
+/*
 import React from 'react';
 
 function Chatbot() {
@@ -10,3 +11,4 @@ function Chatbot() {
 }
 
 export default Chatbot;
+*/

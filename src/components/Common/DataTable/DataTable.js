@@ -92,7 +92,7 @@ function DataTable(
       const available = item.max_guests - (item.booked_slots || 0);
       return `${available}`;
     }
-    if (column.key.includes('date') || column.key.includes('created_at')) {
+    if (column.key.includes('date') || column.key.includes('created_at') || column.key.includes('birthday')) {
       return formatDate(value);
     }
     return value;

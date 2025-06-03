@@ -5,21 +5,22 @@ import "../../../styles/pages/Auth.scss";
 import Alert from 'react-bootstrap/Alert';
 
 // Thành phần cơ sở cho trang đăng nhập/đăng ký
-const AuthBase = ({ 
-  isRegister, 
-  children, 
-  error, 
+const AuthBase = ({
+  isRegister,
+  children,
+  error,
   errorCode,
-  success, 
+  success,
   handleSubmit,
 }) => {
 
   const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  
+
 
   // Effect để xử lý hiển thị và tự động ẩn thông báo thành công
   useEffect(() => {
+    console.log("AuthBase - error:", error, "errorCode:", errorCode); // Log chỉ khi error hoặc success thay đổi
     if (success) {
       setShowSuccess(true);
       // Tự động ẩn thông báo thành công sau 1 giây
@@ -33,15 +34,10 @@ const AuthBase = ({
       // Tự động ẩn thông báo lỗi sau 1 giây
       const timer = setTimeout(() => {
         setShowError(false);
-      }, 1000);   
+      }, 1000);
       return () => clearTimeout(timer);
     }
   }, [success, error]);
-
-  console.log("error: ", error)
-  console.log("errorCode: ", errorCode)
-  
-
 
   return (
     <div className="auth">
@@ -73,15 +69,15 @@ const AuthBase = ({
               <Alert variant="success" className="auth__alert ">{success}</Alert>
             )}
           </div>
-          
+
           <form onSubmit={handleSubmit} className="auth__form grid" autocomplete="on">
             {children}
-            
+
             {/* <span className="auth__separator">Hoặc</span>
             <SocialLogin /> */}
             <div className="auth__switch-message">
-              {isRegister 
-                ? <p>Đã có tài khoản? <Link to="/login"><span className="auth__link">Đăng nhập ngay</span></Link></p> 
+              {isRegister
+                ? <p>Đã có tài khoản? <Link to="/login"><span className="auth__link">Đăng nhập ngay</span></Link></p>
                 : <p>Chưa có tài khoản? <Link to="/register"><span className="auth__link">Đăng kí ngay</span></Link></p>}
             </div>
           </form>

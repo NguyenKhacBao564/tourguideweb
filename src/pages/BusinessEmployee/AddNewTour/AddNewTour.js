@@ -26,7 +26,7 @@ function AddTourPage() {
   const navigate = useNavigate();
   const { addTour, updateTour, getItinerary, getImages } = useContext(TourContext);
   const { user } = useContext(AuthContext);
-  
+
   // Extract tour details for edit mode
   const tourDetail = location.state?.tourDetail || null; 
   //Check trạng thái để xác định có thể chỉnh sửa/ thêm tour được hay không
@@ -37,13 +37,13 @@ function AddTourPage() {
   console.log("Tour detail: ", tourDetail);
   // Custom hooks
   const { alert, showAlert } = useAlert();
-  const { 
-    values, 
-    setValues, 
-    handleInputChange, 
-    validateForm 
+  const {
+    values,
+    setValues,
+    handleInputChange,
+    validateForm
   } = useTourForm(user.branch_id);
-  
+
   const {
     selectedImages,
     displayImages,
@@ -57,7 +57,7 @@ function AddTourPage() {
     handleDragLeave,
     handleDrop
   } = useImageUpload();
-  
+
   const {
     activeField,
     setActiveField,
@@ -70,7 +70,7 @@ function AddTourPage() {
     onEditSchedule,
     confirmEditSchedule
   } = useScheduleManager(values, setValues);
-  
+
   // Fetch itinerary data when in edit mode
   useEffect(() => {
     const initializeEditMode = async () => {
@@ -78,15 +78,15 @@ function AddTourPage() {
       //If edit mode, get itinerary and images
       try {
         const itinerary = await getItinerary(tourDetail.tour_id);
-      
+
         // Format prices
-        const formattedPrices = Array.isArray(tourDetail.prices) 
+        const formattedPrices = Array.isArray(tourDetail.prices)
           ? tourDetail.prices.map(price => ({
-              age_group: price.age_group,
-              price: price.price.toString()
-            }))
+            age_group: price.age_group,
+            price: price.price.toString()
+          }))
           : [];
-        
+
         // Update form values
         setValues(prev => ({
           ...prev,
@@ -94,7 +94,7 @@ function AddTourPage() {
           prices: formattedPrices,
           itinerary: Array.isArray(itinerary) ? itinerary : [],
         }));
-        
+
         //Get images from server
         const images = await getImages(tourDetail.tour_id);
         // Load images if any
@@ -108,7 +108,7 @@ function AddTourPage() {
         showAlert('Không thể tải dữ liệu tour. Vui lòng thử lại sau.', 'danger');
       }
     };
-    
+
     initializeEditMode();
   }, []);
 
@@ -125,12 +125,12 @@ function AddTourPage() {
       showAlert(validation.message, 'danger');
       return;
     }
-    
+
     const formattedPrices = values.prices.map(price => ({
       age_group: price.age_group,
       price: parseInt(price.price.replace(/\./g, '')) || 0 // Chuyển thành số, mặc định 0 nếu không hợp lệ
     }));
-      
+
     // Chuẩn bị dữ liệu để gửi đến API
     const tourData = {
       ...values,
@@ -141,7 +141,7 @@ function AddTourPage() {
       existingImages: existingImages, // Chứa URL ảnh cũ
     };
 
-    
+
     console.log("tourData: ", tourData);
     try {
       if (isEditMode) {
@@ -151,7 +151,7 @@ function AddTourPage() {
         await addTour(tourData);
         showAlert('Thêm tour thành công', 'success');
       }
-      
+
       // Redirect after successful operation
       setTimeout(() => navigate('/businessemployee/managetour'), 500);
     } catch (error) {
@@ -163,19 +163,19 @@ function AddTourPage() {
     <>
       {/* Alert message */}
       {alert.show && (
-        <Alert 
-          variant={alert.variant} 
-          style={{position: 'fixed', top: '10%', left: '50%', transform: 'translateX(-50%)', zIndex: '1000'}}
+        <Alert
+          variant={alert.variant}
+          style={{ position: 'fixed', top: '10%', left: '50%', transform: 'translateX(-50%)', zIndex: '1000' }}
         >
           {alert.message}
         </Alert>
       )}
-      
+
       {/* Page title */}
-      <h2 style={{color: '#339688', fontWeight: 'bold', marginLeft: '20px'}}>
+      <h2 style={{ color: '#339688', fontWeight: 'bold', marginLeft: '20px' }}>
         {isEditMode ? 'Chỉnh Sửa Tour' : 'Thêm Tour Mới'}
       </h2>
-      
+
       {/* Main form container */}
       <Container fluid className="tour-booking-form py-4">
         <Form onSubmit={handleSubmit}>
@@ -192,9 +192,9 @@ function AddTourPage() {
               />
             </Col>
             <Col md={3} className="d-flex justify-content-end">
-              <Button 
-                variant="danger" 
-                className="px-4 exit-button" 
+              <Button
+                variant="danger"
+                className="px-4 exit-button"
                 onClick={() => navigate('/businessemployee/managetour')}
               >
                 Thoát
@@ -206,13 +206,13 @@ function AddTourPage() {
           <TourBasicInfo values={values} onChange={handleInputChange} />
 
           {/* Tour pricing section */}
-          <TourPriceSection 
+          <TourPriceSection
             prices={values.prices}
             onChange={handleInputChange}
           />
 
           {/* Tour description */}
-          <TourDescription 
+          <TourDescription
             value={values.description}
             onChange={handleInputChange}
           />
@@ -246,10 +246,10 @@ function AddTourPage() {
           />
 
           {/* Submit button */}
-          <Button 
-            variant="success" 
-            className="mt-3 p-20-50" 
-            style={{display: "block", marginLeft: 'auto'}} 
+          <Button
+            variant="success"
+            className="mt-3 p-20-50"
+            style={{ display: "block", marginLeft: 'auto' }}
             type="submit"
             disabled={!matchStatus} // Disable if tourDetail is not set
           >
@@ -257,7 +257,7 @@ function AddTourPage() {
           </Button>
         </Form>
       </Container>
-      
+
       {/* Overlay for form modals */}
       {activeField && <div className="overlay" />}
     </>
