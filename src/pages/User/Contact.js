@@ -215,7 +215,7 @@ function Contact() {
                 "Yêu Cầu Chung",
                 "Yêu Cầu Đặt Lịch",
                 "Hỗ Trợ/Kỹ Thuật",
-                "Phản Hồi",
+                "Vấn Đề Khác",
               ].map((subject, index) => (
                 <label key={index} className={styles.customRadio}>
                   <input

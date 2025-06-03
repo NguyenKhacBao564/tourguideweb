@@ -56,7 +56,7 @@ function Navbar({ pageRef }) {
                 <h1 className="logo"><Link to="/">Tour Guide</Link></h1>
                 <ul className={`nav-links ${isOpen ? "active" : ""}`}>
                     <li className="btn--close" onClick={() => setIsOpen(!isOpen)}><FaTimes /></li>
-                    <li><a href="#">Về chúng tôi</a></li>
+                    <li><a href="#">Về công ty</a></li>
                     <li><Link to="/contact">Liên hệ</Link></li>
                     <li><Link to="/tourFavorite">Tour Yêu thích</Link></li>
                     {!user && loading ? (

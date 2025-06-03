@@ -1,9 +1,9 @@
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, useCallback } from "react";
 import {
     fetchSupportRequests,
-    updateRequestStatus,
     sendResponse,
 } from "../api/consultantSupportAPI";
+import { v4 as uuidv4 } from 'uuid'; // Thêm thư viện uuid để tạo response_id
 
 const ConsultantSupportContext = createContext();
 
@@ -13,7 +13,7 @@ export const ConsultantSupportProvider = ({ children }) => {
     const [error, setError] = useState(null);
 
     // Lấy danh sách yêu cầu hỗ trợ
-    const handleFetchSupportRequests = async () => {
+    const handleFetchSupportRequests = useCallback(async () => {
         setLoading(true);
         try {
             const data = await fetchSupportRequests();
@@ -25,39 +25,41 @@ export const ConsultantSupportProvider = ({ children }) => {
         } finally {
             setLoading(false);
         }
-    };
-
-    // Cập nhật trạng thái yêu cầu hỗ trợ
-    const handleUpdateRequestStatus = async (requestId, newStatus) => {
-        try {
-            const data = await updateRequestStatus(requestId, newStatus);
-            setSupportRequests((prevRequests) =>
-                prevRequests.map((request) =>
-                    request.request_id === requestId ? { ...request, status: newStatus } : request
-                )
-            );
-            return data;
-        } catch (err) {
-            throw new Error(err.message || "Không thể cập nhật trạng thái yêu cầu. Vui lòng thử lại.");
-        }
-    };
+    }, []); // Empty dependency array since this function doesn't depend on any props or state
 
     // Gửi phản hồi cho yêu cầu hỗ trợ và lưu vào bảng Customer_Support_Response
-    const handleSendResponse = async (requestId, employeeId, responseMessage) => {
+    const handleSendResponse = async (responseDataFromFrontend) => {
         try {
-            const responseData = {
-                request_id: requestId,
-                emp_id: employeeId,
-                re_message: responseMessage,
-                date: new Date().toISOString(),
-            };
-            const data = await sendResponse(responseData);
+            // Kiểm tra dữ liệu đầu vào từ đối tượng nhận được
+            const { request_id, emp_id, re_message } = responseDataFromFrontend;
+            if (!request_id || !emp_id || !re_message) {
+                throw new Error("Thiếu thông tin: request_id, emp_id, hoặc re_message");
+            }
 
-            // Cập nhật trạng thái yêu cầu thành "RESOLVED" sau khi phản hồi
-            await handleUpdateRequestStatus(requestId, "RESOLVED");
+            // Tạo response_id duy nhất (có thể tạo ở backend nếu muốn, nhưng giữ ở đây cũng được)
+            const responseId = `RES${uuidv4().replace(/-/g, '').slice(0, 15)}`;
+
+            // Tạo payload đầy đủ để gửi đến backend API
+            const payload = {
+                ...responseDataFromFrontend,
+                response_id: responseId,
+                day: new Date(responseDataFromFrontend.day).toISOString(),
+            };
+
+            console.log("Sending response payload to backend:", payload);
+
+            const data = await sendResponse(payload);
+
+            // Cập nhật state local để phản ánh trạng thái RESOLVED
+            setSupportRequests((prevRequests) =>
+                prevRequests.map((request) =>
+                    request.request_id === payload.request_id ? { ...request, status: "Resolved" } : request
+                )
+            );
 
             return data;
         } catch (err) {
+            console.error("Error in handleSendResponse (context):", err);
             throw new Error(err.message || "Không thể gửi phản hồi. Vui lòng thử lại.");
         }
     };
@@ -67,7 +69,6 @@ export const ConsultantSupportProvider = ({ children }) => {
             value={{
                 supportRequests,
                 fetchSupportRequests: handleFetchSupportRequests,
-                updateRequestStatus: handleUpdateRequestStatus,
                 sendResponse: handleSendResponse,
                 loading,
                 error,

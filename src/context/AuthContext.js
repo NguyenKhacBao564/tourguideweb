@@ -9,7 +9,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   console.log("AuthProvider render")
   // const [token, setToken] = useState();
-  
+
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -20,22 +20,22 @@ export const AuthProvider = ({ children }) => {
     // Tránh redirect loop: Không điều hướng nếu đã ở đúng trang hoặc ở trang InforUser
     const roleRoutes = {
       customer: "/",
-      Support: "/consultantemployee",
+      Support: "/consultantemployee/request-support",
       Sales: "/businessemployee/customer",
       Admin: "/admin/dashboard",
     };
-    
+
     // Các trang không cần chuyển hướng về trang chính của role khi reset
-    const exemptPages = ["/thongtin",'/booking','/tourFavorite','/contact'];
-    
+    const exemptPages = ["/thongtin", '/booking', '/tourFavorite', '/contact'];
+
     // Nếu đang ở trang được miễn trừ (như trang thông tin cá nhân), không chuyển hướng
     if (exemptPages.some(page => currentPath.includes(page))) {
       return;
     }
-    
+
     const targetRoute = roleRoutes[role];
     if (targetRoute && currentPath !== targetRoute) {
-        navigate(targetRoute, { replace: true });
+      navigate(targetRoute, { replace: true });
     }
   };
 
@@ -54,15 +54,15 @@ export const AuthProvider = ({ children }) => {
           console.log('Dữ liệu người dùng:', data.user);
           setUser(data.user);
           checkRole(data.user.role, window.location.pathname);
-          } else {
-            console.log('Không có token, đặt user là null');
-            setUser(null); // Đặt user là null nếu không có data (không có token)
-          }
-        } catch (error) {
-          console.error("Token không hợp lệ:", error);
-          // localStorage.removeItem("token");
-          setUser(null);
+        } else {
+          console.log('Không có token, đặt user là null');
+          setUser(null); // Đặt user là null nếu không có data (không có token)
         }
+      } catch (error) {
+        console.error("Token không hợp lệ:", error);
+        // localStorage.removeItem("token");
+        setUser(null);
+      }
       setLoading(false);
     };
     console.log('Gửi getUserData tại:', new Date().toISOString(), 'Cookies:', document.cookie);
@@ -87,7 +87,7 @@ export const AuthProvider = ({ children }) => {
 
   // Hàm xử lý đăng nhập/đăng ký (tái sử dụng logic)
   const authenticateUser = async (apiCall, ...args) => {
-   setLoading(true);
+    setLoading(true);
     try {
       const data = await apiCall(...args);
       console.log("data: ", data)
@@ -109,7 +109,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const regist = async (fullname, email, password, phone, date_of_birth) => {
-    return authenticateUser(registerUser, fullname, email, password, phone, date_of_birth );
+    return authenticateUser(registerUser, fullname, email, password, phone, date_of_birth);
   };
 
 
