@@ -10,6 +10,7 @@ import { AuthContext } from '../../context/AuthContext';
 import { createBooking, createBookingDetail } from '../../api/bookingAPI';
 import { applyPromotionToBooking } from '../../api/promotionAPI';
 import { formatDate } from "../../feature/formatDate";
+import { API_URL } from '../../utils/API_Port';
 
 const defaultPassenger = (type) => ({
   type, // 'adult', 'child', 'baby'
@@ -616,7 +617,11 @@ const BookingInfo = () => {
               <Card.Body>
                 <div className="tour-summary mb-3">
                   <div className="tour-image mb-3">
-                    <img src={tour.image || "https://via.placeholder.com/300x200"} alt={tour.name} className="img-fluid rounded" />
+                    <img 
+                      src={tour.cover_image ? `${API_URL}/${tour.cover_image}` : "https://via.placeholder.com/300x200"} 
+                      alt={tour.name || 'Tour image'} 
+                      className="img-fluid rounded" 
+                    />
                   </div>
                   <h6 className="tour-name">{tour.name || 'Tên tour'}</h6>
                   <div className="tour-details">

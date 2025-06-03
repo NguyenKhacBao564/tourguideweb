@@ -802,6 +802,329 @@ VALUES
 ('IMG0239', 'TOUR0080', 'uploads/1748978720939-169755770.jpg'),
 ('IMG0240', 'TOUR0080', 'uploads/1748978720939-846537457.jpeg');
 
+INSERT INTO Tour_price (tour_id, age_group, price)
+VALUES 
+-- TOUR0001
+('TOUR0001', 'adultPrice', 9000000.00),
+('TOUR0001', 'childPrice', 7000000.00),
+('TOUR0001', 'infantPrice', 4000000.00),
+-- TOUR0002
+('TOUR0002', 'adultPrice', 9500000.00),
+('TOUR0002', 'childPrice', 7200000.00),
+('TOUR0002', 'infantPrice', 4200000.00),
+-- TOUR0003
+('TOUR0003', 'adultPrice', 8800000.00),
+('TOUR0003', 'childPrice', 6800000.00),
+('TOUR0003', 'infantPrice', 3900000.00),
+-- TOUR0004
+('TOUR0004', 'adultPrice', 9200000.00),
+('TOUR0004', 'childPrice', 7100000.00),
+('TOUR0004', 'infantPrice', 4100000.00),
+-- TOUR0005
+('TOUR0005', 'adultPrice', 9000000.00),
+('TOUR0005', 'childPrice', 7000000.00),
+('TOUR0005', 'infantPrice', 4000000.00),
+-- TOUR0006
+('TOUR0006', 'adultPrice', 9300000.00),
+('TOUR0006', 'childPrice', 7200000.00),
+('TOUR0006', 'infantPrice', 4200000.00),
+-- TOUR0007
+('TOUR0007', 'adultPrice', 9100000.00),
+('TOUR0007', 'childPrice', 7000000.00),
+('TOUR0007', 'infantPrice', 4000000.00),
+-- TOUR0008
+('TOUR0008', 'adultPrice', 9500000.00),
+('TOUR0008', 'childPrice', 7300000.00),
+('TOUR0008', 'infantPrice', 4300000.00),
+-- TOUR0009
+('TOUR0009', 'adultPrice', 9200000.00),
+('TOUR0009', 'childPrice', 7100000.00),
+('TOUR0009', 'infantPrice', 4100000.00),
+-- TOUR0010
+('TOUR0010', 'adultPrice', 9400000.00),
+('TOUR0010', 'childPrice', 7200000.00),
+('TOUR0010', 'infantPrice', 4200000.00),
+-- TOUR0011
+('TOUR0011', 'adultPrice', 9000000.00),
+('TOUR0011', 'childPrice', 7000000.00),
+('TOUR0011', 'infantPrice', 4000000.00),
+-- TOUR0012
+('TOUR0012', 'adultPrice', 8800000.00),
+('TOUR0012', 'childPrice', 6800000.00),
+('TOUR0012', 'infantPrice', 3900000.00),
+-- TOUR0013
+('TOUR0013', 'adultPrice', 9200000.00),
+('TOUR0013', 'childPrice', 7100000.00),
+('TOUR0013', 'infantPrice', 4100000.00),
+-- TOUR0014
+('TOUR0014', 'adultPrice', 9100000.00),
+('TOUR0014', 'childPrice', 7000000.00),
+('TOUR0014', 'infantPrice', 4000000.00),
+-- TOUR0015
+('TOUR0015', 'adultPrice', 9500000.00),
+('TOUR0015', 'childPrice', 7300000.00),
+('TOUR0015', 'infantPrice', 4300000.00),
+-- TOUR0016
+('TOUR0016', 'adultPrice', 9300000.00),
+('TOUR0016', 'childPrice', 7200000.00),
+('TOUR0016', 'infantPrice', 4200000.00),
+-- TOUR0017
+('TOUR0017', 'adultPrice', 9000000.00),
+('TOUR0017', 'childPrice', 7000000.00),
+('TOUR0017', 'infantPrice', 4000000.00),
+-- TOUR0018
+('TOUR0018', 'adultPrice', 9200000.00),
+('TOUR0018', 'childPrice', 7100000.00),
+('TOUR0018', 'infantPrice', 4100000.00),
+-- TOUR0019
+('TOUR0019', 'adultPrice', 9100000.00),
+('TOUR0019', 'childPrice', 7000000.00),
+('TOUR0019', 'infantPrice', 4000000.00),
+-- TOUR0020
+('TOUR0020', 'adultPrice', 9400000.00),
+('TOUR0020', 'childPrice', 7200000.00),
+('TOUR0020', 'infantPrice', 4200000.00),
+-- TOUR0021
+('TOUR0021', 'adultPrice', 9000000.00),
+('TOUR0021', 'childPrice', 7000000.00),
+('TOUR0021', 'infantPrice', 4000000.00),
+-- TOUR0022
+('TOUR0022', 'adultPrice', 8800000.00),
+('TOUR0022', 'childPrice', 6800000.00),
+('TOUR0022', 'infantPrice', 3900000.00),
+-- TOUR0023
+('TOUR0023', 'adultPrice', 9200000.00),
+('TOUR0023', 'childPrice', 7100000.00),
+('TOUR0023', 'infantPrice', 4100000.00),
+-- TOUR0024
+('TOUR0024', 'adultPrice', 9100000.00),
+('TOUR0024', 'childPrice', 7000000.00),
+('TOUR0024', 'infantPrice', 4000000.00),
+-- TOUR0025
+('TOUR0025', 'adultPrice', 9500000.00),
+('TOUR0025', 'childPrice', 7300000.00),
+('TOUR0025', 'infantPrice', 4300000.00),
+-- TOUR0026
+('TOUR0026', 'adultPrice', 9300000.00),
+('TOUR0026', 'childPrice', 7200000.00),
+('TOUR0026', 'infantPrice', 4200000.00),
+-- TOUR0027
+('TOUR0027', 'adultPrice', 9000000.00),
+('TOUR0027', 'childPrice', 7000000.00),
+('TOUR0027', 'infantPrice', 4000000.00),
+-- TOUR0028
+('TOUR0028', 'adultPrice', 9200000.00),
+('TOUR0028', 'childPrice', 7100000.00),
+('TOUR0028', 'infantPrice', 4100000.00),
+-- TOUR0029
+('TOUR0029', 'adultPrice', 9100000.00),
+('TOUR0029', 'childPrice', 7000000.00),
+('TOUR0029', 'infantPrice', 4000000.00),
+-- TOUR0030
+('TOUR0030', 'adultPrice', 9400000.00),
+('TOUR0030', 'childPrice', 7200000.00),
+('TOUR0030', 'infantPrice', 4200000.00),
+-- TOUR0031
+('TOUR0031', 'adultPrice', 9000000.00),
+('TOUR0031', 'childPrice', 7000000.00),
+('TOUR0031', 'infantPrice', 4000000.00),
+-- TOUR0032
+('TOUR0032', 'adultPrice', 8800000.00),
+('TOUR0032', 'childPrice', 6800000.00),
+('TOUR0032', 'infantPrice', 3900000.00),
+-- TOUR0033
+('TOUR0033', 'adultPrice', 9200000.00),
+('TOUR0033', 'childPrice', 7100000.00),
+('TOUR0033', 'infantPrice', 4100000.00),
+-- TOUR0034
+('TOUR0034', 'adultPrice', 9100000.00),
+('TOUR0034', 'childPrice', 7000000.00),
+('TOUR0034', 'infantPrice', 4000000.00),
+-- TOUR0035
+('TOUR0035', 'adultPrice', 9500000.00),
+('TOUR0035', 'childPrice', 7300000.00),
+('TOUR0035', 'infantPrice', 4300000.00),
+-- TOUR0036
+('TOUR0036', 'adultPrice', 9300000.00),
+('TOUR0036', 'childPrice', 7200000.00),
+('TOUR0036', 'infantPrice', 4200000.00),
+-- TOUR0037
+('TOUR0037', 'adultPrice', 9000000.00),
+('TOUR0037', 'childPrice', 7000000.00),
+('TOUR0037', 'infantPrice', 4000000.00),
+-- TOUR0038
+('TOUR0038', 'adultPrice', 9200000.00),
+('TOUR0038', 'childPrice', 7100000.00),
+('TOUR0038', 'infantPrice', 4100000.00),
+-- TOUR0039
+('TOUR0039', 'adultPrice', 9100000.00),
+('TOUR0039', 'childPrice', 7000000.00),
+('TOUR0039', 'infantPrice', 4000000.00),
+-- TOUR0040
+('TOUR0040', 'adultPrice', 9400000.00),
+('TOUR0040', 'childPrice', 7200000.00),
+('TOUR0040', 'infantPrice', 4200000.00),
+-- TOUR0041
+('TOUR0041', 'adultPrice', 9000000.00),
+('TOUR0041', 'childPrice', 7000000.00),
+('TOUR0041', 'infantPrice', 4000000.00),
+-- TOUR0042
+('TOUR0042', 'adultPrice', 8800000.00),
+('TOUR0042', 'childPrice', 6800000.00),
+('TOUR0042', 'infantPrice', 3900000.00),
+-- TOUR0043
+('TOUR0043', 'adultPrice', 9200000.00),
+('TOUR0043', 'childPrice', 7100000.00),
+('TOUR0043', 'infantPrice', 4100000.00),
+-- TOUR0044
+('TOUR0044', 'adultPrice', 9100000.00),
+('TOUR0044', 'childPrice', 7000000.00),
+('TOUR0044', 'infantPrice', 4000000.00),
+-- TOUR0045
+('TOUR0045', 'adultPrice', 9500000.00),
+('TOUR0045', 'childPrice', 7300000.00),
+('TOUR0045', 'infantPrice', 4300000.00),
+-- TOUR0046
+('TOUR0046', 'adultPrice', 9300000.00),
+('TOUR0046', 'childPrice', 7200000.00),
+('TOUR0046', 'infantPrice', 4200000.00),
+-- TOUR0047
+('TOUR0047', 'adultPrice', 9000000.00),
+('TOUR0047', 'childPrice', 7000000.00),
+('TOUR0047', 'infantPrice', 4000000.00),
+-- TOUR0048
+('TOUR0048', 'adultPrice', 9200000.00),
+('TOUR0048', 'childPrice', 7100000.00),
+('TOUR0048', 'infantPrice', 4100000.00),
+-- TOUR0049
+('TOUR0049', 'adultPrice', 9100000.00),
+('TOUR0049', 'childPrice', 7000000.00),
+('TOUR0049', 'infantPrice', 4000000.00),
+-- TOUR0050
+('TOUR0050', 'adultPrice', 9400000.00),
+('TOUR0050', 'childPrice', 7200000.00),
+('TOUR0050', 'infantPrice', 4200000.00),
+-- TOUR0051
+('TOUR0051', 'adultPrice', 9000000.00),
+('TOUR0051', 'childPrice', 7000000.00),
+('TOUR0051', 'infantPrice', 4000000.00),
+-- TOUR0052
+('TOUR0052', 'adultPrice', 8800000.00),
+('TOUR0052', 'childPrice', 6800000.00),
+('TOUR0052', 'infantPrice', 3900000.00),
+-- TOUR0053
+('TOUR0053', 'adultPrice', 9200000.00),
+('TOUR0053', 'childPrice', 7100000.00),
+('TOUR0053', 'infantPrice', 4100000.00),
+-- TOUR0054
+('TOUR0054', 'adultPrice', 9100000.00),
+('TOUR0054', 'childPrice', 7000000.00),
+('TOUR0054', 'infantPrice', 4000000.00),
+-- TOUR0055
+('TOUR0055', 'adultPrice', 9500000.00),
+('TOUR0055', 'childPrice', 7300000.00),
+('TOUR0055', 'infantPrice', 4300000.00),
+-- TOUR0056
+('TOUR0056', 'adultPrice', 9300000.00),
+('TOUR0056', 'childPrice', 7200000.00),
+('TOUR0056', 'infantPrice', 4200000.00),
+-- TOUR0057
+('TOUR0057', 'adultPrice', 9000000.00),
+('TOUR0057', 'childPrice', 7000000.00),
+('TOUR0057', 'infantPrice', 4000000.00),
+-- TOUR0058
+('TOUR0058', 'adultPrice', 9200000.00),
+('TOUR0058', 'childPrice', 7100000.00),
+('TOUR0058', 'infantPrice', 4100000.00),
+-- TOUR0059
+('TOUR0059', 'adultPrice', 9100000.00),
+('TOUR0059', 'childPrice', 7000000.00),
+('TOUR0059', 'infantPrice', 4000000.00),
+-- TOUR0060
+('TOUR0060', 'adultPrice', 9400000.00),
+('TOUR0060', 'childPrice', 7200000.00),
+('TOUR0060', 'infantPrice', 4200000.00),
+-- TOUR0061
+('TOUR0061', 'adultPrice', 9000000.00),
+('TOUR0061', 'childPrice', 7000000.00),
+('TOUR0061', 'infantPrice', 4000000.00),
+-- TOUR0062
+('TOUR0062', 'adultPrice', 8800000.00),
+('TOUR0062', 'childPrice', 6800000.00),
+('TOUR0062', 'infantPrice', 3900000.00),
+-- TOUR0063
+('TOUR0063', 'adultPrice', 9200000.00),
+('TOUR0063', 'childPrice', 7100000.00),
+('TOUR0063', 'infantPrice', 4100000.00),
+-- TOUR0064
+('TOUR0064', 'adultPrice', 9100000.00),
+('TOUR0064', 'childPrice', 7000000.00),
+('TOUR0064', 'infantPrice', 4000000.00),
+-- TOUR0065
+('TOUR0065', 'adultPrice', 9500000.00),
+('TOUR0065', 'childPrice', 7300000.00),
+('TOUR0065', 'infantPrice', 4300000.00),
+-- TOUR0066
+('TOUR0066', 'adultPrice', 9300000.00),
+('TOUR0066', 'childPrice', 7200000.00),
+('TOUR0066', 'infantPrice', 4200000.00),
+-- TOUR0067
+('TOUR0067', 'adultPrice', 9000000.00),
+('TOUR0067', 'childPrice', 7000000.00),
+('TOUR0067', 'infantPrice', 4000000.00),
+-- TOUR0068
+('TOUR0068', 'adultPrice', 9200000.00),
+('TOUR0068', 'childPrice', 7100000.00),
+('TOUR0068', 'infantPrice', 4100000.00),
+-- TOUR0069
+('TOUR0069', 'adultPrice', 9100000.00),
+('TOUR0069', 'childPrice', 7000000.00),
+('TOUR0069', 'infantPrice', 4000000.00),
+-- TOUR0070
+('TOUR0070', 'adultPrice', 9400000.00),
+('TOUR0070', 'childPrice', 7200000.00),
+('TOUR0070', 'infantPrice', 4200000.00),
+-- TOUR0071
+('TOUR0071', 'adultPrice', 9000000.00),
+('TOUR0071', 'childPrice', 7000000.00),
+('TOUR0071', 'infantPrice', 4000000.00),
+-- TOUR0072
+('TOUR0072', 'adultPrice', 8800000.00),
+('TOUR0072', 'childPrice', 6800000.00),
+('TOUR0072', 'infantPrice', 3900000.00),
+-- TOUR0073
+('TOUR0073', 'adultPrice', 9200000.00),
+('TOUR0073', 'childPrice', 7100000.00),
+('TOUR0073', 'infantPrice', 4100000.00),
+-- TOUR0074
+('TOUR0074', 'adultPrice', 9100000.00),
+('TOUR0074', 'childPrice', 7000000.00),
+('TOUR0074', 'infantPrice', 4000000.00),
+-- TOUR0075
+('TOUR0075', 'adultPrice', 9500000.00),
+('TOUR0075', 'childPrice', 7300000.00),
+('TOUR0075', 'infantPrice', 4300000.00),
+-- TOUR0076
+('TOUR0076', 'adultPrice', 9300000.00),
+('TOUR0076', 'childPrice', 7200000.00),
+('TOUR0076', 'infantPrice', 4200000.00),
+-- TOUR0077
+('TOUR0077', 'adultPrice', 9000000.00),
+('TOUR0077', 'childPrice', 7000000.00),
+('TOUR0077', 'infantPrice', 4000000.00),
+-- TOUR0078
+('TOUR0078', 'adultPrice', 9200000.00),
+('TOUR0078', 'childPrice', 7100000.00),
+('TOUR0078', 'infantPrice', 4100000.00),
+-- TOUR0079
+('TOUR0079', 'adultPrice', 9100000.00),
+('TOUR0079', 'childPrice', 7000000.00),
+('TOUR0079', 'infantPrice', 4000000.00),
+-- TOUR0080
+('TOUR0080', 'adultPrice', 9400000.00),
+('TOUR0080', 'childPrice', 7200000.00),
+('TOUR0080', 'infantPrice', 4200000.00);
+
 INSERT INTO Customer_Support_Request (request_id, cus_id, subject, message, created_at, status)
 VALUES 
 -- 5 bản ghi đã trả lời (RESOLVED)
