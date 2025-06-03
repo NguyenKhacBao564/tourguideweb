@@ -5,7 +5,7 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import TourSchedule from '../../components/Common/TourSchedule/TourSchedule';
 import Footer from '../../layouts/Footer';
-import TourList from "../../components/TourList/Tourlist";
+//import TourList from "../../components/TourList/Tourlist";
 import { FaRegHeart } from "react-icons/fa";
 import { RiShareForwardLine } from "react-icons/ri";
 import Navbar from '../../layouts/Navbar';
@@ -154,7 +154,7 @@ function BookingTour(props) {
 
    
     const handleBookNow = () => {
-        navigate('/user/booking-info', { state: { tour: currentTour } });
+        navigate('/user/booking-info', { state: { tour: tour, tourId: tourId } });
     };
     
 

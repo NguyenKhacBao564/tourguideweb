@@ -157,7 +157,11 @@ const loginUser = async (email, password) => {
 
 
 // Hàm đăng ký
+
 const registerUser = async (fullname, email, password, phone, birthday) => {
+    if (!fullname || !email || !password || !phone || !birthday) {
+      return {error: ERROR_MESSAGES.AUTH.REGISTRATION_FAILED}
+    }
     try {
         console.log("Bắt đầu quá trình đăng ký với dữ liệu:", { fullname, email, phone, birthday });
 

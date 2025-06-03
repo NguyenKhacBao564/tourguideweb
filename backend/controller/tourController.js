@@ -56,11 +56,11 @@ const updateStatusTour = async (transaction) => {
     `);
 
     // 6. Cập nhật trạng thái active: các tour còn lại
-    await transaction.request().query(`
-      UPDATE Tour
-      SET status = 'active'
-      WHERE status NOT IN ('inactive', 'reject', 'invalid', 'completed', 'ongoing', 'upcoming', 'fullbooked');
-    `);
+    // await transaction.request().query(`
+    //   UPDATE Tour
+    //   SET status = 'active'
+    //   WHERE status NOT IN ('inactive', 'reject', 'invalid', 'completed', 'ongoing', 'upcoming', 'fullbooked');
+    // `);
 
     console.log("Cập nhật trạng thái tour thành công");
   } catch (error) {
@@ -114,7 +114,7 @@ const getTour =  async (req, res) => {
         FROM Tour AS t
         LEFT JOIN Tour_Price AS tp 
         ON t.tour_id = tp.tour_id
-        WHERE t.status NOT IN ('inactive')
+        WHERE t.status NOT IN ('inactive', 'reject', 'pending')
       `;
 
       // Tạo danh sách tham số cho truy vấn

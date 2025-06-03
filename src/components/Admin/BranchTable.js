@@ -27,7 +27,7 @@ const BranchTable = ({ data }) => (
             <th>Chi nhánh</th>
             <th>Doanh thu</th>
             <th>Tăng trưởng</th>
-            <th>Tỷ lệ huỷ</th>
+            {/* <th>Tỷ lệ huỷ</th> */}
             <th>Sl tour</th>
           </tr>
         </thead>
@@ -46,9 +46,9 @@ const BranchTable = ({ data }) => (
               }>
                 {growth_percentage}%
               </td>
-              <td className="branch-table__cancel-rate">
-                {cancel_rate}%
-              </td>
+                {/* <td className="branch-table__cancel-rate">
+                  {cancel_rate}%
+                </td> */}
               <td>{total_tours}</td>
             </tr>
           ))}

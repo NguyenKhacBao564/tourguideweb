@@ -16,7 +16,8 @@ export const AuthProvider = ({ children }) => {
   console.log("AuthProvider user: ", user)
   // Hàm kiểm tra và điều hướng theo role
   const checkRole = (role, currentPath) => {
-    console.log("checkRole: ", role, currentPath)
+    console.log("🔄 checkRole called:", { role, currentPath });
+    
     // Tránh redirect loop: Không điều hướng nếu đã ở đúng trang hoặc ở trang InforUser
     const roleRoutes = {
       customer: "/",
@@ -24,18 +25,29 @@ export const AuthProvider = ({ children }) => {
       Sales: "/businessemployee/customer",
       Admin: "/admin/dashboard",
     };
-
+    
+    // Các trang không cần chuyển hướng về trang chính của role
+    // const exemptPages = ["/thongtin", '/booking', '/payment'];
     // Các trang không cần chuyển hướng về trang chính của role khi reset
-    const exemptPages = ["/thongtin", '/booking', '/tourFavorite', '/contact'];
-
+    const exemptPages = ["/thongtin",'/booking','/tourFavorite','/contact','/payment'];
+    
     // Nếu đang ở trang được miễn trừ (như trang thông tin cá nhân), không chuyển hướng
-    if (exemptPages.some(page => currentPath.includes(page))) {
+    const isExemptPage = exemptPages.some(page => currentPath.includes(page));
+    console.log("🚫 Exempt page check:", { currentPath, exemptPages, isExemptPage });
+    
+    if (isExemptPage) {
+      console.log("✅ Page is exempt, no redirect needed");
       return;
     }
 
     const targetRoute = roleRoutes[role];
+    console.log("🎯 Checking redirect:", { targetRoute, currentPath });
+    
     if (targetRoute && currentPath !== targetRoute) {
-      navigate(targetRoute, { replace: true });
+        console.log("🔀 Redirecting from", currentPath, "to", targetRoute);
+        navigate(targetRoute, { replace: true });
+    } else {
+        console.log("⚡ No redirect needed");
     }
   };
 
@@ -108,8 +120,8 @@ export const AuthProvider = ({ children }) => {
     return authenticateUser(loginUser, email, password);
   };
 
-  const regist = async (fullname, email, password, phone, date_of_birth) => {
-    return authenticateUser(registerUser, fullname, email, password, phone, date_of_birth);
+  const regist = async (fullname, email, password, phone, birthday) => {
+    return authenticateUser(registerUser, fullname, email, password, phone, birthday );
   };
 
 
