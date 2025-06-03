@@ -7,6 +7,8 @@ import NavBar from '../../layouts/Navbar';
 import "../../styles/pages/BookingInfo.scss";
 import { AuthContext } from '../../context/AuthContext';
 import { createBooking, createBookingDetail } from '../../api/bookingAPI';
+import {formatDate} from '../../feature/formatDate';
+import { API_URL } from '../../utils/API_Port';
 
 const defaultPassenger = (type) => ({
   type, // 'adult', 'child', 'baby'
@@ -23,7 +25,8 @@ const BookingInfo = () => {
   // Lấy dữ liệu tour từ location.state
   const tour = location.state?.tour || {};
   const tourId = location.state?.tourId || '';
-  
+  const image = location.state?.image || '';
+
   console.log('Tour data received:', tour);
   console.log('Tour ID received:', tourId);
 
@@ -569,7 +572,7 @@ const BookingInfo = () => {
               <Card.Body>
                 <div className="tour-summary mb-3">
                   <div className="tour-image mb-3">
-                    <img src={tour.image || "https://via.placeholder.com/300x200"} alt={tour.name} className="img-fluid rounded" />
+                    <img src={`${API_URL}/${image.image_url}`} alt={tour.name} className="img-fluid rounded" />
                   </div>
                   <h6 className="tour-name">{tour.name || 'Tên tour'}</h6>
                   <div className="tour-details">
@@ -587,27 +590,27 @@ const BookingInfo = () => {
                       <FaCalendarAlt className="info-icon" />
                       <div>
                         <div className="info-label">Ngày đi:</div>
-                        <div className="info-value">{tour.startDate || tour.date || 'N/A'}</div>
+                        <div className="info-value">{formatDate(tour.start_date) || formatDate(tour.date) || 'N/A'}</div>
                       </div>
                     </Col>
                     <Col xs={6} className="info-item">
                       <FaCalendarAlt className="info-icon" />
                       <div>
                         <div className="info-label">Ngày về:</div>
-                        <div className="info-value">{tour.endDate || tour.returnDate || 'N/A'}</div>
+                        <div className="info-value">{formatDate(tour.end_date) || formatDate(tour.returnDate) || 'N/A'}</div>
                       </div>
                     </Col>
                     <Col xs={6} className="info-item">
                       <FaMapMarkerAlt className="info-icon" />
                       <div>
                         <div className="info-label">Nơi khởi hành:</div>
-                        <div className="info-value">{tour.departureLocation || tour.start || 'N/A'}</div>
+                        <div className="info-value">{tour.departure_location || tour.start || 'N/A'}</div>
                       </div>
                     </Col>
                     <Col xs={6} className="info-item">
                       <FaMapMarkerAlt className="info-icon" />
                       <div>
-                        <div className="info-label">Xe khách</div>
+                        <div className="info-label">{tour.transport}</div>
                       </div>
                     </Col>
                   </Row>
