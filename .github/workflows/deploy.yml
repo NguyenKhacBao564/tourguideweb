@@ -53,6 +53,19 @@ jobs:
           source: "build.tar.gz"
           target: "/home/ec2-user/"
 
+      # 6.5. Verify file transfer
+      - name: Verify file transfer
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: 54.219.205.247
+          username: ec2-user
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          timeout: 60
+          script: |
+            echo "📋 Checking transferred files..."
+            ls -la /home/ec2-user/build.tar.gz
+            echo "📦 File size: $(du -h /home/ec2-user/build.tar.gz)"
+
       # 7. Deploy trên EC2 (chỉ extract và copy, rất nhanh)
       - name: Deploy on EC2
         uses: appleboy/ssh-action@v1.0.0
@@ -60,26 +73,69 @@ jobs:
           host: 54.219.205.247
           username: ec2-user
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          timeout: 300  # 5 phút là đủ cho extract + copy
+          timeout: 300
           script: |
-            cd /home/ec2-user
+            set -e
+            echo "🚀 Starting deployment..."
             
-            # Extract build files
+            # Check if build file exists
+            if [ ! -f "/home/ec2-user/build.tar.gz" ]; then
+              echo "❌ Build file not found!"
+              exit 1
+            fi
+            
+            cd /home/ec2-user
+            echo "📦 Extracting build files..."
             tar -xzf build.tar.gz
             
-            # Backup old build (optional)
-            sudo cp -r /usr/share/nginx/html /usr/share/nginx/html.backup.$(date +%Y%m%d_%H%M%S) 2>/dev/null || true
+            # Check if Nginx is installed and running
+            if ! command -v nginx &> /dev/null; then
+              echo "📋 Installing Nginx..."
+              sudo yum update -y
+              sudo yum install -y nginx
+              sudo systemctl enable nginx
+              sudo systemctl start nginx
+            fi
+            
+            # Create backup directory if not exists
+            sudo mkdir -p /home/ec2-user/backups
+            
+            # Backup current deployment (if exists)
+            if [ -d "/usr/share/nginx/html" ] && [ "$(ls -A /usr/share/nginx/html)" ]; then
+              echo "💾 Creating backup..."
+              sudo cp -r /usr/share/nginx/html /home/ec2-user/backups/html.backup.$(date +%Y%m%d_%H%M%S) 2>/dev/null || true
+            fi
+            
+            # Ensure nginx html directory exists
+            sudo mkdir -p /usr/share/nginx/html
             
             # Deploy new build
+            echo "🔄 Deploying new build..."
             sudo rm -rf /usr/share/nginx/html/*
             sudo cp -r build/* /usr/share/nginx/html/
-            sudo chown -R nginx:nginx /usr/share/nginx/html
+            
+            # Set proper permissions
+            sudo chown -R nginx:nginx /usr/share/nginx/html 2>/dev/null || sudo chown -R ec2-user:ec2-user /usr/share/nginx/html
             sudo chmod -R 755 /usr/share/nginx/html
             
-            # Test nginx config and restart
-            sudo nginx -t && sudo systemctl reload nginx
+            # Test and reload nginx
+            echo "🔧 Testing Nginx configuration..."
+            sudo nginx -t
+            
+            echo "🔄 Reloading Nginx..."
+            sudo systemctl reload nginx || sudo systemctl restart nginx
+            
+            # Verify nginx is running
+            if sudo systemctl is-active --quiet nginx; then
+              echo "✅ Nginx is running"
+            else
+              echo "⚠️ Starting Nginx..."
+              sudo systemctl start nginx
+            fi
             
             # Cleanup
+            echo "🧹 Cleaning up..."
             rm -rf build/ build.tar.gz
             
             echo "✅ Deployment completed successfully!"
+            echo "🌐 Website should be accessible at: http://54.219.205.247"
