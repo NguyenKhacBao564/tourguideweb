@@ -36,6 +36,9 @@ jobs:
           
       # 5. Build frontend locally (nhanh hơn nhiều)
       - name: Build frontend
+        env:
+          CI: false
+          GENERATE_SOURCEMAP: false
         run: |
           npm run build
           tar -czf build.tar.gz build/
