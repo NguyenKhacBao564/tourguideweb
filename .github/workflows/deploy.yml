@@ -60,7 +60,7 @@ jobs:
           host: 54.219.205.247
           username: ec2-user
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          timeout: 60
+          timeout: 60s
           script: |
             echo "📋 Checking transferred files..."
             ls -la /home/ec2-user/build.tar.gz
@@ -73,7 +73,7 @@ jobs:
           host: 54.219.205.247
           username: ec2-user
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          timeout: 300
+          timeout: 300s
           script: |
             set -e
             echo "🚀 Starting deployment..."
