@@ -62,7 +62,7 @@ router.get('/vnpay-return', async (req, res) => {
     console.log('✅ VNPay return result:', result);
     
     // Redirect về frontend với kết quả
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const frontendUrl = process.env.FRONTEND_URL || (process.env.NODE_ENV === 'production' ? 'http://54.219.205.247' : 'http://localhost:3000');
     const redirectUrl = `${frontendUrl}/payment/result?success=${result.success}&message=${encodeURIComponent(result.message)}&orderId=${result.orderId || ''}`;
     
     console.log('🔄 Redirecting to:', redirectUrl);
@@ -71,7 +71,7 @@ router.get('/vnpay-return', async (req, res) => {
     console.error('❌ Error handling VNPay return:', error);
     
     // Redirect về frontend với lỗi
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const frontendUrl = process.env.FRONTEND_URL || (process.env.NODE_ENV === 'production' ? 'http://54.219.205.247' : 'http://localhost:3000');
     const redirectUrl = `${frontendUrl}/payment/result?success=false&message=${encodeURIComponent(error.message || 'Lỗi xử lý kết quả thanh toán')}`;
     
     console.log('🔄 Error redirect to:', redirectUrl);
@@ -300,7 +300,7 @@ router.get('/momo-return', async (req, res) => {
     const result = await PaymentService.handleMoMoCallback(req.query);
     
     // Redirect về frontend với kết quả
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const frontendUrl = process.env.FRONTEND_URL || (process.env.NODE_ENV === 'production' ? 'http://54.219.205.247' : 'http://localhost:3000');
     const redirectUrl = `${frontendUrl}/payment/result?success=${result.success}&message=${encodeURIComponent(result.message)}&orderId=${result.orderId || ''}`;
     
     res.redirect(redirectUrl);
@@ -308,7 +308,7 @@ router.get('/momo-return', async (req, res) => {
     console.error('Error handling MoMo return:', error);
     
     // Redirect về frontend với lỗi
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const frontendUrl = process.env.FRONTEND_URL || (process.env.NODE_ENV === 'production' ? 'http://54.219.205.247' : 'http://localhost:3000');
     const redirectUrl = `${frontendUrl}/payment/result?success=false&message=${encodeURIComponent(error.message || 'Lỗi xử lý kết quả thanh toán MoMo')}`;
     
     res.redirect(redirectUrl);

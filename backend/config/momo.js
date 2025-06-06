@@ -18,9 +18,9 @@ const momoConfig = {
   },
   
   // Callback URLs
-  callbackHost: process.env.MOMO_CALLBACK_HOST || 'http://localhost:3001',
-  returnUrl: process.env.MOMO_RETURN_URL || 'http://localhost:3001/api/payment/momo-return',
-  ipnUrl: process.env.MOMO_IPN_URL || 'http://localhost:3001/api/payment/momo-ipn',
+  callbackHost: process.env.BACKEND_URL || process.env.MOMO_CALLBACK_HOST || 'http://localhost:3001',
+  returnUrl: process.env.BACKEND_URL ? `${process.env.BACKEND_URL}/api/payment/momo-return` : process.env.MOMO_RETURN_URL || 'http://localhost:3001/api/payment/momo-return',
+  ipnUrl: process.env.BACKEND_URL ? `${process.env.BACKEND_URL}/api/payment/momo-ipn` : process.env.MOMO_IPN_URL || 'http://localhost:3001/api/payment/momo-ipn',
   
   // Default values
   currency: 'VND',
