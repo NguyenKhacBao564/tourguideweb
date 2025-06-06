@@ -14,25 +14,34 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Setup Node.js với cache
-      - name: Setup Node.js with cache
+      # 2. Setup Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
 
-      # 3. Install dependencies với cache
+      # 3. Cache node_modules (fallback cache without package-lock.json)
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: node-cache-${{ github.run_number }}
+          restore-keys: |
+            node-cache-
+            node-
+
+      # 4. Install dependencies
       - name: Install dependencies
         run: |
-          npm ci --only=production
+          npm ci --prefer-offline --no-audit --no-fund
           
-      # 4. Build frontend locally (nhanh hơn nhiều)
+      # 5. Build frontend locally (nhanh hơn nhiều)
       - name: Build frontend
         run: |
           npm run build
           tar -czf build.tar.gz build/
           
-      # 5. Copy build artifacts to EC2 
+      # 6. Copy build artifacts to EC2 
       - name: Copy build to EC2
         uses: appleboy/scp-action@v0.1.4
         with:
@@ -42,7 +51,7 @@ jobs:
           source: "build.tar.gz"
           target: "/home/ec2-user/"
 
-      # 6. Deploy trên EC2 (chỉ extract và copy, rất nhanh)
+      # 7. Deploy trên EC2 (chỉ extract và copy, rất nhanh)
       - name: Deploy on EC2
         uses: appleboy/ssh-action@v1.0.0
         with:
