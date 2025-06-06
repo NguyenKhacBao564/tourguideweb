@@ -28,7 +28,12 @@ const favoriteTourRoutes = require("./routes/favoriteTourRoutes");
 const historyBookingRoutes = require("./routes/historyBookingRoutes");
 
 app.use(cors({
-  origin: 'http://localhost:3000', // Domain của frontend
+  origin: [
+    'http://localhost:3000', // Development
+    'http://54.219.205.247', // EC2 IP
+    'http://tourguideeeee.fun', // Domain
+    'http://www.tourguideeeee.fun' // WWW Domain
+  ], // Domain của frontend
   credentials: true, // Cho phép gửi cookie
 }));
 app.use(express.json());
