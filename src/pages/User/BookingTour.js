@@ -59,16 +59,16 @@ function BookingTour(props) {
 
 
     console.log("BookingTour component rendered");
-    const currentTour = {
-        name: tour.name,
-        start: tour.start_date,
-        code: "43210",
-        date: "24/03/2025",
-        priceAdult: 4129000,
-        priceChild: 1990000,
-        priceBaby: 0,
-        image: "https://i.imgur.com/e2UnpdB.jpg"
-    };
+    // const currentTour = {
+    //     name: tour.name,
+    //     start: tour.start_date,
+    //     code: "43210",
+    //     date: "24/03/2025",
+    //     priceAdult: 4129000,
+    //     priceChild: 1990000,
+    //     priceBaby: 0,
+    //     image: "https://i.imgur.com/e2UnpdB.jpg"
+    // };
 
      // Cuộn về đầu trang và reset trạng thái khi tourId thay đổi
     
@@ -169,7 +169,8 @@ function BookingTour(props) {
         }
 
         // Nếu đã đăng nhập, chuyển đến trang booking info
-        navigate('/user/booking-info', { state: { tour: tour, tourId: tourId } });
+        
+        navigate('/user/booking-info', { state: { tour: tour, tourId: tourId , image: images[0] } });
     };
     
 

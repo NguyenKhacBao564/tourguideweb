@@ -94,7 +94,7 @@ function Login() {
           />
           Đồng ý với điều khoản
         </label>
-        <a href="#" className="forgotPassword">Quên mật khẩu</a>
+        {/* <a href="#" className="forgotPassword">Quên mật khẩu</a> */}
       </div>
 
       <button type="submit" className="btn--submit">Đăng nhập</button>

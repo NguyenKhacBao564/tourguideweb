@@ -27,7 +27,8 @@ const BookingInfo = () => {
   // Lấy dữ liệu tour từ location.state
   const tour = location.state?.tour || {};
   const tourId = location.state?.tourId || '';
-  
+  const image = location.state?.image || '';
+
   console.log('Tour data received:', tour);
   console.log('Tour ID received:', tourId);
 
@@ -617,11 +618,7 @@ const BookingInfo = () => {
               <Card.Body>
                 <div className="tour-summary mb-3">
                   <div className="tour-image mb-3">
-                    <img 
-                      src={tour.cover_image ? `${API_URL}/${tour.cover_image}` : "https://via.placeholder.com/300x200"} 
-                      alt={tour.name || 'Tour image'} 
-                      className="img-fluid rounded" 
-                    />
+                    <img src={`${API_URL}/${image.image_url}`} alt={tour.name} className="img-fluid rounded" />
                   </div>
                   <h6 className="tour-name">{tour.name || 'Tên tour'}</h6>
                   <div className="tour-details">

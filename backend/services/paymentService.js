@@ -128,11 +128,11 @@ class PaymentService {
     const transaction = new sql.Transaction(pool);
     
     try {
-      console.log('🔄 Starting payment save process with booking handling...');
+      console.log('Starting payment save process with booking handling...');
       console.log('Payment data:', JSON.stringify(paymentData, null, 2));
       
       await transaction.begin();
-      console.log('✅ Transaction started');
+      console.log('Transaction started');
       
       const { orderId, bookingId, amount, paymentMethod, customerInfo, tourInfo, tour_id, cus_id } = paymentData;
       
@@ -150,9 +150,9 @@ class PaymentService {
         bookingRequest.input('tour_id', sql.Int, tour_id);
         bookingRequest.input('amount', sql.Decimal(18, 2), amount);
         await bookingRequest.query(bookingQuery);
-        console.log('✅ Booking record created/verified with full data');
+        console.log('Booking record created/verified with full data');
       } catch (bookingError) {
-        console.log('⚠️ Could not create booking record:', bookingError.message);
+        console.log('Could not create booking record:', bookingError.message);
         console.log('Continuing with payment creation only...');
       }
       
@@ -179,7 +179,7 @@ class PaymentService {
         cus_id
       });
       
-      console.log('📝 Executing payment SQL query...');
+      console.log(' Executing payment SQL query...');
       
       const request = new sql.Request(transaction);
       request.input('bookingId', sql.VarChar(20), bookingId);
@@ -189,21 +189,21 @@ class PaymentService {
       request.input('response', sql.NVarChar(sql.MAX), response);
       
       const result = await request.query(insertQuery);
-      console.log('✅ Payment SQL query executed successfully');
+      console.log('Payment SQL query executed successfully');
       console.log('Result:', result);
       
       await transaction.commit();
-      console.log('✅ Transaction committed');
+      console.log('Transaction committed');
       
       return result.recordset[0].payment_id;
     } catch (error) {
       await transaction.rollback();
-      console.error('❌ Error in savePaymentInfoWithBooking:');
+      console.error('Error in savePaymentInfoWithBooking:');
       console.error('Error message:', error.message);
       
       // If it's still a foreign key constraint issue, try without foreign key
       if (error.number === 547) {
-        console.log('🔄 Retrying without foreign key constraint...');
+        console.log('Retrying without foreign key constraint...');
         return await this.savePaymentInfoWithoutFK(paymentData);
       }
       
@@ -216,16 +216,16 @@ class PaymentService {
     const pool = await getPool();
     
     try {
-      console.log('🔄 Saving payment without FK constraint...');
+      console.log(' Saving payment without FK constraint...');
       
       const { orderId, bookingId, amount, paymentMethod, customerInfo, tourInfo } = paymentData;
       
       // Disable foreign key constraint temporarily for SQL Server
       try {
         await pool.request().query('ALTER TABLE Payments NOCHECK CONSTRAINT FK_Payments_Booking');
-        console.log('✅ Foreign key constraint disabled');
+        console.log(' Foreign key constraint disabled');
       } catch (fkError) {
-        console.log('⚠️ Could not disable FK constraint, continuing anyway...');
+        console.log(' Could not disable FK constraint, continuing anyway...');
       }
       
       const insertQuery = `
@@ -261,15 +261,15 @@ class PaymentService {
       // Re-enable foreign key constraint
       try {
         await pool.request().query('ALTER TABLE Payments CHECK CONSTRAINT FK_Payments_Booking');
-        console.log('✅ Foreign key constraint re-enabled');
+        console.log(' Foreign key constraint re-enabled');
       } catch (fkError) {
-        console.log('⚠️ Could not re-enable FK constraint');
+        console.log(' Could not re-enable FK constraint');
       }
       
-      console.log('✅ Payment saved without FK constraint');
+      console.log(' Payment saved without FK constraint');
       return result.recordset[0].payment_id;
     } catch (error) {
-      console.error('❌ Error saving payment without FK:', error);
+      console.error('Error saving payment without FK:', error);
       throw new Error(`Database error: ${error.message}`);
     }
   }
@@ -278,7 +278,7 @@ class PaymentService {
   static async simulateMoMoPayment(orderId, amount, phoneNumber) {
     try {
       // This method is now deprecated as we use real MoMo API
-      console.log('⚠️ simulateMoMoPayment is deprecated, using real MoMo API instead');
+      console.log('simulateMoMoPayment is deprecated, using real MoMo API instead');
       
       // Generate test transaction ID
       const transactionId = MoMoUtils.generateReferenceId();
@@ -289,7 +289,7 @@ class PaymentService {
       // Generate test deep link
       const deepLink = `momo://pay?orderId=${orderId}&amount=${amount}&transactionId=${transactionId}`;
       
-      console.log('✅ MoMo payment simulation created:', {
+      console.log('MoMo payment simulation created:', {
         orderId,
         transactionId,
         amount,
@@ -384,10 +384,10 @@ class PaymentService {
       await request.query(updateQuery);
       await transaction.commit();
       
-      console.log('✅ MoMo payment result updated successfully');
+      console.log('MoMo payment result updated successfully');
     } catch (error) {
       await transaction.rollback();
-      console.error('❌ Error updating MoMo payment result:', error);
+      console.error('Error updating MoMo payment result:', error);
       throw new Error(`Database error: ${error.message}`);
     }
   }
@@ -419,7 +419,7 @@ class PaymentService {
   // Test MoMo payment status
   static async testMoMoPaymentStatus(orderId, scenario = 'success') {
     try {
-      console.log(`🧪 Testing MoMo payment status for order: ${orderId}, scenario: ${scenario}`);
+      console.log(`Testing MoMo payment status for order: ${orderId}, scenario: ${scenario}`);
       
       // Simulate different payment scenarios
       const testResult = await MoMoUtils.simulateTestPayment(orderId, scenario);
@@ -464,11 +464,11 @@ class PaymentService {
     const transaction = new sql.Transaction(pool);
     
     try {
-      console.log('🔄 Starting payment save process...');
+      console.log(' Starting payment save process...');
       console.log('Payment data:', JSON.stringify(paymentData, null, 2));
       
       await transaction.begin();
-      console.log('✅ Transaction started');
+      console.log('Transaction started');
       
       const { orderId, bookingId, amount, paymentMethod, customerInfo, tourInfo } = paymentData;
       
@@ -493,7 +493,7 @@ class PaymentService {
         participants: tourInfo.participants || 1
       });
       
-      console.log('📝 Executing SQL query...');
+      console.log('Executing SQL query...');
       console.log('Query:', insertQuery);
       console.log('Parameters:', {
         bookingId,
@@ -511,16 +511,16 @@ class PaymentService {
       request.input('response', sql.NVarChar(sql.MAX), response);
       
       const result = await request.query(insertQuery);
-      console.log('✅ SQL query executed successfully');
+      console.log(' SQL query executed successfully');
       console.log('Result:', result);
       
       await transaction.commit();
-      console.log('✅ Transaction committed');
+      console.log(' Transaction committed');
       
       return result.recordset[0].payment_id;
     } catch (error) {
       await transaction.rollback();
-      console.error('❌ Error in savePaymentInfo:');
+      console.error(' Error in savePaymentInfo:');
       console.error('Error message:', error.message);
       console.error('Error stack:', error.stack);
       console.error('SQL Error details:', {
@@ -548,7 +548,7 @@ class PaymentService {
       // Check if payment already exists and is successful
       const existingPayment = await this.getPaymentInfo(orderId);
       if (existingPayment && existingPayment.payment_status === 'COMPLETED') {
-        console.log('✅ Payment already processed successfully');
+        console.log('Payment already processed successfully');
         return {
           success: true,
           message: 'Thanh toán đã được xử lý thành công',
@@ -561,12 +561,12 @@ class PaymentService {
       // Verify signature
       const isValidSignature = VNPayUtils.verifyReturnUrl(vnpayData);
       if (!isValidSignature) {
-        console.log('⚠️ Signature validation failed, but checking payment status...');
+        console.log('Signature validation failed, but checking payment status...');
         
         // If signature fails but payment exists and response code is 00, 
         // this might be a test environment issue
         if (responseCode === '00' && existingPayment) {
-          console.log('🧪 Test environment - proceeding with successful payment');
+          console.log(' Test environment - proceeding with successful payment');
         } else {
           throw new Error('Chữ ký không hợp lệ');
         }
@@ -609,7 +609,7 @@ class PaymentService {
         try {
           const paymentInfo = await this.getPaymentInfo(orderId);
           if (paymentInfo) {
-            console.log('✅ Payment exists in database despite error');
+            console.log(' Payment exists in database despite error');
             return {
               success: true,
               message: 'Thanh toán thành công',
