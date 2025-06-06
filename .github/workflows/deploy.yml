@@ -20,20 +20,19 @@ jobs:
         with:
           node-version: '18'
 
-      # 3. Cache node_modules (fallback cache without package-lock.json)
+      # 3. Cache node_modules based on package.json
       - name: Cache node_modules
         uses: actions/cache@v3
         with:
           path: ~/.npm
-          key: node-cache-${{ github.run_number }}
+          key: npm-cache-${{ hashFiles('package.json') }}
           restore-keys: |
-            node-cache-
-            node-
+            npm-cache-
 
       # 4. Install dependencies
       - name: Install dependencies
         run: |
-          npm ci --prefer-offline --no-audit --no-fund
+          npm install --prefer-offline --no-audit --no-fund
           
       # 5. Build frontend locally (nhanh hơn nhiều)
       - name: Build frontend
