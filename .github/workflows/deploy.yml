@@ -1,0 +1,74 @@
+name: Deploy Fullstack to EC2
+
+on:
+  push:
+    branches:
+      - main  # Mỗi khi push lên nhánh main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js với cache
+      - name: Setup Node.js with cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      # 3. Install dependencies với cache
+      - name: Install dependencies
+        run: |
+          npm ci --only=production
+          
+      # 4. Build frontend locally (nhanh hơn nhiều)
+      - name: Build frontend
+        run: |
+          npm run build
+          tar -czf build.tar.gz build/
+          
+      # 5. Copy build artifacts to EC2 
+      - name: Copy build to EC2
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: 54.219.205.247
+          username: ec2-user
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "build.tar.gz"
+          target: "/home/ec2-user/"
+
+      # 6. Deploy trên EC2 (chỉ extract và copy, rất nhanh)
+      - name: Deploy on EC2
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: 54.219.205.247
+          username: ec2-user
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          timeout: 300  # 5 phút là đủ cho extract + copy
+          script: |
+            cd /home/ec2-user
+            
+            # Extract build files
+            tar -xzf build.tar.gz
+            
+            # Backup old build (optional)
+            sudo cp -r /usr/share/nginx/html /usr/share/nginx/html.backup.$(date +%Y%m%d_%H%M%S) 2>/dev/null || true
+            
+            # Deploy new build
+            sudo rm -rf /usr/share/nginx/html/*
+            sudo cp -r build/* /usr/share/nginx/html/
+            sudo chown -R nginx:nginx /usr/share/nginx/html
+            sudo chmod -R 755 /usr/share/nginx/html
+            
+            # Test nginx config and restart
+            sudo nginx -t && sudo systemctl reload nginx
+            
+            # Cleanup
+            rm -rf build/ build.tar.gz
+            
+            echo "✅ Deployment completed successfully!"
