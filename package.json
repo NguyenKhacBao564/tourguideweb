@@ -55,6 +55,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:optimized": "node scripts/optimize-build.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "dev": "concurrently \" cd backend && npm run dev\" \" npm start\""
