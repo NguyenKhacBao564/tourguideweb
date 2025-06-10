@@ -38,6 +38,7 @@ import PaymentResult from "./pages/Payment/PaymentResult";
 import PaymentDemo from "./pages/Payment/PaymentDemo";
 import MoMoTestPage from "./pages/Payment/MoMoTestPage";
 import FindTour from "./pages/User/FindTour";
+import ElasticsearchResults from "./pages/User/ElasticsearchResults";
 import TourFavourite from "./pages/User/TourFavourite";
 import AboutUs from './pages/User/AboutUs';
 import AdminAccounts from "./pages/Admin/Accounts/AdminAccounts";
@@ -53,6 +54,7 @@ function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/booking" element={<BookingTour />} />
           <Route path="/findtour" element={<FindTour />} />
+          <Route path="/elasticsearch-results" element={<ElasticsearchResults />} />
           <Route path="/user/booking-info" element={<BookingInfo />} />
 
 

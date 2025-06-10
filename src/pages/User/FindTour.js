@@ -18,7 +18,11 @@ function FindTour(props) {
     const [originalTours, setOriginalTours] = useState([]); // Lưu danh sách ban đầu
     const [countResults, setCountResults] = React.useState(0);
 
-    const filterInfor = location.state?.filterInfor || null;
+    const filterInfor = location.state?.filterInfor || {
+        name: "",
+        date: "",
+        budget: "",
+    };
     console.log("Filter Information from location state: ", filterInfor);
 
     const dropDownItems = [
@@ -77,7 +81,7 @@ function FindTour(props) {
                 </Row>
                 <Row className="mb-5">
                     <h2 className="searchText text-center">
-                        {filterInfor.name === '' ? 'Tất cả tour' : (<p>Đang tìm kiếm tour liên quan đến <span className="highlight">{filterInfor.name}</span></p>)}
+                        {!filterInfor.name || filterInfor.name === '' ? 'Tất cả tour' : (<p>Đang tìm kiếm tour liên quan đến <span className="highlight">{filterInfor.name}</span></p>)}
                     </h2>
                 </Row>
                 <Row className="mb-3 fw-bold"> 

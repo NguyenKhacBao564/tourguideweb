@@ -26,6 +26,7 @@ const chatRoutes = require("./routes/chatRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const favoriteTourRoutes = require("./routes/favoriteTourRoutes");
 const historyBookingRoutes = require("./routes/historyBookingRoutes");
+const elasticsearchRoutes = require("./routes/elasticsearchRoutes");
 
 app.use(cors({
   origin: [
@@ -60,7 +61,19 @@ app.use("/historyBooking", historyBookingRoutes)
 app.use("/api/customer", customerSupportRoutes); // Thêm route cho support
 app.use("/api/consultant", consultantSupportRoutes);
 app.use("/reviews", reviewRoutes);
-app.listen(PORT, () => {
+app.use("/api/elasticsearch", elasticsearchRoutes); // Elasticsearch search routes
+app.listen(PORT, async () => {
   console.log(`🚀 Server chạy tại http://localhost:${PORT}`);
+  
+  // Test Elasticsearch connection on startup
+  console.log('\n📡 Đang kiểm tra kết nối Elasticsearch...');
+  try {
+    const { testConnection } = require('./config/elasticsearch');
+    await testConnection();
+  } catch (error) {
+    console.error('⚠️ Không thể load Elasticsearch config:', error.message);
+    console.error('💡 Hãy đảm bảo file .env có cấu hình Elasticsearch');
+  }
+  console.log('');
 });
 

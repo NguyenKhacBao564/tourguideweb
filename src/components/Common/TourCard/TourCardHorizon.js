@@ -12,6 +12,14 @@ import { Container, Row, Col } from 'react-bootstrap';
 function TourCardHorizon(props) {
 
     const { tour } = props;
+    
+    console.log('🎫 TourCardHorizon received tour:', tour);
+    
+    if (!tour) {
+        console.error('❌ TourCardHorizon: tour prop is missing');
+        return <div>Tour data is missing</div>;
+    }
+    
     const handleBooking = () => {
          window.location.href = `/booking?id=${tour.tour_id}`;
     }
@@ -25,18 +33,18 @@ function TourCardHorizon(props) {
           />
           <Card.Body>
             <Card.Title >
-              {tour.name}
+              {tour.name || 'Tên tour không xác định'}
             </Card.Title>
             <div className="cardText">
                 <Container fluid>
                     <Row className="tour_infor">
                         <Col>
-                            <span><FontAwesomeIcon icon={faClock} /> Thời gian: {tour.duration} ngày {tour.duration -1} đêm</span>
-                            <span><FaLocationDot /> Khởi hành: {tour.departure_location}</span>
+                            <span><FontAwesomeIcon icon={faClock} /> Thời gian: {tour.duration || 0} ngày {(tour.duration || 1) -1} đêm</span>
+                            <span><FaLocationDot /> Khởi hành: {tour.departureLocation || tour.departure_location || 'Chưa xác định'}</span>
                         </Col>
                         <Col>
-                            <span><FaCalendarAlt /> Ngày khởi hành: {formatDate(tour.start_date)}</span>
-                            <span><FontAwesomeIcon icon={faUsers} /> Chỗ còn trống: {tour.max_guests - tour.booked_slots}</span>
+                            <span><FaCalendarAlt /> Ngày khởi hành: {tour.start_date ? formatDate(tour.start_date) : 'Chưa xác định'}</span>
+                            <span><FontAwesomeIcon icon={faUsers} /> Chỗ còn trống: {(tour.max_guests || 0) - (tour.booked_slots || 0)}</span>
                         </Col>
                     </Row>
                 </Container>
@@ -44,7 +52,9 @@ function TourCardHorizon(props) {
             <div className="tour-price">
                 <div className="gap-2">
                     <p className="font-bold text-black-normal">Giá từ:</p>
-                    <p className="font-bold text-red-600"> {tour.price} đ</p>
+                    <p className="font-bold text-red-600"> 
+                        {tour.price ? tour.price.toLocaleString('vi-VN') : 'Liên hệ'} đ
+                    </p>
                 </div>
                   
                 <div className="tmp">

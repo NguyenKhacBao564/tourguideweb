@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import "../styles/layouts/Navbar.scss";
 import { FaBars, FaTimes} from "react-icons/fa";
 import UserAvatar from '../components/Common/UserAvatar/UserAvatar';
+import SearchCompact from '../components/SearchCompact';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useLocation } from "react-router-dom";
@@ -59,6 +60,12 @@ function Navbar({ pageRef }) {
                     <li><Link to="/about-us">Về công ty</Link></li>
                     <li><Link to="/contact">Liên hệ</Link></li>
                     <li><Link to="/tourFavorite">Tour Yêu thích</Link></li>
+                    
+                    {/* Search Component - Hidden on mobile menu */}
+                    <li className="nav-search-desktop">
+                        <SearchCompact />
+                    </li>
+                    
                     {!user && loading ? (
                         <li className="auth-loading">
                             <Spinner animation="border" size="sm" role="status">
@@ -80,6 +87,11 @@ function Navbar({ pageRef }) {
                         </>
                     )}
                 </ul>
+
+                {/* Search Component for mobile - outside menu */}
+                <div className="nav-search-mobile">
+                    <SearchCompact />
+                </div>
 
                 <div className="menu-toggle" onClick={() => setIsOpen(!isOpen)}>
                     {isOpen ? <FaTimes /> : <FaBars />}

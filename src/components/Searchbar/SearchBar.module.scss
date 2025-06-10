@@ -31,7 +31,6 @@
     gap: 0;
 }
 
-  
 .searchItem {
     display: flex;
     flex-direction: column;
@@ -48,7 +47,7 @@
         padding-right: 0;
     }
 }
-  
+
 .separator {
     width: 1px;
     height: 40px;
@@ -57,7 +56,7 @@
     align-self: center;
     opacity: 0.7;
 }
-  
+
 .searchLabel {
     font-size: 15px;
     font-weight: bold;
@@ -66,13 +65,13 @@
     align-items: center;
     margin-bottom: 8px;
 }
-  
+
 .icon {
     width: 10px;
     color: $primary-color;
     margin-right: 10px;
 }
-  
+
 .searchInput {
     border: none;
     outline: none;
@@ -83,9 +82,10 @@
     border-bottom: 1px solid #ddd;
     width: 100%;
     transition: all 0.3s ease;
-    -webkit-appearance: none; // Xóa giao diện mặc định của dropdown trên Safari
-    -moz-appearance: none; // Xóa giao diện mặc định của dropdown trên Firefox
-    appearance: none; // Xóa giao diện mặc định của dropdown
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    
     &:focus {
         border-bottom: 1px solid #1a1a1a;
         &::placeholder {
@@ -93,7 +93,7 @@
         }
     }
 }
-  
+
 .searchButton {
     background-color: #FFDA32;
     border: none;
@@ -135,36 +135,25 @@
     }
 }
 
-
-// @media (max-width: 768px) {
- 
-//   .searchButton {
-//     width: 100%;
-//     height: 45px;
-//     margin: 10px 0 0 0;
-//   }
-// }
-
 @media (max-width: 768px) {
     .searchbarContainer {
         background: none;
         box-shadow: none;
         bottom: 0px;
         position: relative;
-        transform: none;  // Reset transform cần cái này để giúp container mobile chiếm toàn bộ chiều rộng màn hình
-        left: 0;  // Reset left
+        transform: none;
+        left: 0;
         width: 100%;
         max-width: 100%;
         margin: 0;
         
         .searchbarMobile {
             display: block;
-            position:absolute;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             z-index: 100;
-            
         }
     }
 
@@ -188,11 +177,6 @@
 
     .searchButton {
         height: 40px;
-        font-size: 14px;
-    }
-
-    .mobileSearchToggle {
-        padding: 10px 15px;
         font-size: 14px;
     }
 }

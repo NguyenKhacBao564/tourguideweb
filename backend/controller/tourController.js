@@ -4,6 +4,7 @@ const path = require('path'); // Thêm module path để xử lý đường dẫ
 const { insertItinerary, updateItinerary } = require("./scheduleController");
 const { addTourPrice, updateTourPrice } = require("./tourPriceController");
 const { uploadTourImage } = require("./imageController");
+const elasticsearchService = require("../services/elasticsearchService");
 
 
 const updateStatusTour = async (transaction) => {
@@ -467,6 +468,15 @@ const createTour =  async (req, res) => {
         await addTourPrice(transaction, tour_id, parsedPrices);
         await transaction.commit();
 
+        // Tự động đồng bộ tour mới vào Elasticsearch
+        try {
+          await elasticsearchService.syncSingleTour(tour_id);
+          console.log(`✅ Auto-synced new tour ${tour_id} to Elasticsearch`);
+        } catch (esError) {
+          console.error(`⚠️ Failed to sync tour ${tour_id} to Elasticsearch:`, esError.message);
+          // Không throw error để không ảnh hưởng đến việc tạo tour
+        }
+
         return res.status(201).json({ message: "Thêm tour thành công" });
     } catch (error) {
       if (transaction) {
@@ -579,6 +589,15 @@ const updateTour = async (req, res ) => {
     await updateTourPrice(transaction, tourId, parsedPrices);
     await transaction.commit();
 
+    // Tự động đồng bộ tour đã update vào Elasticsearch
+    try {
+      await elasticsearchService.syncSingleTour(tourId);
+      console.log(`✅ Auto-synced updated tour ${tourId} to Elasticsearch`);
+    } catch (esError) {
+      console.error(`⚠️ Failed to sync updated tour ${tourId} to Elasticsearch:`, esError.message);
+      // Không throw error để không ảnh hưởng đến việc update tour
+    }
+
     return res.status(200).json({ message: "Cập nhật tour thành công" });
   }catch(error){
     if (transaction) {
@@ -643,6 +662,14 @@ const blockTour = async (req, res) => {
     console.log("Rows affected:", result.rowsAffected);
 
     if (result.rowsAffected[0] > 0) {
+      // Tự động xóa tour khỏi Elasticsearch khi bị khóa
+      try {
+        await elasticsearchService.deleteTour(tourId);
+        console.log(`✅ Auto-deleted blocked tour ${tourId} from Elasticsearch`);
+      } catch (esError) {
+        console.error(`⚠️ Failed to delete tour ${tourId} from Elasticsearch:`, esError.message);
+      }
+      
       res.json({ message: "Khóa tour thành công" });
     } else {
       res.status(404).json({ message: "Không tìm thấy tour" });
@@ -690,9 +717,10 @@ const getTourByFilter = async (req, res) => {
       let whereClause = [];
       const params = [];
 
-      // Thêm điều kiện bắt buộc
-      whereClause.push('t.status = @status');
-      params.push({ name: 'status', type: sql.NVarChar, value: 'active' });
+      // Thêm điều kiện bắt buộc - chỉ loại bỏ các tour không hoạt động
+      whereClause.push('t.status NOT IN (@inactive1, @inactive2)');
+      params.push({ name: 'inactive1', type: sql.NVarChar, value: 'inactive' });
+      params.push({ name: 'inactive2', type: sql.NVarChar, value: 'reject' });
 
       // Thêm điều kiện bắt buộc cho age_group
       whereClause.push('tp.age_group = @ageGroup');
@@ -718,22 +746,33 @@ const getTourByFilter = async (req, res) => {
       // Thêm điều kiện cho budget (sử dụng bảng tour_price)
       if (budget && budget.trim() !== '') {
         const budgetRanges = {
-          'under-5m': { condition: 'tp.price < 5000000', param: 5000000 },
-          '5m-10m': { condition: 'tp.price >= 5000000 AND tp.price < 10000000', param: [5000000, 10000000] },
-          '10m-20m': { condition: 'tp.price >= 10000000 AND tp.price < 20000000', param: [10000000, 20000000] },
-          'over-20m': { condition: 'tp.price >= 20000000', param: 20000000 },
+          'under-5m': 'tp.price < @priceThreshold1',
+          '5m-10m': 'tp.price >= @priceThreshold2 AND tp.price < @priceThreshold3',
+          '10m-20m': 'tp.price >= @priceThreshold4 AND tp.price < @priceThreshold5',
+          'over-20m': 'tp.price >= @priceThreshold6',
         };
 
-
-        const budgetConfig = budgetRanges[budget];
+        const budgetCondition = budgetRanges[budget];
         
-        if (budgetConfig) {
-          whereClause.push(`(${budgetConfig.condition})`);
-          if (Array.isArray(budgetConfig.param)) {
-            params.push({ name: 'minPrice', type: sql.Decimal(15, 2), value: budgetConfig.param[0] });
-            params.push({ name: 'maxPrice', type: sql.Decimal(15, 2), value: budgetConfig.param[1] });
-          } else {
-            params.push({ name: 'priceThreshold', type: sql.Decimal(15, 2), value: budgetConfig.param });
+        if (budgetCondition) {
+          whereClause.push(`(${budgetCondition})`);
+          
+          // Thêm tham số tương ứng
+          switch (budget) {
+            case 'under-5m':
+              params.push({ name: 'priceThreshold1', type: sql.Decimal(15, 2), value: 5000000 });
+              break;
+            case '5m-10m':
+              params.push({ name: 'priceThreshold2', type: sql.Decimal(15, 2), value: 5000000 });
+              params.push({ name: 'priceThreshold3', type: sql.Decimal(15, 2), value: 10000000 });
+              break;
+            case '10m-20m':
+              params.push({ name: 'priceThreshold4', type: sql.Decimal(15, 2), value: 10000000 });
+              params.push({ name: 'priceThreshold5', type: sql.Decimal(15, 2), value: 20000000 });
+              break;
+            case 'over-20m':
+              params.push({ name: 'priceThreshold6', type: sql.Decimal(15, 2), value: 20000000 });
+              break;
           }
         }
       }
@@ -773,12 +812,7 @@ const getTourByFilter = async (req, res) => {
     const pool = await getPool();
     let request = pool.request();
     params.forEach(param => {
-      if (Array.isArray(param.value)) {
-        request.input(param.name + 'Min', param.type, param.value[0]);
-        request.input(param.name + 'Max', param.type, param.value[1]);
-      } else {
-        request.input(param.name, param.type, param.value);
-      }
+      request.input(param.name, param.type, param.value);
     });
 
     let result = await request.query(query);

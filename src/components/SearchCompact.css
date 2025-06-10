@@ -1,0 +1,204 @@
+.search-compact {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.search-compact__container {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 25px;
+  padding: 8px 12px;
+  min-width: 40px;
+  max-width: 40px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.search-compact.expanded .search-compact__container {
+  max-width: 350px;
+  background: rgba(255, 255, 255, 0.95);
+  border-color: #007bff;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.search-compact__icon {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 8px;
+  transition: color 0.3s ease;
+  flex-shrink: 0;
+}
+
+.search-compact.expanded .search-compact__icon {
+  color: #007bff;
+}
+
+.search-compact__icon:hover {
+  color: #0056b3;
+}
+
+.search-compact__input {
+  border: none;
+  background: transparent;
+  outline: none;
+  flex: 1;
+  font-size: 14px;
+  color: white;
+  width: 0;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.search-compact.expanded .search-compact__input {
+  width: 100%;
+  opacity: 1;
+  color: #333;
+}
+
+.search-compact__input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+  transition: color 0.3s ease;
+}
+
+.search-compact.expanded .search-compact__input::placeholder {
+  color: #6c757d;
+}
+
+.search-compact__clear {
+  background: none;
+  border: none;
+  color: #6c757d;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 8px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.search-compact.expanded .search-compact__clear {
+  opacity: 1;
+}
+
+.search-compact__clear:hover {
+  color: #dc3545;
+}
+
+.search-compact__loading {
+  font-size: 12px;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+.search-compact__suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  margin-top: 4px;
+  max-height: 250px;
+  overflow-y: auto;
+  animation: slideDown 0.2s ease-out;
+}
+
+.search-compact__suggestion {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid #f8f9fa;
+  transition: background-color 0.2s ease;
+}
+
+.search-compact__suggestion:hover {
+  background-color: #f8f9fa;
+}
+
+.search-compact__suggestion:last-child {
+  border-bottom: none;
+}
+
+.search-compact__suggestion-icon {
+  color: #6c757d;
+  font-size: 12px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.search-compact__suggestion-text {
+  color: #333;
+  font-size: 14px;
+  flex: 1;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .search-compact.expanded .search-compact__container {
+    max-width: 250px;
+  }
+  
+  .search-compact__input {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+}
+
+/* Dark navbar styles */
+.navbar.scrolled .search-compact__container,
+.navbar.not-home .search-compact__container {
+  background: rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+.navbar.scrolled .search-compact__icon,
+.navbar.not-home .search-compact__icon {
+  color: #333;
+}
+
+.navbar.scrolled .search-compact.expanded .search-compact__container,
+.navbar.not-home .search-compact.expanded .search-compact__container {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: #007bff;
+}
+
+.navbar.scrolled .search-compact__input::placeholder,
+.navbar.not-home .search-compact__input::placeholder {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+/* Animation */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Focus styles for accessibility */
+.search-compact__icon:focus,
+.search-compact__input:focus,
+.search-compact__clear:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.search-compact__suggestion:focus {
+  background-color: #e9ecef;
+  outline: none;
+} 

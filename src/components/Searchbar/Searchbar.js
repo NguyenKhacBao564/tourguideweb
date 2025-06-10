@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLocationDot, faUser, faCalendarDays, faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faLocationDot, faCalendarDays } from "@fortawesome/free-solid-svg-icons";
 import { FaMoneyBillAlt } from "react-icons/fa";
 import styles from "./SearchBar.module.scss";
 import SearchbarMobile from "./SearchbarMobile";
-import {useNavigate}   from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 const Searchbar = (props) => {
-    const [isSearchOpen, setIsSearchOpen] = useState(false);
     const navigate = useNavigate();
+    
     const [values, setValues] = useState({
         name: "",
         date: "",
         budget: "",
     });
-
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -23,25 +23,15 @@ const Searchbar = (props) => {
         });
     };
 
-    const handleSearch = ()=> {
-        navigate("/findtour", 
-            { state: {filterInfor : values}} // Truyền giá trị ngân sách, địa điểm và ngày vào state
-        );
+    const handleSearch = () => {
+        navigate("/findtour", { state: { filterInfor: values } });
     }
-
-    // console.log("Searchbar values: ", values);
-    // // Xử lý thay đổi giá trị dropdown
-    // const handleBudgetChange = (e) => {
-    //     setBudget(e.target.value);
-    // };
 
     return (
         <div className={styles.searchbarContainer}>
             <div className={styles.searchbarMobile}>
                 <SearchbarMobile />
             </div>
-            {/* Mobile Search Toggle Button */}
-           
 
             {/* Search Form */}
             <div className={styles.searchForm}>
@@ -50,7 +40,15 @@ const Searchbar = (props) => {
                         <FontAwesomeIcon icon={faLocationDot} className={styles.icon} />
                         Bạn muốn đi đâu?
                     </span>
-                    <input name="name" onChange={handleInputChange} type="text" placeholder="Khám phá cuộc phiêu lưu mới" className={styles.searchInput} maxLength="10"/>
+                    <input 
+                        name="name" 
+                        value={values.name}
+                        onChange={handleInputChange}
+                        type="text" 
+                        placeholder="Khám phá cuộc phiêu lưu mới" 
+                        className={styles.searchInput} 
+                        maxLength="50"
+                    />
                 </div>
 
                 <div className={styles.separator}></div>
@@ -64,7 +62,7 @@ const Searchbar = (props) => {
                         name="budget"
                         value={values.budget}
                         onChange={handleInputChange}
-                        className={styles.searchInput} // Sử dụng cùng class với input để giữ giao diện
+                        className={styles.searchInput}
                     >
                         <option value="" disabled>Chọn mức giá</option>
                         <option value="under-5m">Dưới 5 triệu</option>
@@ -81,10 +79,21 @@ const Searchbar = (props) => {
                         <FontAwesomeIcon icon={faCalendarDays} className={styles.icon}/>
                         Ngày đi
                     </span>
-                    <input name="date" onChange={handleInputChange} type="date" className={styles.searchInput} /> 
+                    <input 
+                        name="date" 
+                        value={values.date}
+                        onChange={handleInputChange} 
+                        type="date" 
+                        className={styles.searchInput} 
+                    /> 
                 </div>
 
-                <button className={styles.searchButton} onClick={handleSearch}>Search</button>
+                <button 
+                    className={styles.searchButton} 
+                    onClick={handleSearch}
+                >
+                    Search
+                </button>
             </div>
         </div>
     );

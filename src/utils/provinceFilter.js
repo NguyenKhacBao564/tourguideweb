@@ -6,7 +6,7 @@ const provinceFilter = [
       description: "Hanoi is the capital of Vietnam and the country's second largest city by population. The city mostly lies on the right bank of the Red River.",
     },
     {
-      name: "TP HCM",
+      name: "TP.HCM",
       image: "https://images.pexels.com/photos/11691122/pexels-photo-11691122.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
       description: "Đồng Tháp is a province in the Mekong Delta region of southern Vietnam. It shares its border with Cambodia to the west and is surrounded by Long An, Tien Giang, and Vinh Long provinces.",
     },
