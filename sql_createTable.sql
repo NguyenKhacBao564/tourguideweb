@@ -1,41 +1,3 @@
-
--- 1) XÓA CÁC BẢNG THEO THỨ TỰ NGHỊCH ĐẢO PHỤ THUỘC
-IF OBJECT_ID('Favorite_Tour', 'U') IS NOT NULL
-    DROP TABLE Favorite_Tour;
-IF OBJECT_ID('Tour_Schedule', 'U') IS NOT NULL
-    DROP TABLE Tour_Schedule;
-IF OBJECT_ID('Customer_Support_Response', 'U') IS NOT NULL
-    DROP TABLE Customer_Support_Response;
-IF OBJECT_ID('Customer_Support_Request', 'U') IS NOT NULL
-    DROP TABLE Customer_Support_Request;
-IF OBJECT_ID('Review', 'U') IS NOT NULL
-    DROP TABLE Review;
-IF OBJECT_ID('Payments', 'U') IS NOT NULL
-    DROP TABLE Payments;
-IF OBJECT_ID('Booking_Promotion', 'U') IS NOT NULL
-    DROP TABLE Booking_Promotion;
-IF OBJECT_ID('Promotion', 'U') IS NOT NULL
-    DROP TABLE Promotion;
-IF OBJECT_ID('Booking_Detail', 'U') IS NOT NULL
-    DROP TABLE Booking_Detail;
-IF OBJECT_ID('Booking', 'U') IS NOT NULL
-    DROP TABLE Booking;
-IF OBJECT_ID('Tour_price', 'U') IS NOT NULL
-    DROP TABLE Tour_price;
-IF OBJECT_ID('Tour_image', 'U') IS NOT NULL
-    DROP TABLE Tour_image;
-IF OBJECT_ID('Tour', 'U') IS NOT NULL
-    DROP TABLE Tour;
-IF OBJECT_ID('Employee', 'U') IS NOT NULL
-    DROP TABLE Employee;
-IF OBJECT_ID('Customer', 'U') IS NOT NULL
-    DROP TABLE Customer;
-IF OBJECT_ID('Branch', 'U') IS NOT NULL
-    DROP TABLE Branch;
-IF OBJECT_ID('Employee_Role', 'U') IS NOT NULL
-    DROP TABLE Employee_Role;   
-
--- 2) TẠO CÁC BẢNG THEO THỨ TỰ THUẬN
 /*********** BẢNG Employee_Role ***********/
 CREATE TABLE Employee_Role
 (
@@ -267,15 +229,3 @@ CREATE TABLE Favorite_Tour (
     CONSTRAINT UQ_Customer_Tour UNIQUE (cus_id, tour_id)
 
 );
--- Thêm trigger để tự động cập nhật updated_at
-CREATE TRIGGER TR_Payments_UpdatedAt
-ON Payments
-AFTER UPDATE
-AS
-BEGIN
-    SET NOCOUNT ON;
-    UPDATE Payments
-    SET updated_at = GETDATE()
-    FROM Payments p
-    INNER JOIN inserted i ON p.payment_id = i.payment_id;
-END;

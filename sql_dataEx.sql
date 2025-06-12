@@ -1,3 +1,17 @@
+-- Thêm trigger để tự động cập nhật updated_at
+CREATE TRIGGER TR_Payments_UpdatedAt
+ON Payments
+AFTER UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    UPDATE Payments
+    SET updated_at = GETDATE()
+    FROM Payments p
+    INNER JOIN inserted i ON p.payment_id = i.payment_id;
+END;
+
+
 INSERT INTO Employee_Role (role_name, description) VALUES
   ('Admin',   'Administrator role with full permissions'),
   ('Sales',   'Sales representative role'),
@@ -1282,3 +1296,49 @@ VALUES
 ('BOOK0058', 18400000.00, 'VNPAY', 'COMPLETED', 'ORDER_BK0058', 'TXN123456846', N'Thanh toán thành công qua VNPAY.', '2025-03-20 11:50:00', '2025-03-20 11:55:00'),
 ('BOOK0059', 18200000.00, 'MOMO', 'COMPLETED', 'ORDER_BK0059', 'TXN123456847', N'Thanh toán thành công qua MOMO.', '2025-04-25 13:05:00', '2025-04-25 13:10:00'),
 ('BOOK0060', 19000000.00, 'VNPAY', 'COMPLETED', 'ORDER_BK0060', 'TXN123456848', N'Thanh toán thành công qua VNPAY.', '2025-05-30 14:20:00', '2025-05-30 14:25:00');
+
+INSERT INTO Tour (tour_id, branch_id, name, duration, destination, departure_location, start_date, end_date, description, max_guests, transport, created_at, status)
+VALUES 
+-- TOUR0081
+('TOUR0081', 1, N'Tour Đà Lạt Mộng Mơ', 3, N'Đà Lạt', N'TP.HCM', '2025-06-16', '2025-06-18', N'Khám phá vẻ đẹp thơ mộng của Đà Lạt với hồ Xuân Hương và thung lũng Tình Yêu.', 30, N'Xe du lịch', GETDATE(), 'pending'),
+-- TOUR0082
+('TOUR0082', 2, N'Phú Quốc Biển Xanh', 4, N'Phú Quốc', N'Hà Nội', '2025-06-20', '2025-06-23', N'Thư giãn tại bãi biển Phú Quốc, tham quan làng chài và thưởng thức hải sản tươi ngon.', 25, N'Máy bay', GETDATE(), 'pending'),
+-- TOUR0083
+('TOUR0083', 3, N'Hà Giang Hùng Vĩ', 5, N'Hà Giang', N'Hà Nội', '2025-06-25', '2025-06-29', N'Chinh phục đèo Mã Pí Lèng, ngắm ruộng bậc thang và văn hóa dân tộc H''Mông.', 20, N'Xe du lịch', GETDATE(), 'pending'),
+-- TOUR0084
+('TOUR0084', 4, N'Nha Trang Nắng Vàng', 3, N'Nha Trang', N'TP.HCM', '2025-07-01', '2025-07-03', N'Tắm biển Nha Trang, lặn ngắm san hô và tham quan Vinpearl Land.', 35, N'Máy bay', GETDATE(), 'pending'),
+-- TOUR0085
+('TOUR0085', 5, N'Sapa Mây Trắng', 4, N'Sapa', N'Hà Nội', '2025-07-05', '2025-07-08', N'Khám phá Sapa với núi Hàm Rồng, bản Cát Cát và ruộng bậc thang tuyệt đẹp.', 28, N'Xe du lịch', GETDATE(), 'pending'),
+-- TOUR0086
+('TOUR0086', 1, N'Hội An Cổ Kính', 3, N'Hội An', N'Đà Nẵng', '2025-07-10', '2025-07-12', N'Thưởng thức không gian cổ kính Hội An, đèn lồng lung linh và ẩm thực đặc sắc.', 22, N'Xe du lịch', GETDATE(), 'pending'),
+-- TOUR0087
+('TOUR0087', 2, N'Đà Nẵng - Bà Nà Hills', 4, N'Đà Nẵng', N'TP.HCM', '2025-07-15', '2025-07-18', N'Thăm cầu Vàng, vui chơi tại Bà Nà Hills và tắm biển Mỹ Khê.', 30, N'Máy bay', GETDATE(), 'pending'),
+-- TOUR0088
+('TOUR0088', 3, N'Côn Đảo Huyền Bí', 5, N'Côn Đảo', N'TP.HCM', '2025-07-20', '2025-07-24', N'Khám phá lịch sử Côn Đảo, bãi biển hoang sơ và hệ sinh thái biển đa dạng.', 18, N'Máy bay', GETDATE(), 'pending'),
+-- TOUR0089
+('TOUR0089', 4, N'Miền Tây Sông Nước', 3, N'Cần Thơ', N'TP.HCM', '2025-07-25', '2025-07-27', N'Ngắm chợ nổi Cái Răng, tham quan vườn chim và thưởng thức trái cây miệt vườn.', 25, N'Xe du lịch', GETDATE(), 'pending'),
+-- TOUR0090
+('TOUR0090', 5, N'Huế - Phong Nha', 5, N'Huế', N'Hà Nội', '2025-07-30', '2025-08-03', N'Thăm cố đô Huế, Đại Nội và khám phá hang động Phong Nha - Kẻ Bàng.', 20, N'Máy bay', GETDATE(), 'pending');
+
+INSERT INTO Tour (tour_id, branch_id, name, duration, destination, departure_location, start_date, end_date, description, max_guests, transport, created_at, status)
+VALUES 
+-- TOUR0091
+('TOUR0091', 1, N'Hà Nội - Hạ Long', 3, N'Vịnh Hạ Long', N'Hà Nội', '2025-08-01', '2025-08-03', N'Du thuyền ngắm Vịnh Hạ Long, tham quan hang Sửng Sốt và đảo Ti Tốp.', 30, N'Xe du lịch', GETDATE(), 'pending'),
+-- TOUR0092
+('TOUR0092', 2, N'Đà Lạt - Thác Datanla', 4, N'Đà Lạt', N'TP.HCM', '2025-08-05', '2025-08-08', N'Khám phá thác Datanla, thung lũng Tình Yêu và thưởng thức cà phê Đà Lạt.', 25, N'Xe du lịch', GETDATE(), 'pending'),
+-- TOUR0093
+('TOUR0093', 3, N'Phú Quốc - Bãi Sao', 5, N'Phú Quốc', N'Hà Nội', '2025-08-10', '2025-08-14', N'Tắm biển Bãi Sao, tham quan nhà tù Phú Quốc và thưởng thức nước mắm ngon.', 20, N'Máy bay', GETDATE(), 'pending'),
+-- TOUR0094
+('TOUR0094', 4, N'Nha Trang - Đảo Hòn Mun', 3, N'Nha Trang', N'TP.HCM', '2025-08-15', '2025-08-17', N'Lặn ngắm san hô tại Hòn Mun, tắm biển Dốc Lết và vui chơi tại Vinpearl.', 35, N'Máy bay', GETDATE(), 'pending'),
+-- TOUR0095
+('TOUR0095', 5, N'Sapa - Fansipan', 4, N'Sapa', N'Hà Nội', '2025-08-20', '2025-08-23', N'Chinh phục đỉnh Fansipan, tham quan bản Tà Van và thác Bạc.', 28, N'Xe du lịch', GETDATE(), 'pending'),
+-- TOUR0096
+('TOUR0096', 1, N'Hội An - Cù Lao Chàm', 3, N'Hội An', N'Đà Nẵng', '2025-08-25', '2025-08-27', N'Khám phá Cù Lao Chàm, phố cổ Hội An và thưởng thức cao lầu đặc sản.', 22, N'Xe du lịch', GETDATE(), 'pending'),
+-- TOUR0097
+('TOUR0097', 2, N'Đà Nẵng - Ngũ Hành Sơn', 4, N'Đà Nẵng', N'TP.HCM', '2025-08-30', '2025-09-02', N'Thăm Ngũ Hành Sơn, cầu Rồng và tắm biển Non Nước.', 30, N'Máy bay', GETDATE(), 'pending'),
+-- TOUR0098
+('TOUR0098', 3, N'Côn Đảo - Bãi Đầm Trầu', 5, N'Côn Đảo', N'TP.HCM', '2025-09-05', '2025-09-09', N'Tắm biển Bãi Đầm Trầu, tham quan nghĩa trang Hàng Dương và bảo tàng Côn Đảo.', 18, N'Máy bay', GETDATE(), 'pending'),
+-- TOUR0099
+('TOUR0099', 4, N'Miền Tây - Châu Đốc', 3, N'Châu Đốc', N'TP.HCM', '2025-09-10', '2025-09-12', N'Thăm rừng tràm Trà Sư, miếu Bà Chúa Xứ và chợ Châu Đốc.', 25, N'Xe du lịch', GETDATE(), 'pending'),
+-- TOUR0100
+('TOUR0100', 5, N'Huế - Lăng Tự Đức', 5, N'Huế', N'Hà Nội', '2025-09-15', '2025-09-19', N'Khám phá lăng Tự Đức, sông Hương và thưởng thức ẩm thực cung đình Huế.', 20, N'Máy bay', GETDATE(), 'pending');
