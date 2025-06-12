@@ -83,8 +83,6 @@ const getTour =  async (req, res) => {
       await transaction.begin();
       // Cập nhật trạng thái tour trước khi lấy danh sách
       await updateStatusTour(transaction);
-
-      // const result = await transaction.request()
       // Xây dựng câu truy vấn SQL
       let query = `
         SELECT 
@@ -151,6 +149,7 @@ const getTour =  async (req, res) => {
             end_date: row.end_date,
             max_guests: row.max_guests,
             booked_slots: row.booked_slots, // Thêm số chỗ đã đặt
+            available_seats: row.max_guests - row.booked_slots, // Tính số chỗ còn trống
             transport: row.transport,
             duration: row.duration,
             status: row.status,
@@ -329,7 +328,15 @@ const getTourOutstanding = async (req, res) => {
           (SELECT ft.fav_id 
             FROM Favorite_Tour ft 
             WHERE ft.tour_id = ts.tour_id AND ft.cus_id = @cusId
-          ) AS fav_id
+          ) AS fav_id,
+            ISNULL((
+              SELECT SUM(bd.quantity)
+              FROM Booking b
+              INNER JOIN Booking_Detail bd
+              ON b.booking_id = bd.booking_id
+              WHERE b.tour_id = ts.tour_id 
+              AND b.status = 'confirmed'
+            ), 0) AS booked_slots
         FROM TOUR_SUBSET ts
         `;
     } else {
@@ -691,8 +698,9 @@ const getTourByFilter = async (req, res) => {
       const params = [];
 
       // Thêm điều kiện bắt buộc
-      whereClause.push('t.status = @status');
-      params.push({ name: 'status', type: sql.NVarChar, value: 'active' });
+      whereClause.push('t.status IN (@status1, @status2)');
+      params.push({ name: 'status1', type: sql.NVarChar, value: 'active' });
+      params.push({ name: 'status2', type: sql.NVarChar, value: 'upcoming' });
 
       // Thêm điều kiện bắt buộc cho age_group
       whereClause.push('tp.age_group = @ageGroup');

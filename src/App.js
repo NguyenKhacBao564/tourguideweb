@@ -41,6 +41,11 @@ import FindTour from "./pages/User/FindTour";
 import TourFavourite from "./pages/User/TourFavourite";
 import AboutUs from './pages/User/AboutUs';
 import AdminAccounts from "./pages/Admin/Accounts/AdminAccounts";
+import TourHistory from "./pages/User/TourHistory";
+import InforEmployee from "./pages/BusinessEmployee/InforEmployee/InforEmployee";
+import ForgotPassword from "./pages/User/ForgotPassword";
+import VerifyOTP from "./pages/User/VerifyOTP";
+import ResetPasswordPage from "./pages/User/ResetPassword/ResetPasswordPage";
 
 
 function App() {
@@ -54,7 +59,8 @@ function App() {
           <Route path="/booking" element={<BookingTour />} />
           <Route path="/findtour" element={<FindTour />} />
           <Route path="/user/booking-info" element={<BookingInfo />} />
-
+          <Route path="/historyBooking" element={<TourHistory />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
 
           <Route path="/payment/result" element={<PaymentResult />}/>
           <Route path="/payment/demo" element={<PaymentDemo />}/>
@@ -72,6 +78,9 @@ function App() {
           } />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/verifyOTP" element={<VerifyOTP />} />
+          
           <Route path="/thongtin" element={
             <ProtectedRoute allowedRoles={["customer"]}>
               <InforUser />
@@ -96,6 +105,8 @@ function App() {
                 <CustomerManagement />
               </CustomerProvider>
             } />
+
+            <Route path="customer/inforEmployee" element={<InforEmployee />} />
 
             <Route path="customer/inforcustomer" element={
               <CustomerProvider>

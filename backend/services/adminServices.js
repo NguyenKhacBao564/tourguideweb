@@ -320,10 +320,9 @@ const getTourChartData = async () => {
     const pool = await getPool();
     const result = await pool.request().query(`
       SELECT
-        COUNT(CASE WHEN end_date < GETDATE() THEN 1 END) AS completed,
-        COUNT(CASE WHEN start_date > GETDATE() THEN 1 END) AS pending
+        COUNT(CASE WHEN end_date < GETDATE() AND status = 'completed' THEN 1 END) AS completed,
+        COUNT(CASE WHEN start_date > GETDATE() AND status = 'active' THEN 1 END) AS pending
       FROM Tour
-      WHERE status = 'active'
     `);
     
     const data = result.recordset[0];

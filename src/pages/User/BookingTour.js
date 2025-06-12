@@ -154,7 +154,22 @@ function BookingTour(props) {
 
    
     const handleBookNow = () => {
-        navigate('/user/booking-info', { state: { tour: tour, tourId: tourId , image: images[0] } });
+        // Kiểm tra xem user đã đăng nhập hay chưa
+        if (!user) {
+            console.log("User is not logged in. Redirecting to login page...");
+            // Lưu URL hiện tại để sau khi login có thể quay lại
+            const currentUrl = `/booking?id=${tourId}`;
+            navigate('/login', { 
+                state: { 
+                    returnUrl: currentUrl,
+                    message: "Vui lòng đăng nhập để đặt tour"
+                } 
+            });
+            return;
+        }
+
+        // Nếu đã đăng nhập, chuyển đến trang booking info
+        navigate('/user/booking-info', { state: { tour: tour, tourId: tourId } });
     };
     
 
@@ -245,7 +260,8 @@ function BookingTour(props) {
 
                      
                     </Col>
-                    <Col md={3} className="booking-card" >
+                    
+                    <Col md={3} className="booking_card" >
                         <Card className="booking-card-sticky ">
                             <Card.Header><span style={{fontWeight: 'bold', fontSize: '20px'}}>Booking</span></Card.Header>
                             <Card.Body>

@@ -5,6 +5,7 @@ import DataTable from '../../components/Common/DataTable/DataTable';
 import {getPromotionList, blockPromotion, blockBatchPromotion} from '../../api/promotionAPI';
 import { useNavigate } from 'react-router-dom';
 import { RiResetLeftFill } from "react-icons/ri";
+import ConfirmDialog from '../../components/Common/ConfirmDialog/ConfirmDialog';
 
 
 function PromotionManager(props) {
@@ -14,6 +15,8 @@ function PromotionManager(props) {
     const [selectedPromotions, setSelectedPromotions] = useState([]);
     const [promotions, setPromotions] = useState([]);
     // const [statusFilter, setStatusFilter] = useState(OCCUPANCY_FILTERS.ALL);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+
 
     const [filters, setFilters] = useState({
         status: 'all',
@@ -97,21 +100,53 @@ function PromotionManager(props) {
     ];
 
 
-    const handleBlockSelected = async (ids) => {
-        if (window.confirm(`Bạn có chắc chắn muốn khóa ${ids.length} khuyến mãi đã chọn không?`)) {
-            try {
-                await blockBatchPromotion(ids);
-                setPromotions((prev) => prev.filter((promo) => !ids.includes(promo.promo_id)));
-                setSelectedPromotions([]);
-            } catch (error) {
-                console.error("Error blocking promotions:", error);
-            }
+    const checkConfirm = async (confirm) => {
+        if (confirm) {
+            // Xử lý xác nhận
+            console.log("Xác nhận đã được chọn");
+            await blockBatchPromotion(selectedPromotions);
+            setSelectedPromotions([]);
+            setIsDialogOpen(false);
+            alert(`${selectedPromotions.length} khuyến mãi đã được khóa thành công!`);
+        } else {
+            // Xử lý hủy bỏ
+            console.log("Hủy bỏ đã được chọn");
+            setIsDialogOpen(false);
         }
     }
+//       const confirmDelete = async() => {
+//       try {
+//           await blockBatchTour(selectedTour);
+//           setSelectedTour([]);
+//           setIsDialogOpen(false);
+//           alert(`${selectedTour.length} tour đã được khóa thành công!`);
+//         } catch (error) {
+//           console.error('Lỗi khi khóa tour:', error);
+//         }
+//   };
+
+    console.log("Selected promotions:", selectedPromotions);
+
+    const handleBlockSelected = async (ids) => {
+       setIsDialogOpen(true);
+    }
+
+    // const handleBlockSelected = async (ids) => {
+    //     if (window.confirm(`Bạn có chắc chắn muốn khóa ${ids.length} khuyến mãi đã chọn không?`)) {
+    //         try {
+    //             await blockBatchPromotion(ids);
+    //             setPromotions((prev) => prev.filter((promo) => !ids.includes(promo.promo_id)));
+    //             setSelectedPromotions([]);
+    //         } catch (error) {
+    //             console.error("Error blocking promotions:", error);
+    //         }
+    //     }
+    // }
 
     // Xử lý thay đổi bộ lọc
     const handleFilterChange = (newFilters) => {
         setFilters((prev) => ({ ...prev, ...newFilters }));
+        setSelectedPromotions([]); // Reset selected items when filters change
     };
 
     return (
@@ -123,7 +158,6 @@ function PromotionManager(props) {
                     onSelectChange={setSelectedPromotions}
                     onBlockSelected={handleBlockSelected}
                     onFilterChange={handleFilterChange}
-                    currentFilters={filters}
                 />
             </Row>
             <Row>
@@ -140,6 +174,12 @@ function PromotionManager(props) {
                 />
             </Row>
            </Container>
+            {isDialogOpen && (
+                <ConfirmDialog
+                message="Bạn muốn xóa người dùng này?"
+                checkConfirm={checkConfirm}
+                />
+      )}
         </div>
     );
 }

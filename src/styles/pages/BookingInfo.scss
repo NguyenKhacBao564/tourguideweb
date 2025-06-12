@@ -388,25 +388,34 @@
       }
     }
   }
+
+  .subtotal-section {
+    border-top: 1px solid #e9ecef;
+    padding-top: 0.75rem;
+    margin-top: 0.75rem;
+    
+    .price-item.subtotal {
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+  }
 }
 
 .price-total {
-  border-top: 1px solid #e5e7eb;
+  border-top: 2px solid #1a237e;
   padding-top: 0.75rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
+  margin-top: 0.75rem;
+  
   .total-label {
-    font-weight: 600;
-    color: #374151;
-    font-size: 14px;
-  }
-
-  .total-amount {
-    color: #ef4444;
     font-weight: 700;
-    font-size: 18px;
+    font-size: 1.2rem;
+    color: #1a237e;
+  }
+  
+  .total-amount {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #dc3545;
   }
 }
 
@@ -430,6 +439,103 @@
     transform: none;
     box-shadow: none;
     cursor: not-allowed;
+  }
+}
+
+// Promotion section styles
+.promotion-section {
+  border-top: 1px solid #e9ecef;
+  padding-top: 1rem;
+  
+  .add-promotion-btn {
+    border: 2px dashed #667eea;
+    color: #667eea;
+    background: transparent;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background-color: #667eea;
+      border-style: solid;
+      color: white;
+      transform: translateY(-1px);
+    }
+    
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+  }
+  
+  .applied-promotion {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border-radius: 8px;
+    padding: 1rem;
+    border: 1px solid #28a745;
+    
+    .promotion-info {
+      margin-bottom: 0.75rem;
+      
+      .promotion-code {
+        display: flex;
+        align-items: center;
+        font-size: 1rem;
+        color: #155724;
+        margin-bottom: 0.25rem;
+        
+        .remove-promotion-btn {
+          color: #dc3545;
+          text-decoration: none;
+          
+          &:hover {
+            color: #c82333;
+          }
+        }
+      }
+      
+      .promotion-description {
+        font-size: 0.875rem;
+        color: #155724;
+        margin-bottom: 0.25rem;
+        opacity: 0.8;
+      }
+      
+      .promotion-discount {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #28a745;
+      }
+    }
+    
+    .discount-amount {
+      .price-item.discount {
+        padding: 0.5rem 0;
+        border-top: 1px solid rgba(21, 87, 36, 0.2);
+        margin-top: 0.5rem;
+        font-weight: 600;
+        
+        span:last-child {
+          font-size: 1.1rem;
+        }
+      }
+    }
+  }
+}
+
+// Animation for promotion section
+.applied-promotion {
+  animation: promotionSlideIn 0.3s ease-out;
+}
+
+@keyframes promotionSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

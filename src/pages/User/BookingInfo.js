@@ -2,12 +2,14 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Form, Button, Row, Col, Card, InputGroup } from "react-bootstrap";
-import { FaMapMarkerAlt, FaCalendarAlt, FaUser, FaUsers, FaBaby } from "react-icons/fa";
+import { FaMapMarkerAlt, FaCalendarAlt, FaUser, FaUsers, FaBaby, FaTag, FaTimes } from "react-icons/fa";
 import NavBar from '../../layouts/Navbar';
+import PromotionModal from '../../components/Common/PromotionModal/PromotionModal';
 import "../../styles/pages/BookingInfo.scss";
 import { AuthContext } from '../../context/AuthContext';
 import { createBooking, createBookingDetail } from '../../api/bookingAPI';
-import {formatDate} from '../../feature/formatDate';
+import { applyPromotionToBooking } from '../../api/promotionAPI';
+import { formatDate } from "../../feature/formatDate";
 import { API_URL } from '../../utils/API_Port';
 
 const defaultPassenger = (type) => ({
@@ -48,6 +50,11 @@ const BookingInfo = () => {
   const [submitted, setSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // State cho mã giảm giá
+  const [showPromotionModal, setShowPromotionModal] = useState(false);
+  const [appliedPromotion, setAppliedPromotion] = useState(null);
+  const [discountAmount, setDiscountAmount] = useState(0);
+
   // Tính tổng tiền - sử dụng giá từ tour thực tế
   const getPrice = (type) => {
     switch(type) {
@@ -62,7 +69,8 @@ const BookingInfo = () => {
     }
   };
 
-  const total = adults * getPrice('adult') + children * getPrice('child') + babies * getPrice('baby');
+  const originalTotal = adults * getPrice('adult') + children * getPrice('child') + babies * getPrice('baby');
+  const total = originalTotal - discountAmount;
 
   // Xử lý tăng/giảm số lượng hành khách
   const handleChangeCount = (type, delta) => {
@@ -83,6 +91,29 @@ const BookingInfo = () => {
       const newArr = Array(newCount).fill(0).map(() => defaultPassenger(type));
       return [...filtered, ...newArr];
     });
+
+    // Reset mã giảm giá khi thay đổi số lượng khách
+    if (appliedPromotion) {
+      const newOriginalTotal = newCount * getPrice(type) + 
+        (type !== "adult" ? adults : newCount) * getPrice('adult') + 
+        (type !== "child" ? children : newCount) * getPrice('child') + 
+        (type !== "baby" ? babies : newCount) * getPrice('baby');
+      const newDiscountAmount = (newOriginalTotal * appliedPromotion.discount_percentage) / 100;
+      setDiscountAmount(newDiscountAmount);
+    }
+  };
+
+  // Xử lý áp dụng mã giảm giá
+  const handleApplyPromotion = (promotion) => {
+    setAppliedPromotion(promotion);
+    const newDiscountAmount = (originalTotal * promotion.discount_percentage) / 100;
+    setDiscountAmount(newDiscountAmount);
+  };
+
+  // Xử lý gỡ bỏ mã giảm giá
+  const handleRemovePromotion = () => {
+    setAppliedPromotion(null);
+    setDiscountAmount(0);
   };
 
   // Xử lý submit - tạo booking và booking details
@@ -166,6 +197,19 @@ const BookingInfo = () => {
       
       console.log('Booking details created successfully');
 
+      // Bước 3: Áp dụng mã giảm giá nếu có
+      if (appliedPromotion) {
+        try {
+          console.log('Applying promotion to booking:', { bookingId, promoId: appliedPromotion.promo_id });
+          await applyPromotionToBooking(bookingId, appliedPromotion.promo_id);
+          console.log('Promotion applied successfully');
+        } catch (promoError) {
+          console.error('Error applying promotion:', promoError);
+          // Không dừng lại nếu lỗi áp dụng mã giảm giá, chỉ cảnh báo
+          alert('Cảnh báo: Không thể áp dụng mã giảm giá, nhưng đặt tour đã thành công');
+        }
+      }
+
       // Điều hướng đến trang thanh toán
       navigate("/checkout", {
         state: {
@@ -178,7 +222,9 @@ const BookingInfo = () => {
           bookingDate: new Date().toLocaleString('vi-VN'),
           adults,
           children,
-          babies
+          babies,
+          appliedPromotion,
+          discountAmount
         }
       });
 
@@ -610,7 +656,7 @@ const BookingInfo = () => {
                     <Col xs={6} className="info-item">
                       <FaMapMarkerAlt className="info-icon" />
                       <div>
-                        <div className="info-label">{tour.transport}</div>
+                        <div className="info-label">{tour.transport || 'Xe khách'}</div>
                       </div>
                     </Col>
                   </Row>
@@ -632,6 +678,58 @@ const BookingInfo = () => {
                       <span>{babies} x {getPrice('baby').toLocaleString()} đ</span>
                     </div>
                   </div>
+                  
+                  <div className="subtotal-section">
+                    <div className="price-item subtotal">
+                      <span>Tạm tính:</span>
+                      <span>{originalTotal.toLocaleString()} đ</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Mã giảm giá */}
+                <div className="promotion-section mb-3">
+                  <h6 className="info-title">MÃ GIẢM GIÁ</h6>
+                  {!appliedPromotion ? (
+                    <Button 
+                      variant="outline-primary" 
+                      size="sm" 
+                      className="w-100 add-promotion-btn"
+                      onClick={() => setShowPromotionModal(true)}
+                    >
+                      <FaTag className="me-2" />
+                      Thêm mã giảm giá
+                    </Button>
+                  ) : (
+                    <div className="applied-promotion">
+                      <div className="promotion-info">
+                        <div className="promotion-code">
+                          <FaTag className="me-2" />
+                          <span className="fw-bold">{appliedPromotion.code}</span>
+                          <Button 
+                            variant="link" 
+                            size="sm" 
+                            className="remove-promotion-btn p-0 ms-2"
+                            onClick={handleRemovePromotion}
+                          >
+                            <FaTimes />
+                          </Button>
+                        </div>
+                        <div className="promotion-description">
+                          {appliedPromotion.description}
+                        </div>
+                        <div className="promotion-discount">
+                          Giảm {appliedPromotion.discount_percentage}%
+                        </div>
+                      </div>
+                      <div className="discount-amount">
+                        <div className="price-item discount">
+                          <span>Giảm giá:</span>
+                          <span className="text-success">-{discountAmount.toLocaleString()} đ</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="price-total mb-3">
@@ -653,6 +751,14 @@ const BookingInfo = () => {
             </Card>
           </Col>
         </Row>
+
+        {/* Promotion Modal */}
+        <PromotionModal
+          show={showPromotionModal}
+          onHide={() => setShowPromotionModal(false)}
+          onApplyPromotion={handleApplyPromotion}
+          originalTotal={originalTotal}
+        />
       </div>
     </div>
   );

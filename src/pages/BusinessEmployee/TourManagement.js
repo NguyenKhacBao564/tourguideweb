@@ -7,12 +7,16 @@ import { TourContext } from "../../context/TourContext";
 import StatusFilterEmployee from "../../components/Employee/StatusFilter_Employee/StatusFilterEmployee";
 import { useNavigate } from "react-router-dom";
 import { getOccupancyFilters, sortToursByAvailability} from "../../utils/tourFilterHelpers";
+import ConfirmDialog from "../../components/Common/ConfirmDialog/ConfirmDialog";
 
 
 const TourManagementEmp = () => {
   const navigate = useNavigate();
   const { tours, isLoading, error, fetchTours, blockTour, blockBatchTour } = useContext(TourContext);
   console.log('tours', tours);
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   // Các trạng thái lọc và sắp xếp
   const [sortOrder, setSortOrder] = useState(null);
   const [selectedTour, setSelectedTour] = useState([]); // Mảng chứa các tour đã chọn
@@ -32,7 +36,7 @@ const TourManagementEmp = () => {
   const columns = [
     { key: 'tour_id', label: 'Mã tour' },
     { key: 'name', label: 'Tên tour' },
-    { key: 'max_guests', label: 'Số chổ trống' },
+    { key: 'available_seats', label: 'Số chổ trống' },
     { key: 'start_date', label: 'Ngày khởi hành' },
     { key: 'end_date', label: 'Ngày trở về' },
     { key: 'status', label: 'Trạng thái' },
@@ -67,7 +71,47 @@ const TourManagementEmp = () => {
     },
   ];
 
+  console.log("Selected tours:", selectedTour);
 
+  const handleBlockSelected = async (ids) => {
+    setIsDialogOpen(true);
+
+    // if (window.confirm(`Bạn có chắc chắn muốn xóa ${ids.length} tour đã chọn không batch?`)) {
+    //   try {
+    //     await blockBatchTour(ids);
+    //     setSelectedTour([]);
+    //   } catch (error) {
+    //     console.error('Lỗi khi khóa tour:', error);
+    //   }
+    // }
+  };
+
+  const checkConfirm = async (isConfirmed) => {
+    if (isConfirmed) {
+      try{
+        await blockBatchTour(selectedTour);
+        setSelectedTour([]);
+        setIsDialogOpen(false);
+        alert(`${selectedTour.length} tour đã được khóa thành công!`);
+      } catch (error) {
+        console.error('Lỗi khi khóa tour:', error);
+      }
+    } else {
+      setIsDialogOpen(false);
+    }
+  };
+
+  // const confirmDelete = async() => {
+  //     try {
+        
+  //       } catch (error) {
+  //         console.error('Lỗi khi khóa tour:', error);
+  //       }
+  // };
+
+  // const cancelDelete = () => {
+  //   setIsDialogOpen(false);
+  // };
 
   // Sắp xếp tours bằng useMemo
   const sortedTours = useMemo(() => {
@@ -83,6 +127,7 @@ const TourManagementEmp = () => {
 
   // Xử lý thay đổi bộ lọc
   const handleFilterChange = (newFilters) => {
+    setSelectedTour([]); // Reset selected tours when filters change
       setFilters((prev) => ({ ...prev, ...newFilters }));
   };
   
@@ -91,18 +136,10 @@ const TourManagementEmp = () => {
     setSortOrder(order);
   };
   
-  const handleBlockSelected = async (ids) => {
-    if (window.confirm(`Bạn có chắc chắn muốn xóa ${ids.length} tour đã chọn không batch?`)) {
-      try {
-        await blockBatchTour(ids);
-        setSelectedTour([]);
-      } catch (error) {
-        console.error('Lỗi khi khóa tour:', error);
-      }
-    }
-  };
+
 
   return (
+    <>
     <Container fluid>
       <Row>
         <TourFilterEmployee 
@@ -122,7 +159,6 @@ const TourManagementEmp = () => {
           data={sortedTours}
           columns={columns}
           actions={actions}
-          onFilter={() => true} // Filters are applied before passing to DataTable
           itemsPerPage={12}
           isLoading={isLoading}
           error={error ? error.message : null}
@@ -130,7 +166,15 @@ const TourManagementEmp = () => {
           onSelectChange={setSelectedTour}
           idKey="tour_id"/>
       </Row>
+      
     </Container>
+    {isDialogOpen && (
+        <ConfirmDialog
+          message="Bạn muốn xóa người dùng này?"
+          checkConfirm={checkConfirm}
+        />
+      )}
+      </>
   );
 };
 

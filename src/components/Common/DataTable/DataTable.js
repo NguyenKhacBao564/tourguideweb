@@ -33,6 +33,11 @@ function DataTable(
   const [selectedAll, setSelectedAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Reset trang về 1 khi dữ liệu thay đổi, giải pháp tạm thời, có thể thay đổi phân trang trên backend sau này
+  useEffect(() => {
+    setCurrentPage(1); 
+  }, [data]);
+
   // Dữ liệu đã lọc
   const filteredData = data.filter(onFilter);
 
@@ -88,10 +93,7 @@ function DataTable(
     // if (column.format) {
     //   return column.format(value, item);
     // }
-    if(column.key === 'max_guests') {
-      const available = item.max_guests - (item.booked_slots || 0);
-      return `${available}`;
-    }
+
     if (column.key.includes('date') || column.key.includes('created_at') || column.key.includes('birthday')) {
       return formatDate(value);
     }
@@ -99,12 +101,6 @@ function DataTable(
   };
 
   
-  const handleViewDetail = (id) => {
-    // Logic xem chi tiết tour, ví dụ: chuyển hướng hoặc mở modal
-    console.log(`Xem chi tiết tour ${id}`);
-  };
-
-
   return (
     <Container className="table-wrapper mt-2">
       <Table hover responsive borderless className="tour-management__table" >
@@ -153,7 +149,7 @@ function DataTable(
                   />
                 </td>
                 {columns.map((column) => (
-                  <td key={column.key}>{renderColumnValue(item, column)}</td>
+                  <td key={column.key} className={column.key === `status` ? `${item.status}` : ''}>{renderColumnValue(item, column)}</td>
                 ))}
                 {actions.length > 0 && (
                    <td className="text-center">
