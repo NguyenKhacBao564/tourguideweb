@@ -1,4 +1,5 @@
 // services/authService.js
+require('dotenv').config();
 const bcrypt = require("bcrypt");
 const { sql, getPool } = require("../config/db");
 const { generateAccessToken } = require("../middlewares/jwt");
