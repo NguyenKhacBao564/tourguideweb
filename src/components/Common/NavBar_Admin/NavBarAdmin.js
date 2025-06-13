@@ -11,7 +11,9 @@ function NavBarAdmin({user, header}) {
         if(user.role === 'Admin') {
             navigate('/admin/accounts');
         }else if(user.role === 'Sales') {
-            navigate('customer/inforEmployee');
+            navigate('/businessemployee/inforEmployee', {
+                state: { user: user }
+            });
         } 
     };
 
@@ -22,7 +24,7 @@ function NavBarAdmin({user, header}) {
             <div className='navbar-admin__user'>
                 <span>{user.name}</span>
                 <img 
-                    src="/avt.jpg" 
+                    src={user.avatar || '/default-avatar.jpg'}
                     alt="avatar" 
                     className='navbar-admin__avatar'
                     onClick={handleAvatarClick}

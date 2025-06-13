@@ -74,6 +74,13 @@ const getUserInfor = async (userId, role) => {
         .input("userId", sql.VarChar, userId)
         .query("SELECT * FROM Employee WHERE emp_id = @userId AND em_status = 'active'");
       user = result.recordset[0];
+
+      var branch_name = await pool
+        .request()
+        .input("branchId", sql.Int, user.branch_id)
+        .query("SELECT branch_name FROM Branch WHERE branch_id = @branchId");
+      branch_name = branch_name.recordset[0]?.branch_name || "Không xác định";
+
       if (!user) throw new Error("Không tìm thấy user trong bảng Employee");
       const roleName = await getRoleById(user.role_id);
       console.log("Đã tìm thấy user!");
@@ -86,6 +93,7 @@ const getUserInfor = async (userId, role) => {
         address: user.address,
         avatar: user.pi_url,
         branch_id: user.branch_id,
+        branch_name: branch_name || "Không xác định",
       };
     }
     

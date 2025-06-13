@@ -1,13 +1,14 @@
+require('dotenv').config();
 const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
 const bcrypt = require("bcrypt");
 const {sql, getPool} = require("../config/db");
 
-const CLIENT_ID = '738275179888-auu9fcmai0l3bvjqai3ampoavmffedhe.apps.googleusercontent.com';
-const CLIENT_SECRECT = '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';
+const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const CLIENT_SECRECT = process.env.GOOGLE_CLIENT_SECRECT;
 
 const REDIRECT_URI = 'https://developers.google.com/oauthplayground';
-const REFRESH_TOKEN = '1//04WgLGcwiUGwMCgYIARAAGAQSNwF-L9IrgIPTwrdb81MDRV9BVs4Dot3RjLL-IUem2AvVxA-h8Rf3E_GiDs3ONkbQDUCBrGobPyM';
+const REFRESH_TOKEN = process.env.GOOGLE_REFRESH_TOKEN;
 
 const oAuth2Client = new google.auth.OAuth2(
   CLIENT_ID,
@@ -18,11 +19,6 @@ oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
 
 
-// const verifyOTP = async (otp, otpHashed) => {
-//     const hashedOTP = Buffer.isBuffer(otpHashed) ? otpHashed.toString('utf8') : otpHashed;
-//     const isMatch = await bcrypt.compare(otp, hashedOTP);
-//     return isMatch;
-// };
 const saltRounds = 10;
 //Hàm Hash password
 const hashPassword = async (password) => {
@@ -59,7 +55,7 @@ const verifyOTP = async (req, res) => {
         let { email, otp } = req.body;
         console.log("Email received:", email);
         console.log("OTP received:", otp);
-
+      
         if(!email || !otp) {
             return res.status(400).json({ message: "Email and OTP are required" });
         }
@@ -133,6 +129,8 @@ const verifyEmail = async (email) => {
 const getOTP = async (req, res) => {
     const email = req.body.email;
     console.log("Email received:", email);
+    console.log("CLIENT_ID: ", CLIENT_ID);
+    console.log("CLIENT_SECRECT: ", CLIENT_SECRECT);
     if (!email) {
         return res.status(400).json({ message: "Email is required" });
     }
@@ -154,7 +152,7 @@ const getOTP = async (req, res) => {
             service: "gmail",
             auth: {
                 type: "OAuth2",
-                user: "phucduygg8485@gmail.com",
+                user: "ppduy05@gmail.com",
                 clientId: CLIENT_ID,
                 clientSecret: CLIENT_SECRECT,
                 refreshToken: REFRESH_TOKEN,
@@ -163,7 +161,7 @@ const getOTP = async (req, res) => {
         });
 
         const mailOption ={
-            from: 'TOURGUIDE SUPPORTER <phucduygg8485@gmail.com>',
+            from: 'TOURGUIDE SUPPORTER <ppduy05@gmail.com>',
             to: email,
             subject: "Mã đặt lại mật khẩu TourGuide",
             text: `Mã OTP của bạn là: ${otp}`, // plain‑text body
