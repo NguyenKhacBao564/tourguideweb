@@ -21,8 +21,7 @@ const getOverviewStats = async () => {
         (SELECT COUNT(*) FROM Booking)          AS totalBookings,
         (SELECT ISNULL(SUM(amount), 0) FROM Payments 
          WHERE payment_status = 'COMPLETED' 
-         AND YEAR(created_at) = YEAR(GETDATE()) 
-         AND MONTH(created_at) = MONTH(GETDATE())) AS totalRevenue,
+         AND YEAR(created_at) = YEAR(GETDATE())) AS totalRevenue,
         (SELECT COUNT(*) FROM Customer WHERE cus_status='active')         AS totalCustomers,
         (SELECT COUNT(*) FROM Tour)             AS totalTours
     `);
@@ -235,11 +234,26 @@ async function getBranchStats() {
   try {
       let pool = await sql.connect(dbConfig);
 
+      // Debug: Kiểm tra dữ liệu payments
+      const debugPayments = await pool.request().query(`
+        SELECT COUNT(*) as total_payments,
+               COUNT(CASE WHEN payment_status = 'COMPLETED' THEN 1 END) as completed_payments,
+               COUNT(CASE WHEN YEAR(created_at) = YEAR(GETDATE()) THEN 1 END) as current_year_payments
+        FROM Payments
+      `);
+      console.log('Debug Payments:', debugPayments.recordset[0]);
+
+      // Debug: Kiểm tra dữ liệu branches
+      const debugBranches = await pool.request().query(`
+        SELECT COUNT(*) as total_branches FROM Branch
+      `);
+      console.log('Debug Branches:', debugBranches.recordset[0]);
+
       // Thống kê chi nhánh (Doanh thu, Tăng trưởng, Tỷ lệ hủy, Tổng số tour)
       const branchStats = await pool.request()
           .query(`
               WITH BranchRevenue AS (
-                  -- Doanh thu tháng hiện tại của mỗi chi nhánh
+                  -- Doanh thu năm hiện tại của mỗi chi nhánh
                   SELECT 
                       B.branch_id,
                       B.branch_name,
@@ -249,11 +263,11 @@ async function getBranchStats() {
                   LEFT JOIN Booking Bk ON T.tour_id = Bk.tour_id
                   LEFT JOIN Payments P ON Bk.booking_id = P.booking_id 
                       AND P.payment_status = 'COMPLETED'
-                      AND FORMAT(P.created_at, 'yyyy-MM') = FORMAT(GETDATE(), 'yyyy-MM')
+                      AND YEAR(P.created_at) = YEAR(GETDATE())
                   GROUP BY B.branch_id, B.branch_name
               ),
               PreviousRevenue AS (
-                  -- Doanh thu tháng trước của mỗi chi nhánh
+                  -- Doanh thu năm trước của mỗi chi nhánh
                   SELECT 
                       B.branch_id,
                       COALESCE(SUM(P.amount), 0) AS previous_revenue
@@ -262,7 +276,7 @@ async function getBranchStats() {
                   LEFT JOIN Booking Bk ON T.tour_id = Bk.tour_id
                   LEFT JOIN Payments P ON Bk.booking_id = P.booking_id 
                       AND P.payment_status = 'COMPLETED'
-                      AND FORMAT(P.created_at, 'yyyy-MM') = FORMAT(DATEADD(MONTH, -1, GETDATE()), 'yyyy-MM')
+                      AND YEAR(P.created_at) = YEAR(GETDATE()) - 1
                   GROUP BY B.branch_id
               ),
               CancellationStats AS (
@@ -302,9 +316,11 @@ async function getBranchStats() {
               FROM BranchRevenue BR
               LEFT JOIN PreviousRevenue PR ON BR.branch_id = PR.branch_id
               LEFT JOIN CancellationStats CS ON BR.branch_id = CS.branch_id
-              LEFT JOIN TourCount TC ON BR.branch_id = TC.branch_id;
+              LEFT JOIN TourCount TC ON BR.branch_id = TC.branch_id
+              ORDER BY BR.branch_id;
           `);
-      //console.log('Branch Stats:', branchStats.recordset);
+      
+      console.log('Branch Stats Debug:', JSON.stringify(branchStats.recordset, null, 2));
       return branchStats.recordset;
   } catch (error) {
       console.error('Lỗi khi lấy thống kê chi nhánh:', error);

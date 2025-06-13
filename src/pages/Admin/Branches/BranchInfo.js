@@ -1,7 +1,7 @@
 // src/pages/Admin/Branches/BranchInfo.js
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Button, Badge } from "react-bootstrap";
+//import { Button, Badge } from "react-bootstrap";
 import { getBranchDetail } from "../../../api/adminAPI";
 import Chart from "react-apexcharts";
 
@@ -68,7 +68,6 @@ const BranchInfo = () => {
   // Chuẩn bị dữ liệu cho tour stats pie chart
   const tourStats = branch.tourStats || {};
   
-  // Loại bỏ total và pending, chỉ lấy các trạng thái cần thiết
   const filteredTourStats = {
     pending: tourStats.pending || 0,       // Tour đang chờ duyệt
     active: tourStats.active || 0,   // Tour đã duyệt

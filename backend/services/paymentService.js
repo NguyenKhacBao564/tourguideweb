@@ -128,11 +128,11 @@ class PaymentService {
     const transaction = new sql.Transaction(pool);
     
     try {
-      console.log('🔄 Starting payment save process with booking handling...');
+      console.log('Starting payment save process with booking handling...');
       console.log('Payment data:', JSON.stringify(paymentData, null, 2));
       
       await transaction.begin();
-      console.log('✅ Transaction started');
+      console.log('Transaction started');
       
       const { orderId, bookingId, amount, paymentMethod, customerInfo, tourInfo, tour_id, cus_id } = paymentData;
       
@@ -150,9 +150,9 @@ class PaymentService {
         bookingRequest.input('tour_id', sql.Int, tour_id);
         bookingRequest.input('amount', sql.Decimal(18, 2), amount);
         await bookingRequest.query(bookingQuery);
-        console.log('✅ Booking record created/verified with full data');
+        console.log('Booking record created/verified with full data');
       } catch (bookingError) {
-        console.log('⚠️ Could not create booking record:', bookingError.message);
+        console.log('Could not create booking record:', bookingError.message);
         console.log('Continuing with payment creation only...');
       }
       
@@ -179,7 +179,7 @@ class PaymentService {
         cus_id
       });
       
-      console.log('📝 Executing payment SQL query...');
+      console.log(' Executing payment SQL query...');
       
       const request = new sql.Request(transaction);
       request.input('bookingId', sql.VarChar(20), bookingId);
@@ -189,21 +189,21 @@ class PaymentService {
       request.input('response', sql.NVarChar(sql.MAX), response);
       
       const result = await request.query(insertQuery);
-      console.log('✅ Payment SQL query executed successfully');
+      console.log('Payment SQL query executed successfully');
       console.log('Result:', result);
       
       await transaction.commit();
-      console.log('✅ Transaction committed');
+      console.log('Transaction committed');
       
       return result.recordset[0].payment_id;
     } catch (error) {
       await transaction.rollback();
-      console.error('❌ Error in savePaymentInfoWithBooking:');
+      console.error('Error in savePaymentInfoWithBooking:');
       console.error('Error message:', error.message);
       
       // If it's still a foreign key constraint issue, try without foreign key
       if (error.number === 547) {
-        console.log('🔄 Retrying without foreign key constraint...');
+        console.log('Retrying without foreign key constraint...');
         return await this.savePaymentInfoWithoutFK(paymentData);
       }
       
@@ -216,16 +216,16 @@ class PaymentService {
     const pool = await getPool();
     
     try {
-      console.log('🔄 Saving payment without FK constraint...');
+      console.log(' Saving payment without FK constraint...');
       
       const { orderId, bookingId, amount, paymentMethod, customerInfo, tourInfo } = paymentData;
       
       // Disable foreign key constraint temporarily for SQL Server
       try {
         await pool.request().query('ALTER TABLE Payments NOCHECK CONSTRAINT FK_Payments_Booking');
-        console.log('✅ Foreign key constraint disabled');
+        console.log(' Foreign key constraint disabled');
       } catch (fkError) {
-        console.log('⚠️ Could not disable FK constraint, continuing anyway...');
+        console.log(' Could not disable FK constraint, continuing anyway...');
       }
       
       const insertQuery = `
@@ -261,15 +261,15 @@ class PaymentService {
       // Re-enable foreign key constraint
       try {
         await pool.request().query('ALTER TABLE Payments CHECK CONSTRAINT FK_Payments_Booking');
-        console.log('✅ Foreign key constraint re-enabled');
+        console.log(' Foreign key constraint re-enabled');
       } catch (fkError) {
-        console.log('⚠️ Could not re-enable FK constraint');
+        console.log(' Could not re-enable FK constraint');
       }
       
-      console.log('✅ Payment saved without FK constraint');
+      console.log(' Payment saved without FK constraint');
       return result.recordset[0].payment_id;
     } catch (error) {
-      console.error('❌ Error saving payment without FK:', error);
+      console.error('Error saving payment without FK:', error);
       throw new Error(`Database error: ${error.message}`);
     }
   }
@@ -278,7 +278,7 @@ class PaymentService {
   static async simulateMoMoPayment(orderId, amount, phoneNumber) {
     try {
       // This method is now deprecated as we use real MoMo API
-      console.log('⚠️ simulateMoMoPayment is deprecated, using real MoMo API instead');
+      console.log('simulateMoMoPayment is deprecated, using real MoMo API instead');
       
       // Generate test transaction ID
       const transactionId = MoMoUtils.generateReferenceId();
@@ -289,7 +289,7 @@ class PaymentService {
       // Generate test deep link
       const deepLink = `momo://pay?orderId=${orderId}&amount=${amount}&transactionId=${transactionId}`;
       
-      console.log('✅ MoMo payment simulation created:', {
+      console.log('MoMo payment simulation created:', {
         orderId,
         transactionId,
         amount,
@@ -357,12 +357,14 @@ class PaymentService {
       
       const { orderId, resultCode, transactionId, amount, message, momoData } = resultData;
       
-      // Determine payment status based on result code
+      // Chuẩn hóa trạng thái payment theo convention
       let paymentStatus = 'FAILED';
       if (resultCode === 0) {
-        paymentStatus = 'SUCCESS';
+        paymentStatus = 'COMPLETED';  // Đổi từ SUCCESS thành COMPLETED để nhất quán
       } else if (resultCode === 1006) {
         paymentStatus = 'PENDING';
+      } else {
+        paymentStatus = 'FAILED';
       }
       
       const updateQuery = `
@@ -381,14 +383,33 @@ class PaymentService {
       request.input('response', sql.NVarChar(sql.MAX), JSON.stringify(momoData));
       request.input('orderId', sql.NVarChar(100), orderId);
       
-      await request.query(updateQuery);
-      await transaction.commit();
+      const updateResult = await request.query(updateQuery);
       
-      console.log('✅ MoMo payment result updated successfully');
+      if (updateResult.rowsAffected[0] === 0) {
+        throw new Error(`Không tìm thấy payment với order_id: ${orderId}`);
+      }
+      
+      await transaction.commit();
+      console.log(`✅ MoMo Payment ${orderId} đã được cập nhật thành: ${paymentStatus}`);
+      
+      // Cập nhật trạng thái booking cho MoMo
+      console.log(`🔄 Bắt đầu cập nhật booking status cho MoMo payment ${orderId} với status ${paymentStatus}`);
+      
+      const bookingUpdateResult = await this.updateBookingStatus(orderId, paymentStatus);
+      console.log(`✅ Hoàn thành cập nhật booking status cho MoMo:`, bookingUpdateResult);
+      
+      return {
+        success: true,
+        orderId,
+        paymentStatus,
+        transactionId,
+        message: `MoMo thanh toán ${paymentStatus === 'COMPLETED' ? 'thành công' : 'thất bại'}`
+      };
+      
     } catch (error) {
       await transaction.rollback();
-      console.error('❌ Error updating MoMo payment result:', error);
-      throw new Error(`Database error: ${error.message}`);
+      console.error('❌ Lỗi cập nhật kết quả MoMo payment:', error);
+      throw new Error(`Lỗi cập nhật MoMo payment: ${error.message}`);
     }
   }
 
@@ -419,7 +440,7 @@ class PaymentService {
   // Test MoMo payment status
   static async testMoMoPaymentStatus(orderId, scenario = 'success') {
     try {
-      console.log(`🧪 Testing MoMo payment status for order: ${orderId}, scenario: ${scenario}`);
+      console.log(`Testing MoMo payment status for order: ${orderId}, scenario: ${scenario}`);
       
       // Simulate different payment scenarios
       const testResult = await MoMoUtils.simulateTestPayment(orderId, scenario);
@@ -464,11 +485,11 @@ class PaymentService {
     const transaction = new sql.Transaction(pool);
     
     try {
-      console.log('🔄 Starting payment save process...');
+      console.log(' Starting payment save process...');
       console.log('Payment data:', JSON.stringify(paymentData, null, 2));
       
       await transaction.begin();
-      console.log('✅ Transaction started');
+      console.log('Transaction started');
       
       const { orderId, bookingId, amount, paymentMethod, customerInfo, tourInfo } = paymentData;
       
@@ -493,7 +514,7 @@ class PaymentService {
         participants: tourInfo.participants || 1
       });
       
-      console.log('📝 Executing SQL query...');
+      console.log('Executing SQL query...');
       console.log('Query:', insertQuery);
       console.log('Parameters:', {
         bookingId,
@@ -511,16 +532,16 @@ class PaymentService {
       request.input('response', sql.NVarChar(sql.MAX), response);
       
       const result = await request.query(insertQuery);
-      console.log('✅ SQL query executed successfully');
+      console.log(' SQL query executed successfully');
       console.log('Result:', result);
       
       await transaction.commit();
-      console.log('✅ Transaction committed');
+      console.log(' Transaction committed');
       
       return result.recordset[0].payment_id;
     } catch (error) {
       await transaction.rollback();
-      console.error('❌ Error in savePaymentInfo:');
+      console.error(' Error in savePaymentInfo:');
       console.error('Error message:', error.message);
       console.error('Error stack:', error.stack);
       console.error('SQL Error details:', {
@@ -548,7 +569,7 @@ class PaymentService {
       // Check if payment already exists and is successful
       const existingPayment = await this.getPaymentInfo(orderId);
       if (existingPayment && existingPayment.payment_status === 'COMPLETED') {
-        console.log('✅ Payment already processed successfully');
+        console.log('Payment already processed successfully');
         return {
           success: true,
           message: 'Thanh toán đã được xử lý thành công',
@@ -561,12 +582,12 @@ class PaymentService {
       // Verify signature
       const isValidSignature = VNPayUtils.verifyReturnUrl(vnpayData);
       if (!isValidSignature) {
-        console.log('⚠️ Signature validation failed, but checking payment status...');
+        console.log('Signature validation failed, but checking payment status...');
         
         // If signature fails but payment exists and response code is 00, 
         // this might be a test environment issue
         if (responseCode === '00' && existingPayment) {
-          console.log('🧪 Test environment - proceeding with successful payment');
+          console.log(' Test environment - proceeding with successful payment');
         } else {
           throw new Error('Chữ ký không hợp lệ');
         }
@@ -609,7 +630,7 @@ class PaymentService {
         try {
           const paymentInfo = await this.getPaymentInfo(orderId);
           if (paymentInfo) {
-            console.log('✅ Payment exists in database despite error');
+            console.log(' Payment exists in database despite error');
             return {
               success: true,
               message: 'Thanh toán thành công',
@@ -677,16 +698,16 @@ class PaymentService {
       
       const { orderId, responseCode, transactionNo, amount, vnpayData } = resultData;
       
-      // Xác định trạng thái
-      let status = 'FAILED';
+      // Xác định trạng thái payment
+      let paymentStatus = 'FAILED';
       if (responseCode === '00') {
-        status = 'COMPLETED';
+        paymentStatus = 'COMPLETED';
       } else if (responseCode === '24') {
-        status = 'CANCELLED';
+        paymentStatus = 'CANCELLED';
       }
       
-      // Cập nhật payment
-      const updateQuery = `
+      // Cập nhật payment status
+      const updatePaymentQuery = `
         UPDATE Payments 
         SET 
           payment_status = @status,
@@ -699,63 +720,298 @@ class PaymentService {
       const response = JSON.stringify(vnpayData);
       
       const request = new sql.Request(transaction);
-      request.input('status', sql.NVarChar(20), status);
+      request.input('status', sql.NVarChar(20), paymentStatus);
       request.input('transactionNo', sql.NVarChar(100), transactionNo);
       request.input('response', sql.NVarChar(sql.MAX), response);
       request.input('orderId', sql.NVarChar(100), orderId);
       
-      await request.query(updateQuery);
+      const updateResult = await request.query(updatePaymentQuery);
       
-      // Nếu thanh toán thành công, cập nhật trạng thái booking
-      if (status === 'COMPLETED') {
-        await this.updateBookingStatus(orderId, 'CONFIRMED');
+      if (updateResult.rowsAffected[0] === 0) {
+        throw new Error(`Không tìm thấy payment với order_id: ${orderId}`);
       }
       
       await transaction.commit();
+      console.log(`✅ Payment ${orderId} đã được cập nhật thành: ${paymentStatus}`);
       
-      console.log(`Payment ${orderId} updated to status: ${status}`);
+      // Cập nhật trạng thái booking (BẮTS BUỘC phải thành công)
+      console.log(`🔄 Bắt đầu cập nhật booking status cho payment ${orderId} với status ${paymentStatus}`);
+      
+      const bookingUpdateResult = await this.updateBookingStatus(orderId, paymentStatus);
+      console.log(`✅ Hoàn thành cập nhật booking status:`, bookingUpdateResult);
+      
+      return {
+        success: true,
+        orderId,
+        paymentStatus,
+        transactionNo,
+        message: `Thanh toán ${paymentStatus === 'COMPLETED' ? 'thành công' : 'thất bại'}`
+      };
+  
+      
     } catch (error) {
       await transaction.rollback();
-      console.error('Error updating payment result:', error);
-      throw new Error('Lỗi cập nhật kết quả thanh toán');
+      console.error('❌ Lỗi cập nhật kết quả thanh toán:', error);
+      throw new Error(`Lỗi cập nhật kết quả thanh toán: ${error.message}`);
     }
   }
 
   // Cập nhật trạng thái booking
-  static async updateBookingStatus(orderId, status) {
+  static async updateBookingStatus(orderId, paymentStatus) {
+    const pool = await getPool();
+    const transaction = new sql.Transaction(pool);
+    
     try {
-      const pool = await getPool();
+      await transaction.begin();
+      console.log(`🔄 Starting updateBookingStatus for orderId: ${orderId}, paymentStatus: ${paymentStatus}`);
       
-      // Lấy booking_id từ payment
-      const getBookingQuery = `
-        SELECT booking_id FROM Payments WHERE order_id = @orderId
+      // BƯỚC 1: Tìm payment record theo order_id
+      const getPaymentQuery = `
+        SELECT 
+          p.payment_id,
+          p.booking_id as payment_booking_id,
+          p.payment_status,
+          p.amount,
+          p.response
+        FROM Payments p
+        WHERE p.order_id = @orderId
       `;
       
-      const request1 = new sql.Request(pool);
+      const request1 = new sql.Request(transaction);
       request1.input('orderId', sql.NVarChar(100), orderId);
-      const result = await request1.query(getBookingQuery);
+      const paymentResult = await request1.query(getPaymentQuery);
       
-      if (result.recordset.length > 0) {
-        const bookingId = result.recordset[0].booking_id;
-        
-        // Cập nhật booking status (giả sử có bảng Booking)
-        const updateBookingQuery = `
-          UPDATE Booking 
-          SET status = @status, updated_at = GETDATE()
-          WHERE booking_id = @bookingId
+      if (paymentResult.recordset.length === 0) {
+        throw new Error(`❌ Không tìm thấy payment với order_id: ${orderId}`);
+      }
+      
+      const paymentInfo = paymentResult.recordset[0];
+      const paymentBookingId = paymentInfo.payment_booking_id;
+      
+      console.log(`💳 Found payment:`, {
+        payment_id: paymentInfo.payment_id,
+        payment_booking_id: paymentBookingId,
+        current_payment_status: paymentInfo.payment_status
+      });
+      
+      // BƯỚC 2: Tìm booking thật (có format BK*)
+      let realBookingId = null;
+      
+      // Nếu payment_booking_id có format BK*, đó chính là booking thật
+      if (paymentBookingId && paymentBookingId.startsWith('BK')) {
+        realBookingId = paymentBookingId;
+        console.log(`✅ Payment đã liên kết với booking thật: ${realBookingId}`);
+      } else {
+        // Tìm booking gần nhất (trong 2 giờ qua)
+        const findRealBookingQuery = `
+          SELECT TOP 1 booking_id 
+          FROM Booking 
+          WHERE booking_id LIKE 'BK%' 
+          AND booking_date >= DATEADD(HOUR, -2, GETDATE())
+          ORDER BY booking_date DESC
         `;
         
-        const request2 = new sql.Request(pool);
-        request2.input('status', sql.VarChar(50), status);
-        request2.input('bookingId', sql.VarChar(20), bookingId);
+        const findRequest = new sql.Request(transaction);
+        const bookingFindResult = await findRequest.query(findRealBookingQuery);
         
-        await request2.query(updateBookingQuery);
-        
-        console.log(`Booking ${bookingId} updated to status: ${status}`);
+        if (bookingFindResult.recordset.length > 0) {
+          realBookingId = bookingFindResult.recordset[0].booking_id;
+          console.log(`🔍 Found recent booking: ${realBookingId}`);
+          
+          // Cập nhật payment để liên kết với booking thật
+          const updatePaymentQuery = `
+            UPDATE Payments 
+            SET booking_id = @realBookingId
+            WHERE order_id = @orderId
+          `;
+          
+          const updatePaymentRequest = new sql.Request(transaction);
+          updatePaymentRequest.input('realBookingId', sql.VarChar(20), realBookingId);
+          updatePaymentRequest.input('orderId', sql.NVarChar(100), orderId);
+          await updatePaymentRequest.query(updatePaymentQuery);
+          
+          console.log(`🔗 Updated payment to link with real booking: ${realBookingId}`);
+        }
       }
+      
+      if (!realBookingId) {
+        console.error(`❌ Không tìm thấy booking thật cho payment ${orderId}`);
+        await transaction.rollback();
+        return {
+          success: false,
+          error: 'Không tìm thấy booking để cập nhật',
+          orderId,
+          paymentStatus
+        };
+      }
+      
+      // BƯỚC 3: Lấy thông tin booking thật
+      const getBookingQuery = `
+        SELECT 
+          booking_id,
+          status as current_booking_status,
+          tour_id,
+          cus_id,
+          total_price
+        FROM Booking 
+        WHERE booking_id = @realBookingId
+      `;
+      
+      const request2 = new sql.Request(transaction);
+      request2.input('realBookingId', sql.VarChar(20), realBookingId);
+      const bookingResult = await request2.query(getBookingQuery);
+      
+      if (bookingResult.recordset.length === 0) {
+        console.error(`❌ Booking ${realBookingId} không tồn tại`);
+        await transaction.rollback();
+        return {
+          success: false,
+          error: `Booking ${realBookingId} không tồn tại`,
+          orderId,
+          paymentStatus
+        };
+      }
+      
+      const bookingInfo = bookingResult.recordset[0];
+      const oldStatus = bookingInfo.current_booking_status;
+      
+      console.log(`📋 Found booking:`, {
+        booking_id: realBookingId,
+        current_status: oldStatus,
+        tour_id: bookingInfo.tour_id,
+        cus_id: bookingInfo.cus_id
+      });
+      
+      // BƯỚC 4: Xác định trạng thái booking mới
+      let newBookingStatus;
+      if (paymentStatus === 'COMPLETED') {
+        newBookingStatus = 'confirmed';
+      } else {
+        newBookingStatus = 'cancelled';
+      }
+      
+      console.log(`🔄 Converting payment status "${paymentStatus}" to booking status "${newBookingStatus}"`);
+      
+      if (oldStatus === newBookingStatus) {
+        console.log(`ℹ️ Booking ${realBookingId} đã ở trạng thái ${newBookingStatus} - không cần thay đổi`);
+        await transaction.commit();
+        return {
+          success: true,
+          bookingId: realBookingId,
+          oldStatus,
+          newStatus: newBookingStatus,
+          paymentStatus,
+          skipped: true
+        };
+      }
+      
+      // BƯỚC 5: Cập nhật booking status
+      const updateBookingQuery = `
+        UPDATE Booking 
+        SET status = @newStatus
+        WHERE booking_id = @realBookingId
+      `;
+      
+      const request3 = new sql.Request(transaction);
+      request3.input('realBookingId', sql.VarChar(20), realBookingId);
+      request3.input('newStatus', sql.VarChar(50), newBookingStatus);
+      const updateResult = await request3.query(updateBookingQuery);
+      
+      console.log(`📝 Updated booking ${realBookingId}: ${oldStatus} → ${newBookingStatus}`);
+      console.log(`📊 Rows affected: ${updateResult.rowsAffected[0]}`);
+      
+      if (updateResult.rowsAffected[0] === 0) {
+        throw new Error(`❌ Không thể cập nhật booking ${realBookingId} - có thể đã bị xóa`);
+      }
+      
+      // BƯỚC 6: Log status change  
+      try {
+        await this.logBookingStatusChange(transaction, realBookingId, oldStatus, newBookingStatus, orderId);
+      } catch (logError) {
+        console.warn('Không thể ghi log:', logError.message);
+        // Ignore log errors, continue with booking update
+      }
+      
+      await transaction.commit();
+      
+      console.log(`✅ THÀNH CÔNG: Đã cập nhật booking status: ${realBookingId} (${oldStatus} → ${newBookingStatus})`);
+      
+      // Gửi email thông báo (nếu cần)
+      if (paymentStatus === 'COMPLETED') {
+        await this.sendBookingConfirmationEmail(realBookingId, paymentInfo).catch(err => {
+          console.warn('Không thể gửi email xác nhận:', err.message);
+        });
+      }
+      
+      return {
+        success: true,
+        bookingId: realBookingId,
+        oldStatus,
+        newStatus: newBookingStatus,
+        paymentStatus
+      };
+      
     } catch (error) {
-      console.error('Error updating booking status:', error);
-      // Không throw error vì đây không phải là critical operation
+      await transaction.rollback();
+      console.error('❌ LỖI cập nhật booking status:', error.message);
+      throw new Error(`Không thể cập nhật trạng thái booking: ${error.message}`);
+    }
+  }
+
+  // Ghi log lịch sử thay đổi trạng thái booking
+  static async logBookingStatusChange(transaction, bookingId, oldStatus, newStatus, orderId) {
+    try {
+      const logQuery = `
+        INSERT INTO Booking_Status_Log (
+          booking_id, 
+          old_status, 
+          new_status, 
+          changed_by, 
+          change_reason, 
+          created_at
+        )
+        VALUES (
+          @bookingId, 
+          @oldStatus, 
+          @newStatus, 
+          'SYSTEM', 
+          @changeReason, 
+          GETDATE()
+        )
+      `;
+      
+      const logRequest = new sql.Request(transaction);
+      logRequest.input('bookingId', sql.VarChar(20), bookingId);
+      logRequest.input('oldStatus', sql.VarChar(50), oldStatus);
+      logRequest.input('newStatus', sql.VarChar(50), newStatus);
+      logRequest.input('changeReason', sql.NVarChar(200), `Payment completed - Order ID: ${orderId}`);
+      
+      await logRequest.query(logQuery);
+      console.log(`📝 Đã ghi log thay đổi trạng thái booking ${bookingId}`);
+      
+    } catch (error) {
+      // Không throw error vì đây không phải critical operation
+      console.warn('Không thể ghi log trạng thái booking:', error.message);
+    }
+  }
+
+  // Gửi email xác nhận booking
+  static async sendBookingConfirmationEmail(bookingId, paymentInfo) {
+    try {
+      // TODO: Implement email service
+      console.log(`📧 Gửi email xác nhận booking ${bookingId} cho customer ${paymentInfo.cus_id}`);
+      
+      // Placeholder for email service
+      // await EmailService.sendBookingConfirmation({
+      //   bookingId,
+      //   customerEmail: paymentInfo.customer_email,
+      //   tourName: paymentInfo.tour_name,
+      //   amount: paymentInfo.amount
+      // });
+      
+    } catch (error) {
+      console.warn('Lỗi gửi email xác nhận:', error.message);
+      // Không throw error
     }
   }
 
@@ -992,6 +1248,233 @@ class PaymentService {
     };
     
     return errorMessages[responseCode] || 'Giao dịch không thành công';
+  }
+
+  // Admin: Manually update booking status
+  static async manuallyUpdateBookingStatus(bookingId, newStatus, adminNote = '') {
+    const pool = await getPool();
+    const transaction = new sql.Transaction(pool);
+    
+    try {
+      await transaction.begin();
+      
+      // Lấy thông tin booking hiện tại
+      const getCurrentBookingQuery = `
+        SELECT 
+          b.booking_id,
+          b.status as current_status,
+          b.tour_id,
+          b.cus_id,
+          b.total_price,
+          p.payment_id,
+          p.payment_status
+        FROM Booking b
+        LEFT JOIN Payments p ON b.booking_id = p.booking_id
+        WHERE b.booking_id = @bookingId
+      `;
+      
+      const request1 = new sql.Request(transaction);
+      request1.input('bookingId', sql.VarChar(20), bookingId);
+      const result = await request1.query(getCurrentBookingQuery);
+      
+      if (result.recordset.length === 0) {
+        throw new Error(`Không tìm thấy booking với ID: ${bookingId}`);
+      }
+      
+      const bookingInfo = result.recordset[0];
+      const oldStatus = bookingInfo.current_status;
+      
+      if (oldStatus === newStatus) {
+        return {
+          success: true,
+          message: `Booking ${bookingId} đã ở trạng thái ${newStatus}`,
+          noChange: true
+        };
+      }
+      
+      // Validate status transition
+      const validTransitions = {
+        'pending': ['confirmed', 'cancelled'],
+        'confirmed': ['cancelled', 'completed', 'refunded'],
+        'cancelled': ['pending'], // Có thể khôi phục
+        'completed': ['refunded'],
+        'refunded': []
+      };
+      
+      if (!validTransitions[oldStatus]?.includes(newStatus)) {
+        throw new Error(`Không thể chuyển từ trạng thái '${oldStatus}' sang '${newStatus}'`);
+      }
+      
+             // Cập nhật booking status
+       const updateBookingQuery = `
+         UPDATE Booking 
+         SET 
+           status = @newStatus
+         WHERE booking_id = @bookingId
+       `;
+      
+      const request2 = new sql.Request(transaction);
+      request2.input('newStatus', sql.VarChar(50), newStatus);
+      request2.input('bookingId', sql.VarChar(20), bookingId);
+      
+      await request2.query(updateBookingQuery);
+      
+             // Ghi log với thông tin admin
+       try {
+         await this.logBookingStatusChange(
+           transaction, 
+           bookingId, 
+           oldStatus, 
+           newStatus, 
+           `MANUAL_ADMIN: ${adminNote}`
+         );
+       } catch (logError) {
+         console.warn('Không thể ghi log admin:', logError.message);
+         // Ignore log errors, continue with booking update
+       }
+      
+      await transaction.commit();
+      
+      console.log(`✅ Admin đã cập nhật booking ${bookingId} từ '${oldStatus}' thành '${newStatus}'`);
+      
+      return {
+        success: true,
+        bookingId,
+        oldStatus,
+        newStatus,
+        paymentStatus: bookingInfo.payment_status,
+        message: `Đã cập nhật trạng thái booking thành công`
+      };
+      
+    } catch (error) {
+      await transaction.rollback();
+      console.error('❌ Lỗi cập nhật thủ công trạng thái booking:', error);
+      throw new Error(`Không thể cập nhật trạng thái booking: ${error.message}`);
+    }
+  }
+
+  // Get booking status history
+  static async getBookingStatusHistory(bookingId) {
+    try {
+      const pool = await getPool();
+      
+      const query = `
+        SELECT 
+          booking_id,
+          old_status,
+          new_status,
+          changed_by,
+          change_reason,
+          created_at
+        FROM Booking_Status_Log
+        WHERE booking_id = @bookingId
+        ORDER BY created_at DESC
+      `;
+      
+      const request = new sql.Request(pool);
+      request.input('bookingId', sql.VarChar(20), bookingId);
+      
+      const result = await request.query(query);
+      
+      return {
+        success: true,
+        bookingId,
+        history: result.recordset
+      };
+      
+    } catch (error) {
+      console.error('Lỗi lấy lịch sử trạng thái booking:', error);
+      return {
+        success: false,
+        error: error.message,
+        history: []
+      };
+    }
+  }
+
+  // Create payment manually (for admin)
+  static async createManualPayment(bookingId, amount, paymentMethod = 'MANUAL', adminNote = '') {
+    const pool = await getPool();
+    const transaction = new sql.Transaction(pool);
+    
+    try {
+      await transaction.begin();
+      
+      // Kiểm tra booking tồn tại
+      const checkBookingQuery = `
+        SELECT booking_id, status, total_price 
+        FROM Booking 
+        WHERE booking_id = @bookingId
+      `;
+      
+      const request1 = new sql.Request(transaction);
+      request1.input('bookingId', sql.VarChar(20), bookingId);
+      const bookingResult = await request1.query(checkBookingQuery);
+      
+      if (bookingResult.recordset.length === 0) {
+        throw new Error(`Không tìm thấy booking ${bookingId}`);
+      }
+      
+      const booking = bookingResult.recordset[0];
+      
+      // Tạo orderId cho manual payment
+      const orderId = `MANUAL_${Date.now()}_${bookingId}`;
+      
+      // Tạo payment record
+      const insertPaymentQuery = `
+        INSERT INTO Payments (
+          booking_id, amount, payment_method, payment_status, 
+          order_id, response, created_at, updated_at
+        ) 
+        OUTPUT INSERTED.payment_id
+        VALUES (
+          @bookingId, @amount, @paymentMethod, 'COMPLETED', 
+          @orderId, @response, GETDATE(), GETDATE()
+        )
+      `;
+      
+      const response = JSON.stringify({
+        manual_payment: true,
+        admin_note: adminNote,
+        created_by: 'ADMIN',
+        booking_total: booking.total_price,
+        payment_amount: amount
+      });
+      
+      const request2 = new sql.Request(transaction);
+      request2.input('bookingId', sql.VarChar(20), bookingId);
+      request2.input('amount', sql.Decimal(18, 2), amount);
+      request2.input('paymentMethod', sql.NVarChar(20), paymentMethod);
+      request2.input('orderId', sql.NVarChar(100), orderId);
+      request2.input('response', sql.NVarChar(sql.MAX), response);
+      
+      const paymentResult = await request2.query(insertPaymentQuery);
+      const paymentId = paymentResult.recordset[0].payment_id;
+      
+      // Cập nhật booking status nếu thanh toán đủ
+      if (amount >= booking.total_price && booking.status === 'pending') {
+        await this.manuallyUpdateBookingStatus(bookingId, 'confirmed', `Manual payment created: ${orderId}`);
+      }
+      
+      await transaction.commit();
+      
+      console.log(`✅ Đã tạo manual payment ${orderId} cho booking ${bookingId}`);
+      
+      return {
+        success: true,
+        paymentId,
+        orderId,
+        bookingId,
+        amount,
+        paymentMethod,
+        message: 'Đã tạo thanh toán thủ công thành công'
+      };
+      
+    } catch (error) {
+      await transaction.rollback();
+      console.error('❌ Lỗi tạo thanh toán thủ công:', error);
+      throw new Error(`Không thể tạo thanh toán thủ công: ${error.message}`);
+    }
   }
 }
 

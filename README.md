@@ -1,70 +1,117 @@
-# Getting Started with Create React App
+Để chạy dự án
+B1:Trước tiên npm install ở folder tổng của dự án.
+B2:Tiếp theo cd backend và npm install tiếp tục
+B3:Copy sql_creatTable.sql ở foler tổng của dự án và chạy ở giao diện MS SQL.
+B4:Copy sql_dataEx.sql ở foler tổng của dự án và chạy ở giao diện MS SQL.
+Cấu hình file backend/.env lại để có thể kết nối với Database MS SQL
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Chạy web: npm run dev ở folder tổng của dự án
 
-## Available Scripts
+1: Để test giao diện khách hàng hãy đăng nhập bằng tài khoản: nguyenvanan01@gmail.com và mật khẩu 111111B@
+    Để test chức năng thanh toán hãy chọn vnpay và chọn thanh toán bằng thẻ nội địa.
 
-In the project directory, you can run:
+    Ngân hàng: NCB
+    Số thẻ: 9704198526191432198
+    Tên chủ phát hành: NGUYEN VAN A
+    Ngày phát hành: 07/15
+    Mật khẩu OTP: 123456
 
-### `npm start`
+2: Để test giao diện admin hãy đăng nhập bằng tài khoản: nguyenvana@example.com và mật khẩu 111111B@
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+3: Để test giao diện admin hãy đăng nhập bằng tài khoản: thi.b@example.com và mật khẩu 111111B@
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+4: Để test giao diện admin hãy đăng nhập bằng tài khoản: van.c@example.com và mật khẩu 111111B@
 
-### `npm test`
+# Tên dự án (Ví dụ: Ứng dụng Quản lý Tour Du lịch)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Đây là hướng dẫn thiết lập và chạy dự án này.
 
-### `npm run build`
+## Yêu cầu hệ thống
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Trước khi bắt đầu, hãy đảm bảo bạn đã cài đặt các công cụ sau:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+* Node.js (phiên bản 18 trở lên được khuyến nghị)
+* npm (thường đi kèm với Node.js)
+* Microsoft SQL Server (bao gồm SQL Server Management Studio hoặc công cụ quản lý cơ sở dữ liệu khác)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Cài đặt dự án
 
-### `npm run eject`
+Thực hiện theo các bước dưới đây để thiết lập và chạy dự án.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 1. Cài đặt các Dependencies
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Mở terminal/command prompt và điều hướng đến thư mục gốc của dự án, sau đó chạy các lệnh sau:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+npm install
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Tiếp theo, điều hướng vào thư mục backend và cài đặt các dependencies riêng cho phần backend:
 
-## Learn More
+cd backend
+npm install
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+2. Cấu hình Cơ sở dữ liệu (Microsoft SQL Server)
+Dự án này sử dụng Microsoft SQL Server làm cơ sở dữ liệu.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Chuẩn bị Database:
 
-### Code Splitting
+Mở SQL Server Management Studio (SSMS) hoặc công cụ quản lý cơ sở dữ liệu MS SQL khác.
+Kết nối đến instance SQL Server của bạn.
+Tạo một cơ sở dữ liệu mới cho dự án này (ví dụ: TourBookingDB).
+Tạo bảng và dữ liệu mẫu:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Chạy file sql_createTable.sql (nằm ở thư mục gốc của dự án) trên cơ sở dữ liệu bạn vừa tạo. File này sẽ tạo cấu trúc bảng cần thiết.
+Sau khi tạo bảng, chạy file sql_dataEx.sql (nằm ở thư mục gốc của dự án) để điền dữ liệu mẫu vào các bảng.
+Cấu hình kết nối Database:
 
-### Analyzing the Bundle Size
+Điều hướng đến thư mục backend/.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Tạo một file .env nếu nó chưa tồn tại (hoặc sao chép từ .env.example nếu có).
 
-### Making a Progressive Web App
+Mở file .env và cập nhật các biến môi trường sau để kết nối với cơ sở dữ liệu MS SQL của bạn:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+DB_SERVER=your_sql_server_address  # Ví dụ: localhost, 127.0.0.1, hoặc tên server/instance
+DB_DATABASE=TourBookingDB         # Tên cơ sở dữ liệu bạn đã tạo (ví dụ: TourBookingDB)
+DB_USER=your_db_username          # Tên người dùng SQL Server của bạn
+DB_PASSWORD=your_db_password      # Mật khẩu người dùng SQL Server của bạn
+# Các biến môi trường khác (nếu có)
+# Ví dụ: ELASTICSEARCH_CLOUD_ID, ELASTICSEARCH_USERNAME, ELASTICSEARCH_PASSWORD
 
-### Advanced Configuration
+Lưu ý: Thay thế your_sql_server_address, TourBookingDB, your_db_username, và your_db_password bằng thông tin cấu hình SQL Server của bạn.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+3. Chạy ứng dụng
+Sau khi đã cài đặt dependencies và cấu hình cơ sở dữ liệu, bạn có thể khởi động ứng dụng:
 
-### Deployment
+Mở terminal/command prompt, điều hướng đến thư mục gốc của dự án và chạy: npm run dev
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Thao tác này sẽ khởi động cả phần backend và frontend của ứng dụng.
 
-### `npm run build` fails to minify
+Thông tin đăng nhập Test
+Sử dụng các tài khoản sau để kiểm tra các giao diện và chức năng khác nhau:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+1. Giao diện Khách hàng
+Tài khoản: nguyenvanan01@gmail.com
+
+Mật khẩu: 111111B@
+
+Để test chức năng thanh toán (VNPAY):
+Chọn phương thức thanh toán vnpay và chọn thanh toán bằng thẻ nội địa. Sử dụng thông tin thẻ mẫu sau:
+
+Ngân hàng: NCB
+Số thẻ: 9704198526191432198
+Tên chủ phát hành: NGUYEN VAN A
+Ngày phát hành: 07/15
+Mật khẩu OTP: 123456
+2. Giao diện Admin
+Có các tài khoản admin mẫu sau:
+
+Tài khoản 1: nguyenvana@example.com
+
+Mật khẩu 1: 111111B@
+
+Tài khoản 2: thi.b@example.com
+
+Mật khẩu 2: 111111B@
+
+Tài khoản 3: van.c@example.com
+
+Mật khẩu 3: 111111B@

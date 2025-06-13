@@ -383,4 +383,95 @@ router.get('/test-momo-config', async (req, res) => {
   }
 });
 
+// Admin: Manually update booking status
+router.put('/admin/booking/:bookingId/status', async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    const { newStatus, adminNote } = req.body;
+    
+    if (!newStatus) {
+      return res.status(400).json({
+        success: false,
+        message: 'newStatus là bắt buộc'
+      });
+    }
+    
+    const result = await PaymentService.manuallyUpdateBookingStatus(bookingId, newStatus, adminNote);
+    res.json(result);
+  } catch (error) {
+    console.error('Error manually updating booking status:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Lỗi cập nhật trạng thái booking'
+    });
+  }
+});
+
+// Admin: Get booking status history
+router.get('/admin/booking/:bookingId/history', async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    const result = await PaymentService.getBookingStatusHistory(bookingId);
+    res.json(result);
+  } catch (error) {
+    console.error('Error getting booking history:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Lỗi lấy lịch sử booking'
+    });
+  }
+});
+
+// Admin: Create manual payment
+router.post('/admin/booking/:bookingId/manual-payment', async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    const { amount, paymentMethod = 'MANUAL', adminNote } = req.body;
+    
+    if (!amount || amount <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Số tiền thanh toán phải lớn hơn 0'
+      });
+    }
+    
+    const result = await PaymentService.createManualPayment(bookingId, amount, paymentMethod, adminNote);
+    res.json(result);
+  } catch (error) {
+    console.error('Error creating manual payment:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Lỗi tạo thanh toán thủ công'
+    });
+  }
+});
+
+// Admin: Force update payment status (for testing)
+router.put('/admin/payment/:orderId/force-complete', async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { transactionNo = `FORCE_${Date.now()}` } = req.body;
+    
+    const result = await PaymentService.updatePaymentResult({
+      orderId,
+      responseCode: '00', // Success code
+      transactionNo,
+      amount: 0,
+      vnpayData: {
+        admin_force: true,
+        forced_at: new Date().toISOString(),
+        note: 'Forced completion by admin'
+      }
+    });
+    
+    res.json(result);
+  } catch (error) {
+    console.error('Error force completing payment:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Lỗi force complete payment'
+    });
+  }
+});
+
 module.exports = router; 
