@@ -4,6 +4,7 @@ import FormInput from '../../components/Common/FormInput/FormInput';
 import AuthBase from '../../components/Common/Auth/AuthBase';
 import authInputs from '../../utils/AuthInput';
 import { AuthContext } from '../../context/AuthContext';
+import { Link } from 'react-router-dom';
 
 function Login() {
   const { login } = useContext(AuthContext);
@@ -14,6 +15,7 @@ function Login() {
   const [error, setError] = useState(null);
   const [errorCode, setErrorCode] = useState(null);
   const [success, setSuccess] = useState(null);
+  // State để quản lý checkbox đồng ý với điều khoản
   const [isChecked, setIsChecked] = useState(false);
 
   // Lấy returnUrl và message từ state
@@ -94,7 +96,7 @@ function Login() {
           />
           Đồng ý với điều khoản
         </label>
-        {/* <a href="#" className="forgotPassword">Quên mật khẩu</a> */}
+        <Link to="/forgot-password" className="forgotPassword">Quên mật khẩu</Link>
       </div>
 
       <button type="submit" className="btn--submit">Đăng nhập</button>

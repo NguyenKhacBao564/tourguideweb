@@ -53,7 +53,7 @@ const getPromotion = async (req, res) => {
         }
 
         if (promo_name) {
-            query += " AND description LIKE @promo_name"; // Filter theo description
+            query += " AND promo_name LIKE @promo_name"; // Filter theo promo_name
             request.input("promo_name", sql.NVarChar, `%${promo_name}%`);
         }
         // if (code) {

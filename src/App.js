@@ -41,6 +41,11 @@ import FindTour from "./pages/User/FindTour";
 import TourFavourite from "./pages/User/TourFavourite";
 import AboutUs from './pages/User/AboutUs';
 import AdminAccounts from "./pages/Admin/Accounts/AdminAccounts";
+import TourHistory from "./pages/User/TourHistory";
+import InforEmployee from "./pages/BusinessEmployee/InforEmployee/InforEmployee";
+import ForgotPassword from "./pages/User/ForgotPassword";
+import VerifyOTP from "./pages/User/VerifyOTP";
+import ResetPasswordPage from "./pages/User/ResetPassword/ResetPasswordPage";
 
 
 function App() {
@@ -49,76 +54,51 @@ function App() {
       <ScrollToTop />
       <ConsultantSupportProvider>
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Page />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/booking" element={<BookingTour />} />
           <Route path="/findtour" element={<FindTour />} />
           <Route path="/user/booking-info" element={<BookingInfo />} />
-
-
+          <Route path="/historyBooking" element={<TourHistory />} />
+          <Route path="/tourFavorite" element={ <ProtectedRoute allowedRoles={["customer"]}> <TourFavourite /> </ProtectedRoute> } />
+          <Route path="/contact" element={ <ProtectedRoute allowedRoles={["customer"]}> <Contact /> </ProtectedRoute> } />
           <Route path="/payment/result" element={<PaymentResult />}/>
           <Route path="/payment/demo" element={<PaymentDemo />}/>
           <Route path="/payment/momo-test" element={<MoMoTestPage />}/>
+          <Route path="/about-us" element={<AboutUs />} />
 
-          <Route path="/tourFavorite" element={
-            <ProtectedRoute allowedRoles={["customer"]}>
-              <TourFavourite />
-            </ProtectedRoute>
-          } />
-          <Route path="/contact" element={
-            <ProtectedRoute allowedRoles={["customer"]}>
-              <Contact />
-            </ProtectedRoute>
-          } />
+          
+          {/* Auth Routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/thongtin" element={
-            <ProtectedRoute allowedRoles={["customer"]}>
-              <InforUser />
-            </ProtectedRoute>
-          } />
-          <Route path="/customer" element={<p>customer</p>} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/verifyOTP" element={<VerifyOTP />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+
+          <Route path="/thongtin" element={ <ProtectedRoute allowedRoles={["customer"]}> <InforUser /> </ProtectedRoute> } />
+          {/* <Route path="/customer" element={<p>customer</p>} />
           <Route path="/sale" element={<p>sale</p>} />
-          <Route path="/support" element={<p>support</p>} />
+          <Route path="/support" element={<p>support</p>} /> */}
           <Route path="/unauthorized" element={<Unauthorized />} />
-          <Route path="/about-us" element={<AboutUs />} />
+
           <Route path="*" element={<NotFound/>} />
 
           {/* Business Employee Routes */}
-          <Route path="/businessemployee" element={
-            <ProtectedRoute allowedRoles={["Sales"]}>
-              <BusinessEmployee />
-            </ProtectedRoute>
-          }>
-
-            <Route path="customer" element={
-              <CustomerProvider>
-                <CustomerManagement />
-              </CustomerProvider>
-            } />
-
-            <Route path="customer/inforcustomer" element={
-              <CustomerProvider>
-                <InforCustomer />
-              </CustomerProvider>
-            } />
-
-            <Route path="managetour" element={
-              <TourProvider>
-                <TourManagementEmp />
-              </TourProvider>
-            } />
-
-            <Route path="managetour/addtour" element={
-              <TourProvider>
-                <AddNewTour />
-              </TourProvider>
-            } />
-            <Route path="promotion/addpromotion" element={
-              <AddNewPromotion />
-            } />
-            <Route path="promotion" element={<PromotionManager />} />
+          <Route path="/businessemployee" element={ <ProtectedRoute allowedRoles={["Sales"]}> <BusinessEmployee /> </ProtectedRoute> }>
+              {/* Route CustomerManagement*/}
+              <Route path="customer" element={ <CustomerProvider> <CustomerManagement /> </CustomerProvider> } />
+              <Route path="inforEmployee" element={<InforEmployee />} />
+              <Route path="customer/inforcustomer" element={<CustomerProvider><InforCustomer /></CustomerProvider>} />
+                {/* Route TourManagement*/}
+              <Route path="managetour" element={<TourProvider> <TourManagementEmp /> </TourProvider> } />
+              <Route path="managetour/addtour" element={ <TourProvider> <AddNewTour /> </TourProvider> } />
+                {/* Route PromotionManagement*/}
+              <Route path="promotion" element={<PromotionManager />} />
+              <Route path="promotion/addpromotion" element={ <AddNewPromotion /> } />
           </Route>
+          {/* End Business Employee Routes */}
+
 
           {/* Admin Routes */}
           <Route path="/admin" element={

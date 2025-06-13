@@ -39,6 +39,7 @@ function BookingTour(props) {
     const [isLoadingRelatedTours, setIsLoadingRelatedTours] = useState(false); // Loading cho tour liên quan
     const [schedules, setSchedules] = useState([]);
     const [stats, setStats] = useState({}); // Lưu trữ thống kê đánh giá của tour
+    
     const navigate = useNavigate();
     
 
@@ -58,18 +59,6 @@ function BookingTour(props) {
     }, [tourId, navigate]);
 
 
-    console.log("BookingTour component rendered");
-    // const currentTour = {
-    //     name: tour.name,
-    //     start: tour.start_date,
-    //     code: "43210",
-    //     date: "24/03/2025",
-    //     priceAdult: 4129000,
-    //     priceChild: 1990000,
-    //     priceBaby: 0,
-    //     image: "https://i.imgur.com/e2UnpdB.jpg"
-    // };
-
      // Cuộn về đầu trang và reset trạng thái khi tourId thay đổi
     
    
@@ -88,8 +77,6 @@ function BookingTour(props) {
         }
     };
 
-
-   
 
     useEffect(() => {
         const fetchTour = async () => {
@@ -150,7 +137,7 @@ function BookingTour(props) {
         }
     };
 
-    console.log("Tour data:", tour); // Kiểm tra dữ liệu tour
+    console.log("Tour data in tour Booking:", tour); // Kiểm tra dữ liệu tour
 
    
     const handleBookNow = () => {
@@ -169,8 +156,7 @@ function BookingTour(props) {
         }
 
         // Nếu đã đăng nhập, chuyển đến trang booking info
-        
-        navigate('/user/booking-info', { state: { tour: tour, tourId: tourId , image: images[0] } });
+        navigate('/user/booking-info', { state: { tour: tour, tourId: tourId } });
     };
     
 
@@ -261,7 +247,8 @@ function BookingTour(props) {
 
                      
                     </Col>
-                    <Col md={3} className="booking-card" >
+                    
+                    <Col md={3} className="booking_card" >
                         <Card className="booking-card-sticky ">
                             <Card.Header><span style={{fontWeight: 'bold', fontSize: '20px'}}>Booking</span></Card.Header>
                             <Card.Body>
