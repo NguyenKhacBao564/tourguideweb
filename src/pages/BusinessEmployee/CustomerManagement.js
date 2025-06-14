@@ -1,5 +1,5 @@
 // src/pages/BusinessEmployee/UserManagement.js
-import React, { useState, useContext, useMemo} from 'react';
+import React, { useState, useContext, useMemo, useEffect} from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import CustomerFilterEmployee from '../../components/Employee/Filter/CustomerFilterEmployee';
 import { TourProvider } from '../../context/TourContext';
@@ -8,6 +8,8 @@ import { filterCustomerBySearchTerm } from '../../utils/customerFilterHelper';
 import { useNavigate } from 'react-router-dom';
 import { CustomerContext } from '../../context/CustomerContext';
 import ConfirmDialog from "../../components/Common/ConfirmDialog/ConfirmDialog";
+import Alert from 'react-bootstrap/Alert';
+
 
 function CustomerManagement(props) {
     const navigate = useNavigate();
@@ -18,6 +20,21 @@ function CustomerManagement(props) {
     const [customerToBlock, setCustomerToBlock] = useState(null); // Customer đang được khóa
     const [isBatchBlockCustomer, setIsBatchBlockCustomer] = useState(false); // Biến để xác định có đang khóa nhiều khách hàng cùng lúc hay không
     const [selectedUsers, setSelectedUser] = useState([]);
+
+    const [showSuccess, setShowSuccess] = useState(false); // Biến để xác định có thành công hay không
+    const [successMessage, setSuccessMessage] = useState('');
+    const [blockError, setBlockError] = useState(null);
+
+    // Tự động ẩn thông báo sau 3 giây
+    useEffect(() => {
+        if (showSuccess || blockError) {
+            const timer = setTimeout(() => {
+                setShowSuccess(false);
+                setBlockError(null);
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [showSuccess, blockError]);
 
     // Columns cho bảng
     const columns = [
@@ -67,15 +84,17 @@ function CustomerManagement(props) {
         if(isBatchBlockCustomer){
           await blockBatchCustomer(selectedUsers); 
           setSelectedUser([]);
-          // alert(`${selectedUsers.length} khách hàng đã được khóa thành công!`);
+          setSuccessMessage(`${selectedUsers.length} khách hàng đã được khóa thành công!`);
+          setShowSuccess(true);
         }else if (customerToBlock) {
           await blockCustomer(customerToBlock);
           setSelectedUser((prev) => prev.filter((CusId) => CusId !== customerToBlock));
-          // alert(`Khách hàng với ID ${customerToBlock} đã được khóa thành công!`);
+          setSuccessMessage(`Khách hàng với ID ${customerToBlock} đã được khóa thành công!`);
+          setShowSuccess(true);
         }
       }catch(error){
         console.error('Lỗi khi khóa khách hàng:', error);
-        alert("Đã xảy ra lỗi khi khóa khách hàng!");
+        setBlockError("Đã xảy ra lỗi khi tạm ngưng tài khoản khách hàng!");
       }
     }
     // Đóng dialog và reset trạng thái
@@ -84,9 +103,29 @@ function CustomerManagement(props) {
     setIsBatchBlockCustomer(false);
   }
   
+  console.log("showsucess: ", showSuccess);
+  console.log("blockError: ", blockError);
 
    return (
-    <>
+    <div>
+      <div className="alert-area" style={{ 
+                position: 'fixed', 
+                top: '100px', 
+                right: '30%', 
+                zIndex: 9999, 
+                width: '600px' 
+            }}>
+                {showSuccess && (
+                    <Alert variant="success" onClose={() => setShowSuccess(false)} dismissible transition={true}>
+                        {successMessage}
+                    </Alert>
+                )}
+                {blockError && (
+                    <Alert variant="danger" onClose={() => setBlockError(null)} dismissible >
+                        {blockError}
+                    </Alert>
+                )}
+      </div>
       <Container fluid>
         <Row >
           <CustomerFilterEmployee onSearch={handleSearch} onDelete={handleDeleteSelected} selectedItems={selectedUsers}/>
@@ -113,7 +152,7 @@ function CustomerManagement(props) {
           checkConfirm={checkConfirmBlock}
         />
       )}
-    </>
+    </div>
     );
 }
 

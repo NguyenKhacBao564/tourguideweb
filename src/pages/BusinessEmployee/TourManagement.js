@@ -8,13 +8,12 @@ import StatusFilterEmployee from "../../components/Employee/StatusFilter_Employe
 import { useNavigate } from "react-router-dom";
 import { getOccupancyFilters, sortToursByAvailability} from "../../utils/tourFilterHelpers";
 import ConfirmDialog from "../../components/Common/ConfirmDialog/ConfirmDialog";
-
+import Alert from 'react-bootstrap/Alert';
 
 const TourManagementEmp = () => {
   const navigate = useNavigate();
   const { tours, isLoading, error, fetchTours, blockTour, blockBatchTour } = useContext(TourContext);
-  console.log('tours', tours);
-
+ 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [tourToBlock, setTourToBlock] = useState(null); // Tour đang được khóa
   const [isBatchBlockTour, setIsBatchBlockTour] = useState(false); // Biến để xác định có đang khóa nhiều tour cùng lúc hay không
@@ -22,11 +21,28 @@ const TourManagementEmp = () => {
   const [sortOrder, setSortOrder] = useState(null);
   const [selectedTour, setSelectedTour] = useState([]); // Mảng chứa các tour đã chọn
   const occupancyFilters = useCallback(getOccupancyFilters(), []);
+
+  const [showSuccess, setShowSuccess] = useState(false); // Biến để xác định có thành công hay không
+  const [successMessage, setSuccessMessage] = useState('');
+  const [blockError, setBlockError] = useState(null);
+
   const [filters, setFilters] = useState({
           status: 'all',
           search: '',
   });
   
+  console.log('tours', tours);
+
+  // Tự động ẩn thông báo sau 3 giây
+    useEffect(() => {
+        if (showSuccess || blockError) {
+            const timer = setTimeout(() => {
+                setShowSuccess(false);
+                setBlockError(null);
+            }, 2000);
+            return () => clearTimeout(timer);
+        }
+    }, [showSuccess, blockError]);
 
   useEffect(() => {
     console.log("TourManagementEmp useEffect run");
@@ -81,17 +97,20 @@ const TourManagementEmp = () => {
           //Khóa các tour đã chọn
           await blockBatchTour(selectedTour);
           setSelectedTour([]);
-          // alert(`${selectedTour.length} tour đã được khóa thành công!`);
+          setShowSuccess(true);
+          setSuccessMessage(`${selectedTour.length} tour đã được khóa thành công!`);
         }
         else if (tourToBlock) {
           //Khóa tour đơn lẻ
           await blockTour(tourToBlock);
           setSelectedTour((prev) => prev.filter((tourId) => tourId !== tourToBlock));
-          // alert(`Tour với ID ${tourToBlock} đã được khóa thành công!`);
+          setShowSuccess(true);
+          setSuccessMessage(`Tour với ID ${tourToBlock} đã được khóa thành công!`);
         }
       } catch (error) {
         console.error('Lỗi khi khóa tour:', error);
-        alert("Đã xảy ra lỗi khi khóa tour!");
+        setBlockError("Đã xảy ra lỗi khi tạm ngưng khuyến mãi!");
+        // alert("Đã xảy ra lỗi khi khóa tour!");
       }
     }
     //Đóng dialog và reset trạng thái
@@ -125,6 +144,24 @@ const TourManagementEmp = () => {
 
   return (
     <>
+    <div className="alert-area" style={{ 
+        position: 'fixed', 
+        top: '50px', 
+        right: '30%', 
+        zIndex: 9999, 
+        width: '600px' 
+      }}>
+        {showSuccess && (
+            <Alert variant="success" onClose={() => setShowSuccess(false)} dismissible transition={true}>
+                {successMessage}
+            </Alert>
+        )}
+        {blockError && (
+            <Alert variant="danger" onClose={() => setBlockError(null)} dismissible >
+                {blockError}
+            </Alert>
+        )}
+    </div>
     <Container fluid>
       <Row>
         <TourFilterEmployee 
