@@ -14,7 +14,6 @@ function PromotionManager(props) {
     const [error, setError] = useState(null);
     const [selectedPromotions, setSelectedPromotions] = useState([]);
     const [promotions, setPromotions] = useState([]);
-    // const [statusFilter, setStatusFilter] = useState(OCCUPANCY_FILTERS.ALL);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
 
@@ -99,6 +98,10 @@ function PromotionManager(props) {
         },
     ];
 
+    const handleBlockSelected = async (ids) => {
+       setIsDialogOpen(true);
+    }
+
 
     const checkConfirm = async (confirm) => {
         if (confirm) {
@@ -107,41 +110,14 @@ function PromotionManager(props) {
             await blockBatchPromotion(selectedPromotions);
             setSelectedPromotions([]);
             setIsDialogOpen(false);
-            alert(`${selectedPromotions.length} khuyến mãi đã được khóa thành công!`);
+            // alert(`${selectedPromotions.length} khuyến mãi đã được khóa thành công!`);
         } else {
             // Xử lý hủy bỏ
             console.log("Hủy bỏ đã được chọn");
             setIsDialogOpen(false);
         }
     }
-//       const confirmDelete = async() => {
-//       try {
-//           await blockBatchTour(selectedTour);
-//           setSelectedTour([]);
-//           setIsDialogOpen(false);
-//           alert(`${selectedTour.length} tour đã được khóa thành công!`);
-//         } catch (error) {
-//           console.error('Lỗi khi khóa tour:', error);
-//         }
-//   };
-
     console.log("Selected promotions:", selectedPromotions);
-
-    const handleBlockSelected = async (ids) => {
-       setIsDialogOpen(true);
-    }
-
-    // const handleBlockSelected = async (ids) => {
-    //     if (window.confirm(`Bạn có chắc chắn muốn khóa ${ids.length} khuyến mãi đã chọn không?`)) {
-    //         try {
-    //             await blockBatchPromotion(ids);
-    //             setPromotions((prev) => prev.filter((promo) => !ids.includes(promo.promo_id)));
-    //             setSelectedPromotions([]);
-    //         } catch (error) {
-    //             console.error("Error blocking promotions:", error);
-    //         }
-    //     }
-    // }
 
     // Xử lý thay đổi bộ lọc
     const handleFilterChange = (newFilters) => {
@@ -176,10 +152,10 @@ function PromotionManager(props) {
            </Container>
             {isDialogOpen && (
                 <ConfirmDialog
-                message="Bạn muốn xóa người dùng này?"
+                message="Bạn chắc muốn xóa những khuyến mãi này?"
                 checkConfirm={checkConfirm}
                 />
-      )}
+            )}
         </div>
     );
 }

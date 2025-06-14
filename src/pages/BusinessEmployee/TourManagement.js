@@ -16,7 +16,8 @@ const TourManagementEmp = () => {
   console.log('tours', tours);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
+  const [tourToBlock, setTourToBlock] = useState(null); // Tour đang được khóa
+  const [isBatchBlockTour, setIsBatchBlockTour] = useState(false); // Biến để xác định có đang khóa nhiều tour cùng lúc hay không
   // Các trạng thái lọc và sắp xếp
   const [sortOrder, setSortOrder] = useState(null);
   const [selectedTour, setSelectedTour] = useState([]); // Mảng chứa các tour đã chọn
@@ -48,14 +49,9 @@ const TourManagementEmp = () => {
       label: 'Khóa',
       variant: 'danger',
       onClick: async (id) => {
-        if (window.confirm('Bạn có chắc chắn muốn khóa tour này không?')) {
-          try {
-            await blockTour(id);
-            setSelectedTour((prev) => prev.filter((tourId) => tourId !== id));
-          } catch (err) {
-            console.error('Lỗi khi khóa tour:', err);
-          }
-        }
+        setTourToBlock(id); //Lưu id tour cần khóa
+        setIsDialogOpen(true); // Mở dialog xác nhận khóa tour
+        setIsBatchBlockTour(false); // Không phải khóa hàng loạt
       },
       condition: (item) => ['active', 'upcoming'].includes(item.status), // Chỉ cho phép khóa với status active hoặc upcoming
     },
@@ -73,45 +69,36 @@ const TourManagementEmp = () => {
 
   console.log("Selected tours:", selectedTour);
 
-  const handleBlockSelected = async (ids) => {
-    setIsDialogOpen(true);
-
-    // if (window.confirm(`Bạn có chắc chắn muốn xóa ${ids.length} tour đã chọn không batch?`)) {
-    //   try {
-    //     await blockBatchTour(ids);
-    //     setSelectedTour([]);
-    //   } catch (error) {
-    //     console.error('Lỗi khi khóa tour:', error);
-    //   }
-    // }
+  const handleBlockSelected = () => {
+    setIsDialogOpen(true); // Mở dialog xác nhận khóa tour
+    setIsBatchBlockTour(true); // Đánh dấu là khóa hàng loạt
   };
 
-  const checkConfirm = async (isConfirmed) => {
+  const checkConfirmBlock = async (isConfirmed) => {
     if (isConfirmed) {
       try{
-        await blockBatchTour(selectedTour);
-        setSelectedTour([]);
-        setIsDialogOpen(false);
-        alert(`${selectedTour.length} tour đã được khóa thành công!`);
+        if(isBatchBlockTour){
+          //Khóa các tour đã chọn
+          await blockBatchTour(selectedTour);
+          setSelectedTour([]);
+          // alert(`${selectedTour.length} tour đã được khóa thành công!`);
+        }
+        else if (tourToBlock) {
+          //Khóa tour đơn lẻ
+          await blockTour(tourToBlock);
+          setSelectedTour((prev) => prev.filter((tourId) => tourId !== tourToBlock));
+          // alert(`Tour với ID ${tourToBlock} đã được khóa thành công!`);
+        }
       } catch (error) {
         console.error('Lỗi khi khóa tour:', error);
+        alert("Đã xảy ra lỗi khi khóa tour!");
       }
-    } else {
-      setIsDialogOpen(false);
     }
+    //Đóng dialog và reset trạng thái
+    setIsDialogOpen(false);
+    setTourToBlock(null);
+    setIsBatchBlockTour(false);
   };
-
-  // const confirmDelete = async() => {
-  //     try {
-        
-  //       } catch (error) {
-  //         console.error('Lỗi khi khóa tour:', error);
-  //       }
-  // };
-
-  // const cancelDelete = () => {
-  //   setIsDialogOpen(false);
-  // };
 
   // Sắp xếp tours bằng useMemo
   const sortedTours = useMemo(() => {
@@ -132,11 +119,9 @@ const TourManagementEmp = () => {
   };
   
   const handleSort = (order) => {
-    // if (order === sortOrder) return; // Không thay đổi nếu cùng thứ tự
     setSortOrder(order);
   };
   
-
 
   return (
     <>
@@ -170,11 +155,11 @@ const TourManagementEmp = () => {
     </Container>
     {isDialogOpen && (
         <ConfirmDialog
-          message="Bạn muốn xóa người dùng này?"
-          checkConfirm={checkConfirm}
+          message="Bạn có chắc muốn xóa những tour này?"
+          checkConfirm={checkConfirmBlock}
         />
       )}
-      </>
+    </>
   );
 };
 

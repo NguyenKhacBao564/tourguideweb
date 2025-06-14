@@ -14,7 +14,7 @@ const updateStatusTour = async (transaction) => {
       UPDATE Tour
       SET status = 'completed'
       WHERE end_date < GETDATE()
-        AND status NOT IN ('inactive', 'reject');
+        AND status NOT IN ('inactive', 'reject','pending');
     `);
 
     // Cập nhật trạng thái Đang khởi hành: start_date <= hôm nay <= end_date
@@ -23,7 +23,7 @@ const updateStatusTour = async (transaction) => {
       SET status = 'ongoing'
       WHERE start_date <= GETDATE()
         AND end_date >= GETDATE()
-        AND status NOT IN ('inactive', 'reject');
+        AND status NOT IN ('inactive', 'reject','pending');
     `);
 
     // Cập nhật trạng thái Sắp khởi hành: start_date từ hôm nay đến 7 ngày tới
@@ -32,7 +32,7 @@ const updateStatusTour = async (transaction) => {
       SET status = 'upcoming'
       WHERE start_date > GETDATE()
         AND start_date <= DATEADD(DAY, 7, GETDATE())
-        AND status NOT IN ('inactive', 'reject');
+        AND status NOT IN ('inactive', 'reject','pending');
     `);
 
     // Cập nhật trạng thái Đã đủ chỗ: booked_slots >= max_guests
