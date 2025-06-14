@@ -184,19 +184,35 @@ const getOTP = async (req, res) => {
                 </div>`, // HTML body
                         };
 
+        // Send email first
+        await transporter.sendMail(mailOption);
+
         // Hash the OTP before storing it in the database
         const hashedOTP = await bcrypt.hash(otp, saltRounds);
         const hashedBuffer = Buffer.from(hashedOTP, "utf8");
 
-        await transporter.sendMail(mailOption);
-
-        await pool.request()
+        // Check if OTP record exists for this email
+        const existingOTP = await pool.request()
             .input("email", sql.VarChar, email)
-            .input("otp", sql.VarBinary, hashedBuffer)
-            .input("createdAt", sql.DateTime, new Date())
-            .input("expiredAt", sql.DateTime, new Date(Date.now() + 5 * 60 * 1000)) // OTP expires in 5 minutes
-            .query("INSERT INTO OTP (email, opt, createdAt, expiredAt) VALUES (@email, @otp, @createdAt, @expiredAt)");
+            .query("SELECT email FROM OTP WHERE email = @email");
 
+        if (existingOTP.recordset.length > 0) {
+            // Update existing OTP
+            await pool.request()
+                .input("email", sql.VarChar, email)
+                .input("otp", sql.VarBinary, hashedBuffer)
+                .input("createdAt", sql.DateTime, new Date())
+                .input("expiredAt", sql.DateTime, new Date(Date.now() + 5 * 60 * 1000))
+                .query("UPDATE OTP SET opt = @otp, createdAt = @createdAt, expiredAt = @expiredAt WHERE email = @email");
+        } else {
+            // Insert new OTP
+            await pool.request()
+                .input("email", sql.VarChar, email)
+                .input("otp", sql.VarBinary, hashedBuffer)
+                .input("createdAt", sql.DateTime, new Date())
+                .input("expiredAt", sql.DateTime, new Date(Date.now() + 5 * 60 * 1000))
+                .query("INSERT INTO OTP (email, opt, createdAt, expiredAt) VALUES (@email, @otp, @createdAt, @expiredAt)");
+        }
 
         console.log("Email sent successfully");
         res.status(200).json({ 
