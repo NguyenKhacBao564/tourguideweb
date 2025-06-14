@@ -15,6 +15,8 @@ function PromotionManager(props) {
     const [selectedPromotions, setSelectedPromotions] = useState([]);
     const [promotions, setPromotions] = useState([]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [promotionToBlock, setPromotionToBlock] = useState(null); // Promotion đang được khóa
+    const [isBatchBlockPromotion, setIsBatchBlockPromotion] = useState(false); // Biến để xác định có đang khóa nhiều khuyến mãi cùng lúc hay không
 
 
     const [filters, setFilters] = useState({
@@ -70,52 +72,50 @@ function PromotionManager(props) {
      // Định nghĩa các hành động (button) cho mỗi cột trong bảng
     const actions = [
         {
-        label: 'Tạm ngưng',
-        variant: 'danger',
-        onClick: async (id) => {
-            if (window.confirm('Bạn có chắc chắn muốn khóa khuyến mãi này không?')) {
-            try {
-                await blockPromotion(id);
-                setSelectedPromotions((prev) => prev.filter((promoId) => promoId !== id));
-                setPromotions((prev) => prev.filter((promo) => promo.promo_id !== id));
-                console.log(`Khuyến mãi với ID ${id} đã bị khóa.`);
-            } catch (err) {
-                console.error('Lỗi khi khóa khuyến mãi:', err);
-
-            }
-            }
-            console.log("Khóa khuyến mãi");
-        },
+            label: 'Tạm ngưng',
+            variant: 'danger',
+            onClick: async (id) => {
+                setPromotionToBlock(id); //Lưu id khuyến mãi cần khóa
+                setIsDialogOpen(true); // Mở dialog xác nhận khóa khuyến mãi
+                setIsBatchBlockPromotion(false); // Không phải khóa hàng loạt
+            },
         },
         {
-        label: 'Chi tiết',
-        variant: 'success',
-        onClick: (id, promoDetail) => {            
-            navigate("/businessemployee/promotion/addpromotion", {
-            state: { promotionDetail: promoDetail }
-            });
-        },
+            label: 'Chi tiết',
+            variant: 'success',
+            onClick: (id, promoDetail) => {            
+                navigate("/businessemployee/promotion/addpromotion", {
+                state: { promotionDetail: promoDetail }
+                });
+            },
         },
     ];
 
-    const handleBlockSelected = async (ids) => {
-       setIsDialogOpen(true);
+    const handleBlockSelected = () => {
+        setIsDialogOpen(true);
+        setIsBatchBlockPromotion(true); // Đánh dấu là khóa hàng loạt
     }
 
-
-    const checkConfirm = async (confirm) => {
-        if (confirm) {
-            // Xử lý xác nhận
-            console.log("Xác nhận đã được chọn");
-            await blockBatchPromotion(selectedPromotions);
-            setSelectedPromotions([]);
-            setIsDialogOpen(false);
-            // alert(`${selectedPromotions.length} khuyến mãi đã được khóa thành công!`);
-        } else {
-            // Xử lý hủy bỏ
-            console.log("Hủy bỏ đã được chọn");
-            setIsDialogOpen(false);
+    const checkConfirmBlock = async (isConfirmed) => {
+        if (isConfirmed) {
+            try{
+                if(isBatchBlockPromotion) {
+                    await blockBatchPromotion(selectedPromotions);
+                    setSelectedPromotions([]);
+                    setPromotions((prev) => prev.filter((promo) => !selectedPromotions.includes(promo.promo_id))); // Cập nhật danh sách khuyến mãi
+                } else if (promotionToBlock) {
+                    await blockPromotion(promotionToBlock);
+                    setSelectedPromotions((prev) => prev.filter((promoId) => promoId !== promotionToBlock));
+                    setPromotions((prev) => prev.filter((promo) => promo.promo_id !== promotionToBlock)); // Cập nhật danh sách khuyến mãi
+                }
+            } catch (error) {
+                console.error('Error blocking promotions:', error);
+                alert("Đã xảy ra lỗi khi tạm ngưng khuyến mãi!");
+            }     
         }
+        setIsDialogOpen(false); // Đóng dialog sau khi xác nhận
+        setPromotionToBlock(null); // Reset promotionToBlock
+        setIsBatchBlockPromotion(false); // Reset trạng thái khóa hàng loạt
     }
     console.log("Selected promotions:", selectedPromotions);
 
@@ -152,8 +152,8 @@ function PromotionManager(props) {
            </Container>
             {isDialogOpen && (
                 <ConfirmDialog
-                message="Bạn chắc muốn xóa những khuyến mãi này?"
-                checkConfirm={checkConfirm}
+                message="Bạn chắc muốn xóa khuyến mãi này?"
+                checkConfirm={checkConfirmBlock}
                 />
             )}
         </div>

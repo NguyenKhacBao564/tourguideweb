@@ -155,7 +155,7 @@ const TourManagementEmp = () => {
     </Container>
     {isDialogOpen && (
         <ConfirmDialog
-          message="Bạn có chắc muốn xóa những tour này?"
+          message="Bạn có chắc muốn xóa tour này?"
           checkConfirm={checkConfirmBlock}
         />
       )}
