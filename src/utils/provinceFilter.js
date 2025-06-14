@@ -6,7 +6,7 @@ const provinceFilter = [
       description: "Hà Nội là thủ đô của Việt Nam và là thành phố lớn thứ hai về dân số. Thành phố chủ yếu nằm ở bờ phải của sông Hồng.",
     },
     {
-      name: "TP HCM",
+      name: "TP.HCM",
       image: "https://images.pexels.com/photos/11691122/pexels-photo-11691122.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
       description: "TP HCM, trước đây gọi là Sài Gòn, là thành phố lớn nhất Việt Nam, nổi tiếng với cuộc sống đường phố sôi động và các di tích thuộc địa Pháp lịch sử.",
     },
