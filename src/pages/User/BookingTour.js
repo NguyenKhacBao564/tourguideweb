@@ -156,7 +156,7 @@ function BookingTour(props) {
         }
 
         // Nếu đã đăng nhập, chuyển đến trang booking info
-        navigate('/user/booking-info', { state: { tour: tour, tourId: tourId } });
+        navigate('/user/booking-info', { state: { tour: tour, tourId: tourId , image: images[0] } });
     };
     
 

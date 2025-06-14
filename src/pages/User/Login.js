@@ -7,7 +7,7 @@ import { AuthContext } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
 
 function Login() {
-  const { login } = useContext(AuthContext);
+  const { login,  loginWithGoogle } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -33,6 +33,12 @@ function Login() {
   const onChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
+
+  //Hàm xử lí đăng nhập google
+  const handleGoogleLogin = async (credentialResponse) => {
+      const user = await loginWithGoogle(credentialResponse.credential);
+      console.log("Google login response:", user);
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -76,6 +82,7 @@ function Login() {
       errorCode={errorCode}
       success={success}
       handleSubmit={handleSubmit}
+      handleGoogleLogin={handleGoogleLogin}
     >
       {/* Form inputs specific to login */}
       {authInputs.login.map(input => (

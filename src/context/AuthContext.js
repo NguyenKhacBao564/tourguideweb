@@ -1,13 +1,12 @@
 // src/context/AuthContext.js
 import React, { createContext, useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser, registerUser, logoutUser, getUserData } from "../api/authAPI";
+import { loginUser, googleAuth, registerUser, logoutUser, getUserData } from "../api/authAPI";
 
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  console.log("AuthProvider render")
   // const [token, setToken] = useState();
 
   const [user, setUser] = useState(null);
@@ -124,6 +123,9 @@ export const AuthProvider = ({ children }) => {
     return authenticateUser(registerUser, fullname, email, password, phone, birthday );
   };
 
+  const loginWithGoogle = async (credentialResponse) => {
+      return authenticateUser(googleAuth, credentialResponse);
+  };
 
   const logout = async () => {
     setLoading(true);
@@ -147,6 +149,7 @@ export const AuthProvider = ({ children }) => {
     user,
     loading,
     login,
+    loginWithGoogle,
     regist,
     logout,
     refreshUserData
