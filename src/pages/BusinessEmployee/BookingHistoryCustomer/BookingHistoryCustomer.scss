@@ -1,4 +1,4 @@
-$title-color: #2563eb;
+$title-color: #123288;
 
 .booking-history-customer {
   background-color: white;
@@ -40,14 +40,14 @@ $title-color: #2563eb;
       }
     }
 
-    .tour-info-card {
+    .tour_info-card {
       background-color: #f9fafb;
       border-radius: 0.5rem;
       padding: 1.5rem;
       margin-bottom: 1.5rem;
 
-      .tour-title {
-        font-size: 1.25rem;
+      .tour_title {
+        font-size: 1.5rem;
         font-weight: bold;
         color: $title-color;
         text-align: center;
@@ -63,7 +63,7 @@ $title-color: #2563eb;
           grid-template-columns: repeat(3, 1fr);
         }
 
-        .info-item {
+        .info_item {
           display: flex;
           align-items: flex-start;
           gap: 0.75rem;
@@ -86,6 +86,7 @@ $title-color: #2563eb;
           .info-content {
             .info-label {
               font-weight: 600;
+              font-size: 1.5rem;
               color: #374151;
               margin-bottom: 0.25rem;
             }

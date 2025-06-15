@@ -1,54 +1,62 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import './BookingHistoryCustomer.scss'; // Import your styles here
 import { IoIosArrowRoundBack } from "react-icons/io";
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
+import { FaLocationDot } from "react-icons/fa6";
+import { IoIosTime } from "react-icons/io";
+import { FaRegCalendarAlt } from "react-icons/fa";
+import { MdEventSeat } from "react-icons/md";
+import { FaCar } from "react-icons/fa";
+import { formatDate } from '../../../feature/formatDate';
+import { getTourById } from '../../../api/tourAPI';
+import { getHistoryBookingById } from '../../../api/historyBookingAPI';
 
-interface BookingHistoryCustomerProps {
-  customerName?: string;
-  bookingDate?: string;
-  bookingCode?: string;
-  destination?: string;
-  duration?: string;
-  totalGuests?: number;
-  transport?: string;
-  departureDate?: string;
-  returnDate?: string;
-  adultCount?: number;
-  childCount?: number;
-  infantCount?: number;
-  adultPrice?: number;
-  childPrice?: number;
-  infantPrice?: number;
-  voucherDiscount?: number;
-  totalAmount?: number;
-}
 
-function BookingHistoryCustomer(props: BookingHistoryCustomerProps) {
-  const {
-    customerName = "Phạm Phúc Duy",
-    bookingDate = "17/03/2022",
-    bookingCode = "#XYZABC",
-    destination = "Đà Lạt",
-    duration = "4 ngày 3 đêm",
-    totalGuests = 50,
-    transport = "Xe khách",
-    departureDate = "20/03/2025",
-    returnDate = "24/03/2025",
-    adultCount = 1,
-    childCount = 2,
-    infantCount = 3,
-    adultPrice = 3990000,
-    childPrice = 3990000,
-    infantPrice = 3990000,
-    voucherDiscount = 1000000,
-    totalAmount = 10970000
-  } = props;
 
-    const navigate = useNavigate();
+function BookingHistoryCustomer() {
 
-  
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const formatPrice = (price: number) => {
+  const bookingData = location.state?.booking || {};
+  const customerData = location.state?.customer || {};
+
+  console.log("Booking Data:", bookingData);
+  console.log("Customer Data:", customerData);
+
+  const [loading, setLoading] = useState(true);
+  const [tour, setTour] = useState({});
+  const [bookingDetail, setBookingDetail] = useState({});
+
+
+
+  console.log("Booking Detail:", bookingDetail);
+
+  //Lấy dữ liệu khi component được mount
+  useEffect(() => {
+    // Gọi backend để lấy thông tin chi tiết tour và booking theo id 
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const dataTour = await getTourById(bookingData.tour_id);
+        setTour(dataTour);
+        const dataBooking = await getHistoryBookingById(bookingData.booking_id);
+        setBookingDetail(dataBooking);
+      } catch (error) {
+        console.error("Error fetching tour data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (bookingData.tour_id) {
+      fetchData();
+    }
+  }, [bookingData.tour_id]);
+
+  // console.log("price:", bookingDetail.adultPrice.quantity);
+
+  const formatPrice = (price) => {
     return price.toLocaleString('vi-VN') + ' đ';
   };
 
@@ -62,80 +70,80 @@ function BookingHistoryCustomer(props: BookingHistoryCustomerProps) {
 
       <div className="content">
         {/* Title */}
-        <h1 className="title">Tour Đà Lạt</h1>
+        <h1 className="title">{bookingData.tour_name}</h1>
 
         {/* Customer Info */}
         <div className="customer-info">
           <div className="info-row">
             <span className="label">Khách hàng: </span>
-            <span>{customerName}</span>
+            <span>{customerData.fullname}</span>
           </div>
           <div className="info-row">
             <span className="label">Ngày đặt tour: </span>
-            <span>{bookingDate}</span>
+            <span>{formatDate(bookingData.booking_date)}</span>
           </div>
           <div className="info-row">
             <span className="label">Mã booking: </span>
-            <span>{bookingCode}</span>
+            <span>{bookingData.booking_id}</span>
           </div>
         </div>
 
         {/* Tour Information Card */}
-        <div className="tour-info-card">
-          <h2 className="tour-title">THÔNG TIN TOUR</h2>
+        <div className="tour_info-card">
+          <h2 className="tour_title">THÔNG TIN TOUR</h2>
           
           <div className="tour-grid">
             {/* Location */}
-            <div className="info-item">
+            <div className="info_item">
               {/* <MapPin className="icon green" /> */}
               <div className="info-content">
-                <h3 className="info-label">Địa Điểm</h3>
-                <p className="info-value">{destination}</p>
+                <h3 className="info-label"><FaLocationDot/> Địa Điểm</h3>
+                <p className="info-value">{tour.destination}</p>
               </div>
             </div>
 
             {/* Duration */}
-            <div className="info-item">
+            <div className="info_item">
               {/* <Clock className="icon blue" /> */}
               <div className="info-content">
-                <h3 className="info-label">Thời Lượng</h3>
-                <p className="info-value">{duration}</p>
+                <h3 className="info-label"><IoIosTime/> Thời Lượng</h3>
+                <p className="info-value">{tour.duration} ngày {tour.duration -1 } đêm</p>
               </div>
             </div>
 
             {/* Total Guests */}
-            <div className="info-item">
+            <div className="info_item">
               {/* <Users className="icon blue" /> */}
               <div className="info-content">
-                <h3 className="info-label">Tổng Số Ghế</h3>
-                <p className="info-value">{totalGuests}</p>
+                <h3 className="info-label"><MdEventSeat/> Tổng Số Ghế</h3>
+                <p className="info-value">{tour.max_guests}</p>
               </div>
             </div>
 
             {/* Transport */}
-            <div className="info-item">
+            <div className="info_item">
               {/* <Car className="icon green" /> */}
               <div className="info-content">
-                <h3 className="info-label">Phương Tiện</h3>
-                <p className="info-value">{transport}</p>
+                <h3 className="info-label"><FaCar/> Phương Tiện</h3>
+                <p className="info-value">{tour.transport}</p>
               </div>
             </div>
 
             {/* Departure Date */}
-            <div className="info-item">
+            <div className="info_item">
               {/* <Calendar className="icon blue" /> */}
               <div className="info-content">
-                <h3 className="info-label">Ngày Khởi Hành</h3>
-                <p className="info-value">{departureDate}</p>
+                <h3 className="info-label"><FaRegCalendarAlt/> Ngày Khởi Hành</h3>
+                <p className="info-value">{formatDate(tour.start_date)}</p>
               </div>
             </div>
 
             {/* Return Date */}
-            <div className="info-item">
+            <div className="info_item">
               {/* <CalendarCheck className="icon green" /> */}
               <div className="info-content">
-                <h3 className="info-label">Ngày Về</h3>
-                <p className="info-value">{returnDate}</p>
+                <h3 className="info-label"><FaRegCalendarAlt/> Ngày Về</h3>
+                <p className="info-value">{formatDate(tour.end_date)}</p>
               </div>
             </div>
           </div>
@@ -144,42 +152,44 @@ function BookingHistoryCustomer(props: BookingHistoryCustomerProps) {
         {/* Pricing Section */}
         <div className="pricing-section">
           {/* Left side - Guest counts and prices */}
+          {loading ? <p>Loading...</p> :
           <div className="pricing-left">
             <div className="pricing-row">
               <div className="pricing-label">
                 <span className="label-text">Người lớn</span>
-                <span className="quantity">x {adultCount} =</span>
+                <span className="quantity">x {bookingDetail.adultPrice.quantity} =</span>
               </div>
-              <span className="price">{formatPrice(adultPrice)}</span>
+              <span className="price">{formatPrice(bookingDetail.adultPrice.total_price)}</span>
             </div>
 
             <div className="pricing-row">
               <div className="pricing-label">
                 <span className="label-text">Trẻ em</span>
-                <span className="quantity">x {childCount} =</span>
+                <span className="quantity">x {bookingDetail.childPrice.quantity} =</span>
               </div>
-              <span className="price">{formatPrice(childPrice)}</span>
+              <span className="price">{formatPrice(bookingDetail.childPrice.total_price)}</span>
             </div>
 
             <div className="pricing-row">
               <div className="pricing-label">
                 <span className="label-text">Em bé</span>
-                <span className="quantity">x {infantCount} =</span>
+                <span className="quantity">x {bookingDetail.infantPrice.quantity} =</span>
               </div>
-              <span className="price">{formatPrice(infantPrice)}</span>
+              <span className="price">{formatPrice(bookingDetail.infantPrice.total_price)}</span>
             </div>
 
             <div className="pricing-row total-border">
               <span className="label-text">Voucher</span>
-              <span className="price">-{formatPrice(voucherDiscount)}</span>
+              <span className="price">-{formatPrice(bookingDetail.voucher)}</span>
             </div>
           </div>
-
+          }
+  
           {/* Right side - Total */}
           <div className="pricing-right">
             <div className="total-container">
               <h3 className="total-label">Thành tiền:</h3>
-              <p className="total-amount">{formatPrice(totalAmount)}</p>
+              <p className="total-amount">{formatPrice(bookingData.total_price)}</p>
             </div>
           </div>
         </div>

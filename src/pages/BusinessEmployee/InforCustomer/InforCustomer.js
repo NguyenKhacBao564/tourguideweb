@@ -43,6 +43,8 @@ function InforCustomer() {
             [name]: value
         }));
     };
+    console.log("customer:", customer);
+    console.log("Tour History:", tourHistory);
 
     useEffect(() => {
         const fetchCustomerData = async () => {
@@ -173,7 +175,7 @@ function InforCustomer() {
                             {tourHistory.length > 0 ? (
                                 tourHistory.map((booking) => (
                                     <Row key={booking.booking_id} xs={12} className="history_card mb-3">
-                                        <Card>
+                                        <Card className="history-card">
                                             <Card.Body>
                                                 <Card.Title><strong>{booking.tour_name}</strong></Card.Title>
                                                 <div className="d-flex justify-content-between">
@@ -183,7 +185,14 @@ function InforCustomer() {
                                                     </Card.Text>
                                                     <Button
                                                         variant="link"
-                                                        onClick={() => navigate(`/businessemployee/customer/inforcustomer/history`)}
+                                                        onClick={() => navigate(`/businessemployee/customer/inforcustomer/history?bookingId=${booking.booking_id}`,
+                                                            {
+                                                                state: {
+                                                                    booking: booking,
+                                                                    customer: customer
+                                                                }
+                                                            }
+                                                        )}
                                                     >
                                                         Chi tiết
                                                     </Button>
@@ -195,6 +204,7 @@ function InforCustomer() {
                             ) : (
                                 <div>Chưa có lịch sử đặt tour.</div>
                             )}
+                            
                         </div>
                     </Col>
                 </Row>

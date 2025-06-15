@@ -88,6 +88,9 @@
             overflow-y: auto; // Thêm thanh cuộn dọc khi nội dung vượt quá
             overflow-x: hidden; // Ẩn thanh cuộn ngang nếu có
             padding-right: 0.5rem; // Thêm padding để tránh che mất nội dung
+            .history-card{
+                border-bottom: 1px solid #e0e0e0;
+            }
         }
     }
 }

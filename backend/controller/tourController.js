@@ -186,8 +186,6 @@ const getTourByProvince = async (req, res) => {
   const province = req.params.province;
   const limit = parseInt(req.query.limit) || 10; // Giới hạn số lượng tour trả về, mặc định là 10
   const cusId = req.query.cusId; // Lấy cusId từ query params nếu có
-  // console.log("Get tours by province with param    efffefffs:", req.query);
-  // console.log("Province:", province, "Limit:", limit);
 
   try {
     const pool = await getPool();

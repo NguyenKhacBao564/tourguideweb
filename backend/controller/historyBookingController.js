@@ -16,6 +16,7 @@ const getHistoryBooking = async (req, res) => {
                 b.cus_id, 
                 b.booking_date, 
                 b.status, 
+                b.total_price,
                 t.name AS tour_name,
                 t.start_date,
                 SUM(bd.quantity) AS number_of_guests
@@ -26,11 +27,13 @@ const getHistoryBooking = async (req, res) => {
             GROUP BY 
                 b.booking_id, 
                 b.tour_id, 
-                b.cus_id, 
+                b.cus_id,
+                b.total_price, 
                 b.booking_date, 
                 b.status, 
                 t.name,
                 t.start_date
+
         `;
         
         const request = transaction.request();
@@ -49,7 +52,78 @@ const getHistoryBooking = async (req, res) => {
     }
 }
 
+const getHistoryBookingById = async (req, res) => {
+    try {
+        const booking_id = req.params.id; // Lấy booking_id từ params
+        console.log("Booking ID:", booking_id);
+        const pool = await getPool();
+        const result = await pool.request()
+            .input("booking_id", sql.NVarChar, booking_id)
+            .query(`
+                SELECT * FROM Booking_Detail pd
+                WHERE booking_id = @booking_id
+            `);
+        if (result.recordset.length === 0) {
+            return res.status(404).json({ message: "Không tìm thấy thông tin booking" });
+        }
+
+        const promotion = await pool.request()
+            .input("booking_id", sql.NVarChar, booking_id)
+            .query(`
+               SELECT pb.promo_id,
+                      p.discount_percentage
+                FROM Booking_Promotion pb
+                JOIN Booking b ON b.booking_id = pb.booking_id
+                JOIN Promotion p ON pb.promo_id = p.promo_id
+                WHERE b.booking_id = @booking_id
+            `);
+        
+        var realTotalPrice = 0;
+        //% giảm giá
+        var discount_percentage = 0;
+        if (promotion.recordset.length > 0) {
+            discount_percentage = promotion.recordset[0].discount_percentage;
+        }
+
+        //Tính tổng giá tiền thực tế:
+        result.recordset.forEach((row) => {
+            realTotalPrice += row.price_per_person * row.quantity;
+        });
+
+        // Tính discount dựa trên % giảm giá và tổng giá tiền thực tế
+        const discount = promotion.recordset.length > 0 ? (discount_percentage/100) * realTotalPrice : 0;
+         
+        //Nhóm thông tin booking theo age_group
+        const bookingDetail = {
+            voucher: discount, //Thông tin voucher đã giảm
+            adultPrice: {
+                quantity: 0,
+                total_price: 0
+            },
+            childPrice: {
+                quantity: 0,
+                total_price: 0
+            },
+            infantPrice: {
+                quantity: 0,
+                total_price: 0
+            }
+        }
+        result.recordset.forEach((row) => {
+            bookingDetail[row.age_group] = {
+                quantity: row.quantity,
+                total_price: row.price_per_person * row.quantity
+            };
+        });
+
+        return res.status(200).json(bookingDetail);
+    } catch (error) {
+        console.error("Error fetching booking details:", error.message);
+        return res.status(500).json({ message: "Lỗi server", error: error.message });
+    }
+}
 
 module.exports = {
-    getHistoryBooking
+    getHistoryBooking,
+    getHistoryBookingById
 };

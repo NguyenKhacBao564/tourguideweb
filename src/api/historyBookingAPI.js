@@ -12,3 +12,14 @@ export const getHistoryBooking = async (customer_id) => {
         throw error;
     }
 };
+
+
+export const getHistoryBookingById = async (id) => {
+    try {
+        const response = await axios.get(`${API_URL}/historyBooking/historyDetail/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching booking history by ID:", error);
+        throw error;
+    }
+};
