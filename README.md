@@ -51,8 +51,6 @@ DB_SERVER=your_sql_server_address  # Ví dụ: localhost, 127.0.0.1, hoặc tên
 DB_DATABASE=TourBookingDB         # Tên cơ sở dữ liệu bạn đã tạo (ví dụ: TourBookingDB)
 DB_USER=your_db_username          # Tên người dùng SQL Server của bạn
 DB_PASSWORD=your_db_password      # Mật khẩu người dùng SQL Server của bạn
-# Các biến môi trường khác (nếu có)
-# Ví dụ: ELASTICSEARCH_CLOUD_ID, ELASTICSEARCH_USERNAME, ELASTICSEARCH_PASSWORD
 
 Lưu ý: Thay thế your_sql_server_address, TourBookingDB, your_db_username, và your_db_password bằng thông tin cấu hình SQL Server của bạn.
 
