@@ -1,28 +1,6 @@
-Để chạy dự án
-B1:Trước tiên npm install ở folder tổng của dự án.
-B2:Tiếp theo cd backend và npm install tiếp tục
-B3:Copy sql_creatTable.sql ở foler tổng của dự án và chạy ở giao diện MS SQL.
-B4:Copy sql_dataEx.sql ở foler tổng của dự án và chạy ở giao diện MS SQL.
-Cấu hình file backend/.env lại để có thể kết nối với Database MS SQL
 
-Chạy web: npm run dev ở folder tổng của dự án
 
-1: Để test giao diện khách hàng hãy đăng nhập bằng tài khoản: nguyenvanan01@gmail.com và mật khẩu 111111B@
-    Để test chức năng thanh toán hãy chọn vnpay và chọn thanh toán bằng thẻ nội địa.
-
-    Ngân hàng: NCB
-    Số thẻ: 9704198526191432198
-    Tên chủ phát hành: NGUYEN VAN A
-    Ngày phát hành: 07/15
-    Mật khẩu OTP: 123456
-
-2: Để test giao diện admin hãy đăng nhập bằng tài khoản: nguyenvana@example.com và mật khẩu 111111B@
-
-3: Để test giao diện admin hãy đăng nhập bằng tài khoản: thi.b@example.com và mật khẩu 111111B@
-
-4: Để test giao diện admin hãy đăng nhập bằng tài khoản: van.c@example.com và mật khẩu 111111B@
-
-# Tên dự án (Ví dụ: Ứng dụng Quản lý Tour Du lịch)
+# Tên dự án: Ứng dụng Quản lý Tour Du lịch
 
 Đây là hướng dẫn thiết lập và chạy dự án này.
 
@@ -73,8 +51,6 @@ DB_SERVER=your_sql_server_address  # Ví dụ: localhost, 127.0.0.1, hoặc tên
 DB_DATABASE=TourBookingDB         # Tên cơ sở dữ liệu bạn đã tạo (ví dụ: TourBookingDB)
 DB_USER=your_db_username          # Tên người dùng SQL Server của bạn
 DB_PASSWORD=your_db_password      # Mật khẩu người dùng SQL Server của bạn
-# Các biến môi trường khác (nếu có)
-# Ví dụ: ELASTICSEARCH_CLOUD_ID, ELASTICSEARCH_USERNAME, ELASTICSEARCH_PASSWORD
 
 Lưu ý: Thay thế your_sql_server_address, TourBookingDB, your_db_username, và your_db_password bằng thông tin cấu hình SQL Server của bạn.
 
