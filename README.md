@@ -1,6 +1,6 @@
 
 
-# Tên dự án (Ví dụ: Ứng dụng Quản lý Tour Du lịch)
+# Tên dự án: Ứng dụng Quản lý Tour Du lịch
 
 Đây là hướng dẫn thiết lập và chạy dự án này.
 
