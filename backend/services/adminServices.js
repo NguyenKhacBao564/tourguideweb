@@ -95,7 +95,6 @@ const getBranchDetail = async (branchId, year = new Date().getFullYear()) => {
       FROM Branch 
       WHERE branch_id = @branchId
     `;
-    
     const branchResult = await pool
       .request()
       .input('branchId', branchId)
