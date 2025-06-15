@@ -29,7 +29,7 @@ function PromotionFilterEmployee({
 
     const handleBlockSelected = () => {
         if(onBlockSelected && selectedItems.length > 0) {
-            onBlockSelected(selectedItems);
+            onBlockSelected();
         }
     }
 
