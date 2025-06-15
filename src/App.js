@@ -46,6 +46,7 @@ import InforEmployee from "./pages/BusinessEmployee/InforEmployee/InforEmployee"
 import ForgotPassword from "./pages/User/ForgotPassword";
 import VerifyOTP from "./pages/User/VerifyOTP";
 import ResetPasswordPage from "./pages/User/ResetPassword/ResetPasswordPage";
+import BookingHistoryCustomer from "./pages/BusinessEmployee/BookingHistoryCustomer/BookingHistoryCustomer";
 
 
 function App() {
@@ -90,6 +91,7 @@ function App() {
               <Route path="customer" element={ <CustomerProvider> <CustomerManagement /> </CustomerProvider> } />
               <Route path="inforEmployee" element={<InforEmployee />} />
               <Route path="customer/inforcustomer" element={<CustomerProvider><InforCustomer /></CustomerProvider>} />
+              <Route path="customer/inforcustomer/history" element={<BookingHistoryCustomer />} />
                 {/* Route TourManagement*/}
               <Route path="managetour" element={<TourProvider> <TourManagementEmp /> </TourProvider> } />
               <Route path="managetour/addtour" element={ <TourProvider> <AddNewTour /> </TourProvider> } />

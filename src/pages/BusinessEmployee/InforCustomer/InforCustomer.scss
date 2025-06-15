@@ -47,13 +47,15 @@
             border-bottom: 1px solid #F49B33;
            
         }
-        .avatar-image {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 1rem;
+        .avatar-container{
+            .avatar-image {
+                width: 100px;
+                height: 100px;
+                object-fit: cover;
+                margin: 10px 0;
+            }
         }
+        
 
         .update-btn {
             background-color: #26ADA6;

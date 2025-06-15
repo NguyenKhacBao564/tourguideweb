@@ -10,6 +10,8 @@ import { getHistoryBooking } from '../../../api/historyBookingAPI';
 import { CustomerContext } from '../../../context/CustomerContext';
 import { updateCustomer, getCustomerById } from '../../../api/customerAccountAPI'; // Giả định API
 import {formatDate} from '../../../feature/formatDate'; // Giả định hàm định dạng ngày tháng
+import ConfirmDialog from "../../../components/Common/ConfirmDialog/ConfirmDialog";
+
 
 function InforCustomer() {
     const navigate = useNavigate();
@@ -96,7 +98,7 @@ function InforCustomer() {
             try {
                 await blockCustomer(customer.cus_id);
                 alert('Khóa tài khoản thành công');
-                navigate('/businessemployee/customers'); // Chuyển hướng về danh sách khách hàng
+                goBack(); // Chuyển hướng về danh sách khách hàng
             } catch (err) {
                 alert('Khóa tài khoản thất bại: ' + err.message);
             }
@@ -120,11 +122,18 @@ function InforCustomer() {
                             <h2><IoChevronBackOutline onClick={goBack} size={30}/>Thông tin khách hàng</h2>
                         </Row>
                         <Row>
-                            <Image 
-                                src={(customer.pi_url ? `${API_URL}/${customer.pi_url}` : `default-avatar.jpg`)}
-                                alt="avatar" 
-                                className="avatar-image"
-                            />
+                            <div className="avatar-container">    
+                                <Image 
+                                    src={(customer.pi_url ? `${API_URL}/${customer.pi_url}` : `/default-avatar.jpg`)}
+                                    alt="avatar" 
+                                    className="avatar-image"
+                                    fluid
+                                    roundedCircle
+                                />
+                            </div>
+                        </Row>
+                        <Row>
+                           
                             <Form className="user-form">
                                 <Form.Group className="mb-4" controlId="fullName">
                                     <Form.Label>Họ và tên</Form.Label>
@@ -172,12 +181,12 @@ function InforCustomer() {
                                                         <strong>Ngày đặt:</strong> {formatDate(booking.booking_date)}<br />
                                                         <strong>Số khách:</strong> {booking.number_of_guests}<br />
                                                     </Card.Text>
-                                                    {/* <Button
+                                                    <Button
                                                         variant="link"
-                                                        onClick={() => navigate(`/businessemployee/customer/inforcustomer/history/${booking.booking_id}`)}
+                                                        onClick={() => navigate(`/businessemployee/customer/inforcustomer/history`)}
                                                     >
                                                         Chi tiết
-                                                    </Button> */}
+                                                    </Button>
                                                 </div>
                                             </Card.Body>
                                         </Card>
