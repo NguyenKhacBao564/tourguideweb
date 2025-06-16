@@ -19,7 +19,7 @@ const createSupportRequest = async (req, res) => {
         const { firstName, lastName, email, phone, subject, message } = req.body;
 
         // Kiểm tra dữ liệu đầu vào
-        if (!firstName || !lastName || !email || !phone || !subject || !message) {
+        if (!firstName || !lastName || !email || !subject || !message) {
             return res.status(400).json({
                 code: ERROR_MESSAGES.SUPPORT.REQUEST_FAILED.code,
                 message: "Vui lòng điền đầy đủ thông tin"
