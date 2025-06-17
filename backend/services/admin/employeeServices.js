@@ -41,7 +41,7 @@ const getEmployeesByPageAndStatus = async (page, pageSize) => {
     // Lấy tổng số nhân viên
     const countResult = await pool.request().query(`
       SELECT COUNT(*) as total FROM Employee
-    `);
+      `);
   
     return {
       employees: result.recordset,

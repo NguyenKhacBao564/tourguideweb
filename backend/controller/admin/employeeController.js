@@ -2,7 +2,7 @@ const employeeServices = require("../../services/admin/employeeServices");
 
 const getEmployeesByPageAndStatus = async (req, res) => {
   try {
-    const { page, pageSize } = req.query;
+  const { page, pageSize } = req.query;
     const data = await employeeServices.getEmployeesByPageAndStatus(Number(page), Number(pageSize));
     res.status(200).json(data);
   } catch (error) {
@@ -23,7 +23,7 @@ const getEmployeeById = async (req, res) => {
 
 const lockEmployeesByIds = async (req, res) => {
   try {
-    const { ids } = req.body;
+  const { ids } = req.body;
     const count = await employeeServices.lockEmployeesByIds(ids);
     res.status(200).json({ message: `Đã khóa ${count} nhân viên thành công` });
   } catch (error) {
@@ -34,7 +34,7 @@ const lockEmployeesByIds = async (req, res) => {
 
 const unlockEmployeesByIds = async (req, res) => {
   try {
-    const { ids } = req.body;
+  const { ids } = req.body;
     const count = await employeeServices.unlockEmployeesByIds(ids);
     res.status(200).json({ message: `Đã mở khoá ${count} nhân viên thành công` });
   } catch (error) {
