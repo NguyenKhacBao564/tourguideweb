@@ -4,6 +4,7 @@ const { v4: uuidv4 } = require("uuid");
 //Hàm cập nhật trạng thái khuyến mãi trước khi lấy dữ liệu
 const updatePromotionStatus = async (transaction) => {
     try {
+       
         //Cập nhật tour đã lên lịch (chưa diễn ra)
         await transaction.request().query(`
             UPDATE Promotion SET status = 'active' 
@@ -25,7 +26,20 @@ const updatePromotionStatus = async (transaction) => {
     }
 }
 
+const checkPromotionCode = async (code) => {
+    try {
+        const pool = await getPool();
+        const result = await pool.request()
+            .input("code", sql.NVarChar, code)
+            .query("SELECT * FROM Promotion WHERE code = @code");
+        return result.recordset[0] || null;
+    } catch (error) {
+        console.error("Lỗi khi kiểm tra mã khuyến mãi:", error.message);
+        throw new Error("Lỗi khi kiểm tra mã khuyến mãi");
+    }
+}
 
+// Hàm lấy danh sách khuyến mãi với bộ lọc
 const getPromotion = async (req, res) => {
 
     let transaction;
@@ -82,13 +96,18 @@ const getPromotion = async (req, res) => {
 }
 
 const createPromotion = async (req, res) => {
-    
     try {
         const {promo_id, promo_name, code, discount_percentage, start_date, end_date, max_use } = req.body;
         // Kiểm tra dữ liệu đầu vào
         if (!promo_id || !promo_name || !code || !discount_percentage || !start_date || !end_date || !max_use) {
             return res.status(400).json({ error: "Tất cả các trường là bắt buộc" });
         }
+
+        const existingPromotion = await checkPromotionCode(code);
+        if (existingPromotion) {
+            return res.status(400).json({ message: "Mã khuyến mãi đã tồn tại" });
+        }
+
         if (discount_percentage <= 0 || discount_percentage > 100) {
             return res.status(400).json({ error: "Phần trăm giảm giá phải từ 0 đến 100" });
         }
@@ -176,6 +195,13 @@ const updatePromotion = async (req, res) => {
     try {
         const { promotionId } = req.params;
         const {  promo_name, code, discount_percentage, start_date, end_date, max_use } = req.body;
+        
+        //Kiểm tra code khuyến mãi đã tồn tại hay chưa
+        const existingPromotion = await checkPromotionCode(code);
+        if (existingPromotion) {
+            return res.status(400).json({ message: "Mã khuyến mãi đã tồn tại" });
+        }
+
         console.log("Promotion ID: ", promotionId);
         console.log("Promotion data: ", req.body);
         const pool = await getPool();

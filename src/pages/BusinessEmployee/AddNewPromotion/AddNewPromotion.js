@@ -13,14 +13,17 @@ function AddNewPromotion(props) {
     const location = useLocation();
     const navigate = useNavigate();
 
+    // Kiểm tra xem có dữ liệu khuyến mãi từ trang trước không
     const promotionDetail = location.state?.promotionDetail || null;
-    const isEditMode = !!promotionDetail;
+    const isEditMode = !!promotionDetail; // Nếu có dữ liệu khuyến mãi thì là chế độ chỉnh sửa, ngược lại là thêm mới
 
     const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
     const [showSuccess, setShowSuccess] = useState(false);
+    const [showError, setShowError] = useState(false);
 
-
-    const [values, setValues] = useState({
+    // Giá trị mặc định của form
+    const initialValues = {
         promo_id: '',
         promo_name: '',
         code: '',
@@ -28,19 +31,22 @@ function AddNewPromotion(props) {
         start_date: '',
         end_date: '',
         max_use: 0,
-    })
+    };
+
+    const [values, setValues] = useState(initialValues);
 
     // Tự động ẩn thông báo sau 1 giây
     useEffect(() => {
-        if (showSuccess) {
+        if (showSuccess || showError) {
             const timer = setTimeout(() => {
                 setShowSuccess(false);
+                setShowError(false);
             }, 1000);
             return () => clearTimeout(timer);
         }
-    }, [showSuccess]);
+    }, [showSuccess, showError]);
 
-
+    // Nếu là chế độ chỉnh sửa, thì set giá trị ban đầu từ promotionDetail
     useEffect(() => {
         if (!isEditMode || !promotionDetail) return;
         if (isEditMode) {
@@ -55,6 +61,11 @@ function AddNewPromotion(props) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (values.end_date < values.start_date) {
+            setShowError(true);
+            setErrorMessage('Ngày kết thúc không được trước ngày bắt đầu');
+            return;
+        }
         const promotionData = {
             ...values,
             promo_id: isEditMode? promotionDetail.promo_id : generateId(),
@@ -71,10 +82,13 @@ function AddNewPromotion(props) {
                 await createPromotion(promotionData);
                 setShowSuccess(true);
                 setSuccessMessage('Thêm khuyến mãi thành công');
+                // Reset form về giá trị ban đầu
+                setValues(initialValues);
                 return;
             }
-        }catch{
-            alert("Thêm khuyến mãi thất bại");
+        }catch (error) {
+            setShowError(true);
+            setErrorMessage(error.response.data.message);
         }
 
 
@@ -99,6 +113,7 @@ function AddNewPromotion(props) {
                 width: '600px' 
             }}>
             {showSuccess && <Alert variant="success" className="text-center">{successMessage}</Alert>}
+            {showError && <Alert variant="danger" className="text-center">{errorMessage}</Alert>}
             </div>
             <div className="go-back d-flex align-items-center pb-3" >
                 <IoIosArrowBack size={38} onClick={goBack} style={{cursor: 'pointer'}} />
