@@ -100,5 +100,18 @@ debug.log
 .idea/
 *.iml
 
+docker-compose.yml
+.dockerignore
+DOCKER-GUIDE.md
+Makefile
+Dockerfile
+docker.env
+backend/Dockerfile
+backend/.dockerignore
+backend/docker-compose.yml
+backend/DOCKER-GUIDE.md
+backend/Makefile
+backend/Dockerfile
+backend/.dockerignore
 
 

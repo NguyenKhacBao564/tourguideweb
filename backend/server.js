@@ -56,6 +56,16 @@ app.use("/reset-password", resetPasswordRoutes); // Route cho reset password
 app.use("/api/customer", customerSupportRoutes); // Thêm route cho support
 app.use("/api/consultant", consultantSupportRoutes);
 app.use("/reviews", reviewRoutes);
+
+// Health check endpoint for Docker
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ 
+    status: "OK", 
+    timestamp: new Date().toISOString(),
+    service: "tour-booking-backend"
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`🚀 Server chạy tại http://localhost:${PORT}`);
 });
