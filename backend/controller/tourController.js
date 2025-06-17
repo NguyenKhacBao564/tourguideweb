@@ -199,7 +199,7 @@ const getTourByProvince = async (req, res) => {
           OFFSET 0 ROWS
           FETCH NEXT @limit ROWS ONLY
         )
-        SELECT ts.tour_id, ts.name, ts.destination, ts.start_date, ts.max_guests, ts.duration, tp.price,
+        SELECT ts.tour_id, ts.name, ts.destination, ts.start_date, ts.max_guests, ts.duration, ts.transport, tp.price,
         (SELECT TOP 1 image_url 
           FROM Tour_image ti 
           WHERE ti.tour_id = ts.tour_id 
@@ -235,7 +235,7 @@ const getTourByProvince = async (req, res) => {
           OFFSET 0 ROWS
           FETCH NEXT @limit ROWS ONLY
         )
-        SELECT ts.tour_id, ts.name, ts.destination, ts.start_date, ts.max_guests, ts.duration, tp.price,
+        SELECT ts.tour_id, ts.name, ts.destination, ts.start_date, ts.max_guests, ts.duration, ts.transport, tp.price,
         (SELECT TOP 1 image_url 
           FROM Tour_image ti 
           WHERE ti.tour_id = ts.tour_id 
@@ -272,7 +272,7 @@ const getTourByProvince = async (req, res) => {
           duration: row.duration,
           price: row.price, //price không có 's'
           cover_image: row.cover_image || 'uploads\\default.jpg',
-
+          transport: row.transport || 'Không xác định',
           booked_slots: row.booked_slots, // Thêm số chỗ đã đặt
           ...(cusId && {
               is_favorite: row.is_favorite === 1, // Chỉ thêm nếu có cusId
@@ -300,7 +300,7 @@ const getTourOutstanding = async (req, res) => {
       query = `
           WITH TOUR_SUBSET AS (
           SELECT 
-            t.tour_id, t.name, t.destination, t.start_date, t.max_guests, t.duration, tp.price
+            t.tour_id, t.name, t.destination, t.start_date, t.max_guests, t.duration, t.transport, tp.price
           FROM Tour AS t
           LEFT JOIN Tour_Price AS tp 
             ON t.tour_id = tp.tour_id AND tp.age_group = 'adultPrice'
@@ -310,7 +310,7 @@ const getTourOutstanding = async (req, res) => {
           FETCH NEXT 10 ROWS ONLY
         )
         SELECT 
-          ts.tour_id, ts.name, ts.destination, ts.start_date, ts.max_guests, ts.duration, ts.price,
+          ts.tour_id, ts.name, ts.destination, ts.start_date, ts.max_guests, ts.duration, ts.transport, ts.price,
           (SELECT TOP 1 image_url 
             FROM Tour_image ti 
             WHERE ti.tour_id = ts.tour_id 
@@ -341,7 +341,7 @@ const getTourOutstanding = async (req, res) => {
         query = `
            WITH TOUR_SUBSET AS (
             SELECT 
-              t.tour_id, t.name, t.destination, t.start_date, t.max_guests, t.duration, tp.price
+              t.tour_id, t.name, t.destination, t.start_date, t.max_guests, t.duration, t.transport, tp.price
             FROM Tour AS t
             LEFT JOIN Tour_Price AS tp 
               ON t.tour_id = tp.tour_id AND tp.age_group = 'adultPrice'
@@ -351,7 +351,7 @@ const getTourOutstanding = async (req, res) => {
             FETCH NEXT 10 ROWS ONLY
           )
           SELECT 
-            ts.tour_id, ts.name, ts.destination, ts.start_date, ts.max_guests, ts.duration, ts.price,
+            ts.tour_id, ts.name, ts.destination, ts.start_date, ts.max_guests, ts.duration, ts.transport, ts.price,
             (SELECT TOP 1 image_url 
             FROM Tour_image ti 
             WHERE ti.tour_id = ts.tour_id 
@@ -382,6 +382,7 @@ const getTourOutstanding = async (req, res) => {
               start_date: row.start_date,
               max_guests: row.max_guests,
               duration: row.duration,
+              transport: row.transport || 'Không xác định',
               price: row.price, //price không có 's'
               cover_image: row.cover_image || 'uploads\\default.jpg',
               booked_slots: row.booked_slots, // Thêm số chỗ đã đặt
@@ -603,10 +604,23 @@ const getTourById = async (req, res) => {
       transaction = pool.transaction(); 
       await transaction.begin();
 
-      // Lấy thông tin tour
+      // Lấy thông tin tour và booked_slots
       const tourResult = await transaction.request()
-      .input("tour_id", sql.NVarChar, tourId)
-      .query("SELECT * FROM Tour WHERE tour_id = @tour_id");
+        .input("tour_id", sql.NVarChar, tourId)
+        .query(`
+          SELECT 
+            t.*,
+            ISNULL((
+              SELECT SUM(bd.quantity)
+              FROM Booking b
+              INNER JOIN Booking_Detail bd
+              ON b.booking_id = bd.booking_id
+              WHERE b.tour_id = t.tour_id 
+              AND b.status = 'confirmed'
+            ), 0) AS booked_slots
+          FROM Tour t
+          WHERE t.tour_id = @tour_id
+        `);
 
       // Lấy thông tin giá tour
       const priceResult = await transaction.request()

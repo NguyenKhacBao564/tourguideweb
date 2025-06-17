@@ -36,7 +36,7 @@ function TourInforCard(props) {
                             <Col md={1} className="tour__infor--icon"><FaCar/> </Col>
                             <Col className="tour_infor">
                                 <p><strong>Phương Tiện:</strong></p>
-                                <p>Xe ô tô</p>
+                                <p>{tour.transport}</p>
                             </Col>
                         </Row>
                     </Col>
@@ -61,7 +61,7 @@ function TourInforCard(props) {
                             <Col md={1} className="tour__infor--icon"><MdEventSeat/></Col>
                             <Col className="tour_infor">
                                 <p><strong>Chỗ Còn Trống:</strong></p>
-                                <p>10</p>
+                                <p>{tour.max_guests - tour.booked_slots}</p>
                             </Col>
                         </Row>
                         <Row>

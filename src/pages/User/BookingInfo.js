@@ -216,6 +216,7 @@ const BookingInfo = () => {
           contact,
           passengers,
           tour,
+          image,
           total,
           payment,
           bookingId,
@@ -656,7 +657,8 @@ const BookingInfo = () => {
                     <Col xs={6} className="info-item">
                       <FaMapMarkerAlt className="info-icon" />
                       <div>
-                        <div className="info-label">{tour.transport || 'Xe khách'}</div>
+                        <div className="info-label">Phương tiện:</div>
+                        <div className="info-value">{tour.transport || 'Xe khách'}</div>
                       </div>
                     </Col>
                   </Row>

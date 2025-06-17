@@ -6,6 +6,8 @@ import NavBar from '../../layouts/Navbar';
 import '../../styles/pages/Checkout.scss';
 import { createPaymentUrl, createMoMoPayment, formatCurrency, validatePaymentData } from '../../api/paymentAPI';
 import { AuthContext } from '../../context/AuthContext';
+import {formatDate} from '../../feature/formatDate';
+import { API_URL } from '../../utils/API_Port';
 
 const Checkout = () => {
   const location = useLocation();
@@ -28,6 +30,7 @@ const Checkout = () => {
     contact = {},
     passengers = [],
     tour = {},
+    image = "",
     total = 0,
     payment = "",
     bookingCode = "2503125VPHXB",
@@ -280,7 +283,7 @@ const Checkout = () => {
               <Card.Body>
                 <div style={{fontWeight: 700, color: '#1a237e', fontSize: 16, marginBottom: 8, textTransform: 'uppercase'}}>PHIẾU XÁC NHẬN BOOKING</div>
                 <div className="d-flex align-items-center mb-2">
-                  <img src={tour.image} alt="tour" style={{width: 110, height: 80, objectFit: "cover", borderRadius: 8, marginRight: 12, border: '1px solid #e0e0e0'}} />
+                  <img src={`${API_URL}/${image.image_url}`} alt="tour" style={{width: 110, height: 80, objectFit: "cover", borderRadius: 8, marginRight: 12, border: '1px solid #e0e0e0'}} />
                   <div>
                     <div style={{fontWeight: 700, fontSize: 16, color: '#222'}}>{tour.name}</div>
                     <div style={{fontSize: 15}}>Mã tour: <span style={{color: "#e53935", fontWeight: 700}}>{tour.code}</span></div>
@@ -289,10 +292,10 @@ const Checkout = () => {
                 </div>
                 <div style={{marginTop: 12, marginBottom: 8, fontWeight: 600, color: '#222'}}>THÔNG TIN TOUR:</div>
                 <Row style={{fontSize: 15, color: '#444'}}>
-                  <Col xs={6} className="mb-2"><FaCalendarAlt style={{marginRight: 6}}/> Ngày đi: <b>{tour.startDate || "20/03/2025"}</b></Col>
-                  <Col xs={6} className="mb-2"><FaCalendarAlt style={{marginRight: 6}}/> Ngày về: <b>{tour.endDate || "24/03/2025"}</b></Col>
-                  <Col xs={6} className="mb-2"><FaMapMarkerAlt style={{marginRight: 6}}/> {tour.start || "Đà Lạt"}</Col>
-                  <Col xs={6} className="mb-2"><FaBus style={{marginRight: 6}}/> Xe khách</Col>
+                  <Col xs={6} className="mb-2"><FaCalendarAlt style={{marginRight: 6}}/> Ngày đi: <b>{formatDate(tour.start_date)}</b></Col>
+                  <Col xs={6} className="mb-2"><FaCalendarAlt style={{marginRight: 6}}/> Ngày về: <b>{formatDate(tour.end_date)}</b></Col>
+                  <Col xs={6} className="mb-2"><FaMapMarkerAlt style={{marginRight: 6}}/>Điểm đến <b>{tour.destination}</b></Col>
+                  <Col xs={6} className="mb-2"><FaBus style={{marginRight: 6}}/>Phương tiện: <b>{tour.transport}</b></Col>
                 </Row>
                 
                 {/* Form chọn phương thức thanh toán */}

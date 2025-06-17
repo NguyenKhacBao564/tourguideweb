@@ -210,8 +210,10 @@ function BookingTour(props) {
                                 )}
                             </Row>
                         </Container>
-
+                        
+                        {/* Thông tin tour */}
                         <TourInforCard tour={tour} />
+
                         {/* Thông tin bổ sung */}
                         <div className="mt-4">
                             <h3 className="section-title">Tour Này Có Gì Hay!</h3>
