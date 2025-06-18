@@ -93,7 +93,7 @@ const getToursByStatusAndPage = async ( page, pageSize) => {
         .query(`
           SELECT 
             t.tour_id,
-            t.name as tour_name,
+            t.name,
             t.destination,
             FORMAT(t.start_date, 'yyyy-MM-dd') as start_date,
             FORMAT(t.end_date, 'yyyy-MM-dd') as end_date,

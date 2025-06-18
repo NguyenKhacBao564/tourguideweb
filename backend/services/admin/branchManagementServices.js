@@ -156,20 +156,20 @@ async function getBranchStats() {
   try {
       const pool = await getPool();
 
-      // Debug: Kiểm tra dữ liệu payments
-      const debugPayments = await pool.request().query(`
-        SELECT COUNT(*) as total_payments,
-               COUNT(CASE WHEN payment_status = 'COMPLETED' THEN 1 END) as completed_payments,
-               COUNT(CASE WHEN YEAR(created_at) = YEAR(GETDATE()) THEN 1 END) as current_year_payments
-        FROM Payments
-      `);
-      console.log('Debug Payments:', debugPayments.recordset[0]);
+      // // Debug: Kiểm tra dữ liệu payments
+      // const debugPayments = await pool.request().query(`
+      //   SELECT COUNT(*) as total_payments,
+      //          COUNT(CASE WHEN payment_status = 'COMPLETED' THEN 1 END) as completed_payments,
+      //          COUNT(CASE WHEN YEAR(created_at) = YEAR(GETDATE()) THEN 1 END) as current_year_payments
+      //   FROM Payments
+      // `);
+      // console.log('Debug Payments:', debugPayments.recordset[0]);
 
-      // Debug: Kiểm tra dữ liệu branches
-      const debugBranches = await pool.request().query(`
-        SELECT COUNT(*) as total_branches FROM Branch
-      `);
-      console.log('Debug Branches:', debugBranches.recordset[0]);
+      // // Debug: Kiểm tra dữ liệu branches
+      // const debugBranches = await pool.request().query(`
+      //   SELECT COUNT(*) as total_branches FROM Branch
+      // `);
+      // console.log('Debug Branches:', debugBranches.recordset[0]);
 
       // Thống kê chi nhánh (Doanh thu, Tăng trưởng, Tỷ lệ hủy, Tổng số tour)
       const branchStats = await pool.request()
@@ -242,7 +242,7 @@ async function getBranchStats() {
               ORDER BY BR.branch_id;
           `);
       
-      console.log('Branch Stats Debug:', JSON.stringify(branchStats.recordset, null, 2));
+      // console.log('Branch Stats Debug:', JSON.stringify(branchStats.recordset, null, 2));
       return branchStats.recordset;
   } catch (error) {
       console.error('Lỗi khi lấy thống kê chi nhánh:', error);
@@ -296,7 +296,7 @@ const getToursByStatusAndPage = async (page = 1, pageSize = 10) => {
       .query(`
         SELECT 
           t.tour_id,
-          t.name as tour_name,
+          t.name,
           FORMAT(t.start_date, 'yyyy-MM-dd') as start_date,
           FORMAT(t.end_date, 'yyyy-MM-dd') as end_date,
           t.status,

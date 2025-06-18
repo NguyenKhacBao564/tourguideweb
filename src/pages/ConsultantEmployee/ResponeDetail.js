@@ -69,7 +69,7 @@ const ResponeDetail = () => {
                 if (editorRef.current) {
                     editorRef.current.innerText = "";
                 }
-                navigate('/consultantemployee');
+                navigate('/consultantemployee/request-support');
             } catch (err) {
                 alert(err.message || 'Gửi phản hồi thất bại!');
             }

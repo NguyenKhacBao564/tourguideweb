@@ -32,9 +32,17 @@ const updateTourStatus = async (req, res) => {
 };
 
 const getToursByStatusAndPage = async (req, res) => {
-  const { page, pageSize } = req.query;
-  const tours = await tourManagementServices.getToursByStatusAndPage(page, pageSize);
-  res.status(200).json(tours);
+  try {
+    const { page = 1, pageSize = 10 } = req.query;
+    const tours = await tourManagementServices.getToursByStatusAndPage(
+      parseInt(page), 
+      parseInt(pageSize)
+    );
+    res.status(200).json(tours);
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách tour:', error);
+    res.status(500).json({ error: error.message });
+  }
 };
 
 module.exports = { approveTourById, rejectTourById, updateTourStatus, getToursByStatusAndPage };

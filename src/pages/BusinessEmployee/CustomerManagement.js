@@ -148,7 +148,7 @@ function CustomerManagement(props) {
       </Container>
       {isDialogOpen && (
         <ConfirmDialog
-          message="Bạn có chắc muốn xóa khách hàng này không?"
+          message="Bạn có chắc muốn kbóa khách hàng này không?"
           checkConfirm={checkConfirmBlock}
         />
       )}
