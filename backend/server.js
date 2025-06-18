@@ -29,7 +29,12 @@ const historyBookingRoutes = require("./routes/historyBookingRoutes");
 const resetPasswordRoutes = require("./routes/resetPasswordRoutes");
 
 app.use(cors({
-  origin: 'http://localhost:3000', // Domain của frontend
+  origin: [
+    'http://localhost:3000', // Development
+    'http://54.219.205.247', // EC2 IP
+    'http://tourguideeeee.fun', // Domain
+    'http://www.tourguideeeee.fun' // WWW Domain
+  ], // Domain của frontend
   credentials: true, // Cho phép gửi cookie
 }));
 app.use(express.json());
@@ -57,14 +62,6 @@ app.use("/api/customer", customerSupportRoutes); // Thêm route cho support
 app.use("/api/consultant", consultantSupportRoutes);
 app.use("/reviews", reviewRoutes);
 
-// Health check endpoint for Docker
-app.get("/api/health", (req, res) => {
-  res.status(200).json({ 
-    status: "OK", 
-    timestamp: new Date().toISOString(),
-    service: "tour-booking-backend"
-  });
-});
 
 app.listen(PORT, () => {
   console.log(`🚀 Server chạy tại http://localhost:${PORT}`);
